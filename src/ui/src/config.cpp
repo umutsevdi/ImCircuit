@@ -22,7 +22,10 @@ const char* to_str<ui::Configuration::ThemePreference>(
 }
 
 namespace ui {
-    static void _set_locale(const std::string& locale);
+    static Error _set_locale(const std::string& locale);
+
+    UserData user_data { true, true, true, true, {} };
+    static Configuration _config;
 
     static Configuration::ThemePreference str_to_ThemePreference(
         const std::string& s)
@@ -35,17 +38,15 @@ namespace ui {
         return Configuration::FOLLOW_OS;
     }
 
-    Configuration _config;
-
     Configuration& load_config(void)
     {
         std::string data;
-        if (!fs::read(fs::ROOT / "config.json", data)) {
+        if (!fs::read(fs::CONFIG / "config.json", data)) {
             L_WARN("Configuration file was not found at %s. Initializing "
                    "defaults.",
-                (fs::ROOT / "config.json").c_str());
+                (fs::CONFIG / "config.json").c_str());
             fs::write(
-                fs::ROOT / "config.json", _config.to_json().toStyledString());
+                fs::CONFIG / "config.json", _config.to_json().toStyledString());
             return _config;
         }
 
@@ -54,25 +55,29 @@ namespace ui {
         if (!r.parse(data, v)) {
             L_ERROR("Invalid configuration file format. Overwriting.");
             fs::write(
-                fs::ROOT / "config.json", _config.to_json().toStyledString());
+                fs::CONFIG / "config.json", _config.to_json().toStyledString());
             return _config;
         }
         if (_config.from_json(v) != Error::OK) {
             L_ERROR("Parse error.");
             _config = Configuration();
         }
+        if (_config.language != "en_US") {
+            _set_locale(_config.language);
+        }
         L_DEBUG("Configuration was loaded.");
-        _set_locale(_config.language);
         return _config;
     }
 
     Configuration& get_config(void) { return _config; }
 
-    void set_config(const Configuration& cfg)
+    void set_config(Configuration& cfg)
     {
         if (cfg.language != _config.language) {
             L_INFO("Update locale to %s", cfg.language.c_str());
-            _set_locale(cfg.language);
+            if (_set_locale(cfg.language)) {
+                cfg.language = _config.language;
+            }
         }
         _config            = cfg;
         _config.is_applied = false;
@@ -81,7 +86,8 @@ namespace ui {
 
     void save_config(void)
     {
-        fs::write(fs::ROOT / "config.json", _config.to_json().toStyledString());
+        fs::write(
+            fs::CONFIG / "config.json", _config.to_json().toStyledString());
         _config.is_applied = true;
         _config.is_saved   = true;
     }
@@ -137,20 +143,17 @@ namespace ui {
         return Error::OK;
     }
 
-    static void _set_locale(const std::string& locale)
+    static Error _set_locale(const std::string& locale)
     {
         const char* domain = APPNAME_BIN;
         std::string dir    = fs::LOCALE.string();
         if (!(bindtextdomain(domain, dir.c_str())
                 && bind_textdomain_codeset(domain, "UTF-8"))) {
-            L_ERROR("Error while updating translations.");
-            return;
+            return ERROR(Error::LOCALE_ERROR);
         }
-
         if (setlocale(LC_ALL, (locale + ".UTF-8").c_str()) == nullptr) {
-            L_WARN("setlocale failed for %s", locale.c_str());
+            return ERROR(Error::LOCALE_ERROR);
         }
-
         if (
 #ifdef _WIN32
             _putenv_s("LC_ALL", locale.c_str())
@@ -159,20 +162,13 @@ namespace ui {
             setenv("LC_ALL", locale.c_str(), 1)
 #endif
         ) {
-            L_WARN("Not all LOCALE environment variables were updated.");
+            return ERROR(Error::LOCALE_ERROR);
         }
         if (!textdomain(domain)) {
-            L_WARN("textdomain failed");
+            return ERROR(Error::LOCALE_ERROR);
         };
+        return Error::OK;
     }
-
-    UserData user_data {
-        .palette    = true,
-        .inspector  = true,
-        .scene_info = true,
-        .console    = true,
-        .login {},
-    };
 
     void _apply_all(ImGuiContext*, ImGuiSettingsHandler*)
     {
@@ -203,7 +199,7 @@ namespace ui {
         if (sscanf(line, "layout=0x%X", &layout) == 1) {
             user_data.palette    = layout & 0b0001;
             user_data.inspector  = layout & 0b0010;
-            user_data.scene_info = layout & 0b100;
+            user_data.scene_info = layout & 0b0100;
             user_data.console    = layout & 0b1000;
         }
         if (sscanf(line, "login=\"%127[^\"]\"", lo->login.data()) == 1) { }
@@ -213,9 +209,8 @@ namespace ui {
         ImGuiContext*, ImGuiSettingsHandler*, ImGuiTextBuffer* buf)
     {
         buf->appendf("[%s][%s]\n", APPNAME_LONG, "default");
-        uint32_t layout = user_data.palette
-            | (user_data.inspector ? 1u : 0u << 1) | (user_data.scene_info << 2)
-            | (user_data.console << 3);
+        uint32_t layout = user_data.palette | (user_data.inspector << 1)
+            | (user_data.scene_info << 2) | (user_data.console << 3);
         buf->appendf("layout=0x%X\n", layout);
         buf->appendf("login=\"%s\"\n\n", user_data.login.begin());
     }

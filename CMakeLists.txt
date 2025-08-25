@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
+set(PROJECT_LONG  "Logic Circuit Simulator")
+project(LogicCircuitSimulator C CXX)
 if (WIN32)
     message(${CMAKE_SOURCE_DIR})
     # If Win32 use vcpkg to get dependencies.
@@ -6,7 +8,6 @@ if (WIN32)
         CACHE STRING "Vcpkg toolchain file")
 endif()
 
-project(LogicCircuitSimulator C CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug")
@@ -131,7 +132,7 @@ if(LCS_BUILD_TESTS)
         COMMENT "Running tests after build"
     )
     if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_GUI)
-        add_dependencies(${PRJ} run_tests)
+        add_dependencies(${PROJECT_NAME} run_tests)
     endif()
 endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_ENABLE_DOXYGEN)
@@ -165,3 +166,53 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_ENABLE_DOXYGEN)
         endif()
     endif()
 endif()
+
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_DESCRIPTION "A free and open-source cross-platform Logic Circuit Simulator.")
+set(CPACK_PACKAGE_MAINTAINER "Umut Sevdi <mail@umutsevdi.com>")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+if(WIN32)
+set(CPACK_GENERATOR "NSIS")
+set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/pkg/win/LogicCircuitSimulator.ico")
+set(CPACK_NSIS_MUI_UNFINISH "Your finish text here.")
+set(CPACK_NSIS_MUI_WELCOME_TEXT "Welcome to the installer for ${PROJECT_LONG}.")
+set(CPACK_NSIS_MUI_FINISH_TEXT "Thank you for installing ${PROJECT_LONG}.")
+set(CPACK_NSIS_INSTALL_ROOT)
+install(DIRECTORY "build/release"
+		DESTINATION bin
+        PATTERN "*.*"
+)
+set(CPACK_NSIS_MODIFY_PATH "ON")
+set(CPACK_CREATE_DESKTOP_LINKS ${PROJECT_NAME})
+
+else()
+set(CPACK_GENERATOR "DEB;RPM")  
+set(CPACK_RPM_PACKAGE_LICENSE "GPL")  
+set(CPACK_RPM_PACKAGE_GROUP "Development")  
+set(CPACK_RPM_PACKAGE_REQUIRES "glib2, libcurl, libsecret, glfw, mesa-libGL")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Umut Sevdi <mail@umutsevdi.com>")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libglib2.0-0, libcurl4, libsecret-1-0, libglfw3, libopenGL0")
+
+install(FILES "build/release/LogicCircuitSimulator"
+        DESTINATION "/usr/bin/"
+        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+                                GROUP_EXECUTE GROUP_READ
+                                WORLD_EXECUTE WORLD_READ
+)
+
+install(DIRECTORY pkg/usr/share/
+        DESTINATION /usr/share/
+        USE_SOURCE_PERMISSIONS
+        PATTERN "*.*"
+)
+
+install(FILES "LICENSE"
+        DESTINATION "/usr/bin/"
+        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+                                GROUP_EXECUTE GROUP_READ
+                                WORLD_EXECUTE WORLD_READ
+)
+endif()
+include(CPack)

@@ -1,7 +1,7 @@
-#include "common.h"
-#include "core.h"
 #include <doctest.h>
 #include <json/json.h>
+#include "common.h"
+#include "core.h"
 
 using namespace lcs;
 
@@ -22,10 +22,11 @@ TEST_CASE("Save a scene and load")
     s->connect(g_and, 1, v1);
     s->connect(o, 0, g_or);
     tabs::notify(s_handle);
-    REQUIRE_EQ(tabs::save_as(lcs::fs::TMP / "test.lcs", s_handle), Error::OK);
+    REQUIRE_EQ(
+        tabs::save_as(lcs::fs::LIBRARY / "test.lcs", s_handle), Error::OK);
     REQUIRE_EQ(tabs::close(s_handle), Error::OK);
     size_t idx = -1;
-    REQUIRE_EQ(tabs::open(lcs::fs::TMP / "test.lcs", idx), Error::OK);
+    REQUIRE_EQ(tabs::open(lcs::fs::LIBRARY / "test.lcs", idx), Error::OK);
     REQUIRE(idx != -1);
 }
 

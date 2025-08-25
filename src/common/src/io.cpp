@@ -53,43 +53,57 @@ void Message::_fn_parse(const char* name)
         // Trim return type
         fnname = fnname.substr(fnname.find_first_of(" ") + 1);
 
-        size_t fn_end      = fnname.find_first_of('(');
-        size_t class_begin = 0;
-        fnname             = fnname.substr(class_begin, fn_end - class_begin);
+        if (fnname.find("lambda") == std::string::npos) {
+            size_t fn_end      = fnname.find_first_of('(');
+            size_t class_begin = 0;
+            fnname = fnname.substr(class_begin, fn_end - class_begin);
 
-        size_t fn_begin  = fnname.find_last_of("::") + 1;
-        fn_end           = fnname.size() - 1;
-        size_t class_end = fnname.find_first_of("::", class_begin);
-        if (fn_begin == std::string::npos || class_begin == std::string::npos) {
-            // No class found
-            class_end = class_begin;
-            fn_begin  = class_begin;
+            size_t fn_begin  = fnname.find_last_of("::") + 1;
+            fn_end           = fnname.size() - 1;
+            size_t class_end = fnname.find_last_of("::") - 1;
+            if (fn_begin == std::string::npos
+                || class_begin == std::string::npos) {
+                // No class found
+                class_end = class_begin;
+                fn_begin  = class_begin;
+            }
+
+            std::string name_fn
+                = fnname.substr(fn_begin, fn_end - fn_begin + 1);
+            std::string name_class
+                = fnname.substr(class_begin, class_end - class_begin);
+
+            if (name_class == name_fn) {
+                name_class = "lcs";
+            }
+            line_cache[name] = name_class + " " + name_fn;
+        } else {
+            line_cache[name] = " lambda";
         }
-
-        std::string name_fn = fnname.substr(fn_begin, fn_end - fn_begin + 1);
-        std::string name_class
-            = fnname.substr(class_begin, class_end - class_begin);
-
-        if (name_class == name_fn) {
-            name_class = "lcs";
-        }
-        line_cache[name] = name_class + " " + name_fn;
         _fn_parse(name);
     }
 }
 
 namespace fs {
 
+#include "po.h"
+    const char** locales(void) { return __LOCALES__; }
+    const char** localnames(void) { return __NAMES__; }
+    size_t localsize(void) { return __LOCALE_S; }
+
     bool ready = false;
     bool is_testing;
-    std::filesystem::path ROOT;
-    std::filesystem::path TMP;
-    std::filesystem::path LIBRARY;
-    std::filesystem::path CACHE;
-    std::filesystem::path MISC;
+
+    // /usr/share/LogicCircuitSimulator/
+    std::filesystem::path APPDATA;
+    // $HOME/.local/share/
     std::filesystem::path LOCALE;
-    std::vector<std::string> LOCALE_LANG {};
-    std::filesystem::path INI;
+    // $HOME/.cache/${APPNAME_BIN}/
+    std::filesystem::path CACHE;
+    // $HOME/.local/share/${APPNAME_BIN}/
+    std::filesystem::path LIBRARY;
+    // $HOME/.local/share/${APPNAME_BIN}/
+    std::filesystem::path CONFIG;
     FILE* __TEST_LOG__ = nullptr;
 
     static constexpr int LINE_SIZE = 200;
@@ -107,101 +121,75 @@ namespace fs {
         is_testing       = _is_testing;
         app_start_time   = std::chrono::steady_clock::now();
         const char* home = std::getenv("HOME");
-#ifdef _WIN32
-        ROOT = std::filesystem::path { getenv("LOCALAPPDATA") } / APPNAME_BIN;
-        TMP  = std::filesystem::path { getenv("TEMP") } / APPNAME_BIN;
-#elif defined(__linux__)
-        TMP  = "/tmp/" APPNAME_BIN;
-        ROOT = home ? std::string(home) + "/.local/share/" APPNAME_BIN
-                    : "/tmp/" APPNAME_BIN;
-
-        std::string desktopfile = std::string(home)
-            + "/.local/share/applications/" APPNAME_LONG ".desktop";
-        if (!std::filesystem::exists(desktopfile)) {
-            std::printf("Desktop file does not exist\r\n");
-            std::string data =
-#include "lcs.desktop.txt"
-                ;
-            std::printf("APPNAME\r\n");
-            data = data.replace(data.find("%APPNAME%"), 9, APPNAME_BIN);
-            std::printf("HOME\r\n");
-            data = data.replace(data.find("%HOME%"), 6, home);
-            std::printf("APPNAME : %s\r\n", data.c_str());
-            data = data.replace(data.find("%APPNAME%"), 9, APPNAME_BIN);
-            write(desktopfile, data);
-        }
-#elif defined(__unix__)
-        // TODO For BSD & Mac
-#endif
         if (is_testing) {
             time_t now = time(nullptr);
             tm* t      = localtime(&now);
-            std::stringstream s_time { ".test_" };
-            s_time << "run" << "_" << t->tm_hour << "_" << t->tm_min << "_"
-                   << t->tm_sec;
-            s_time <<
+            static char folder[1024] {};
+            std::snprintf(folder, 1024, "run_%02d%02d%02d_%s", t->tm_hour,
+                t->tm_min, t->tm_sec,
 #ifdef NDEBUG
-                "_rel"
+                "rel"
 #else
-                "_dbg"
+                "dbg"
 #endif
-                ;
-            ROOT = TMP / s_time.str();
-            TMP  = TMP / s_time.str() / "tmp";
-            if (!std::filesystem::exists(ROOT)) {
-                std::filesystem::create_directories(ROOT);
-            }
-            auto logfile = ROOT / "log.txt";
+            );
+            std::filesystem::create_directories(folder);
+            home         = folder;
+            auto logfile = std::filesystem::path { home } / "log.txt";
 #ifdef _MSC_VER
             __TEST_LOG__ = _wfopen(logfile.c_str(), L"w");
 #else
             __TEST_LOG__ = std::fopen(logfile.c_str(), "w");
 #endif
-
-            L_DEBUG("Creating testing environment at %s", ROOT.c_str());
         }
-        LIBRARY = ROOT / "pkg";
-        CACHE   = ROOT / ".cache";
-        INI     = ROOT / "profile.ini";
-        MISC    = ROOT / "misc";
-        LOCALE  = MISC / "locale";
+#ifdef _WIN32
+        APPDATA = std::filesystem::path { getenv("APPDATA") } / APPNAME_BIN;
+        LOCALE  = APPDATA / "locale";
+
+        auto localappdata = std::filesystem::path { getenv("LOCALAPPDATA") };
+        CACHE             = localappdata / "cache";
+        CONFIG            = localappdata / "config";
+        LIBRARY           = localappdata / "pkg";
+#elif defined(__linux__)
+        APPDATA = "/usr/share/" APPNAME_BIN;
+        LOCALE  = "/usr/share/locale/";
+
+        CACHE   = std::filesystem::path { home } / ".cache" / APPNAME_BIN;
+        CONFIG  = std::filesystem::path { home } / ".config" / APPNAME_BIN;
+        LIBRARY = std::filesystem::path { home } / ".local/share" / APPNAME_BIN
+            / "pkg";
+#elif defined(__unix__)
+        // TODO For BSD & Mac
+#endif
+        lcs_assert(std::filesystem::exists(APPDATA));
+        lcs_assert(std::filesystem::exists(LOCALE));
         try {
-            if (!std::filesystem::exists(TMP)) {
-                L_DEBUG("Creating %s directory.", TMP.c_str());
-                std::filesystem::create_directories(TMP);
-            }
-            if (!std::filesystem::exists(MISC)) {
-                L_DEBUG("Creating %s directory.", MISC.c_str());
-                std::filesystem::create_directories(MISC);
-            }
-            if (!std::filesystem::exists(LOCALE)) {
-                L_DEBUG("Creating %s directory.", LOCALE.c_str());
-                std::filesystem::create_directories(LOCALE);
+            if (!std::filesystem::exists(CACHE)) {
+                L_DEBUG("Creating %s directory.", CACHE.c_str());
+                std::filesystem::create_directories(CACHE);
             }
             if (!std::filesystem::exists(LIBRARY)) {
                 L_DEBUG("Creating %s directory.", LIBRARY.c_str());
                 std::filesystem::create_directories(LIBRARY);
             }
-            if (!std::filesystem::exists(CACHE)) {
-                L_DEBUG("Creating %s directory.", CACHE.c_str());
-                std::filesystem::create_directories(CACHE);
-            }
-            if (!std::filesystem::exists(INI)) {
-                static const char* _default_ini =
-#include "default_ini.txt"
-                    ;
-                fs::write(INI, _default_ini);
-                L_DEBUG("Placing default layout");
+            if (!std::filesystem::exists(CONFIG)) {
+                L_DEBUG("Creating %s directory.", CONFIG.c_str());
+                std::filesystem::create_directories(CONFIG);
+                std::filesystem::copy_file(
+                    APPDATA / "default.ini", CONFIG / "default.ini");
+                std::filesystem::copy_file(
+                    APPDATA / "themes.json", CONFIG / "themes.json");
+                std::filesystem::copy_file(
+                    APPDATA / "config.json", CONFIG / "config.json");
             }
         } catch (const std::exception& e) {
             L_ERROR("Directory creation failed. %s ", e.what());
         }
-        for (auto& l : std::filesystem::directory_iterator(LOCALE)) {
-            if (l.exists() && l.is_directory()) {
-                std::string localname = l.path().filename().string();
-                L_DEBUG("Locale %s discovered", localname.c_str());
-                LOCALE_LANG.push_back(
-                    localname.substr(0, localname.rfind('.')));
+        for (size_t i = 0; i < localsize(); i++) {
+            if (std::filesystem::is_directory(LOCALE / locales()[i])) {
+                L_DEBUG("Discovered %s(%s)", locales()[i], localnames()[i]);
+            } else {
+                L_WARN("Locale %s not found!", locales()[i]);
             }
         }
         L_INFO("Module lcs::fs is ready");
