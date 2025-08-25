@@ -1,0 +1,16 @@
+{
+	"language" : "en_US",
+	"proxy" : "http://localhost:8000",
+	"scale" : 100,
+	"theme" : {
+		"corners" : 0,
+		"dark" : "Default (Dark)",
+		"light" : "Default (Light)",
+		"prefer" : "os"
+	},
+	"window" : {
+		"fullscreen" : true,
+		"x" : 1980,
+		"y" : 1080
+	}
+}

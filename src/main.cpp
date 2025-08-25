@@ -12,7 +12,7 @@
 #include "port.h"
 
 namespace lcs::ui {
-int main(int, char**);
+extern int init(void);
 }
 using namespace lcs;
 static void _cleanup(void)
@@ -21,6 +21,17 @@ static void _cleanup(void)
     net::close();
 }
 
+#if defined(_WIN32) && NDEBUG && __TESTING__ == 0
+#include <windows.h>
+int WINAPI WinMain(
+    HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+    fs::init(__TESTING__);
+    net::init(__TESTING__);
+    std::atexit(_cleanup);
+    return ui::init();
+}
+#else
 int main(int argc, char* argv[])
 {
     fs::init(__TESTING__);
@@ -31,6 +42,7 @@ int main(int argc, char* argv[])
     context.applyCommandLine(argc, argv);
     return context.run();
 #else
-    return ui::main(argc, argv);
+    return ui::init();
 #endif
 }
+#endif

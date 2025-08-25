@@ -19,6 +19,7 @@ xgettext \
 merge_po()
 {
     local locales=("fr_FR" "de_DE" "tr_TR" "en_US" "ru_RU")
+    local names=("Français" "Deutsch" "Türkçe" "English" "Русский")
 
     for loc in "${locales[@]}"; do
         loc+=".po"
@@ -36,14 +37,30 @@ merge_po()
                     --output="$po_path"
         fi
     done
+    rm i18n/po.h
+    echo "/** Generated at `date` */" >> i18n/po.h
+    echo "#ifndef __LCS_POGEN__"  >> i18n/po.h
+    echo "#define __LCS_POGEN__"  >> i18n/po.h
+    echo "#define __LOCALE_S ${#locales[@]}" >> i18n/po.h
+    echo "static const char* __LOCALES__[] = {" >> i18n/po.h
+    for loc in "${locales[@]}"; do
+        echo "\"$loc\"," >> i18n/po.h
+    done
+    echo "};" >> i18n/po.h
+    echo "static const char* __NAMES__[] = {" >> i18n/po.h
+    for loc in "${names[@]}"; do
+        echo "\"$loc\"," >> i18n/po.h
+    done
+    echo "};" >> i18n/po.h
+    echo "#endif // __LCS_POGEN__" >> i18n/po.h
 }
 
 make_mo()
 {
-    rm -rf misc/locale
+    rm -rf pkg/usr/locale
     for i in i18n/*.po; do
         base=`basename -s .po $i`
-        target="misc/locale/$base/LC_MESSAGES/"
+        target="pkg/usr/locale/$base/LC_MESSAGES/"
         mkdir -p $target
         msgfmt -o ${target}/${APPNAME_BIN}.mo $i
     done

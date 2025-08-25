@@ -9,6 +9,8 @@
 #include "configuration.h"
 #include "ui.h"
 
+#define DL(_a, _b) (t.is_dark ? (_a) : (_b))
+
 namespace lcs::ui {
 static std::map<std::string, LcsTheme> themes;
 static std::vector<const char*> names_light {};
@@ -116,8 +118,8 @@ static void _init_fonts(ImGuiIO& io)
     io.Fonts->AddFontDefault();
     static const ImWchar icon_ranges[] = { ICON_MIN_LC, ICON_MAX_LC, 0 };
 
-    auto dir         = fs::MISC / "font" / "Archivo" / "ttf";
-    auto font_lucide = fs::MISC / "font" / "Lucide" / "Lucide.ttf";
+    auto dir         = fs::APPDATA / "font" / "Archivo" / "ttf";
+    auto font_lucide = fs::APPDATA / "font" / "Lucide" / "Lucide.ttf";
 
     std::string font = (dir / "Archivo-Regular.ttf").string();
     _FONT[SMALL | REGULAR]
@@ -151,7 +153,7 @@ static void _init_fonts(ImGuiIO& io)
     _FONT[LARGE | BOLD | ITALIC] = atlas->AddFontFromFileTTF(
         font.c_str(), 1.25 * fsize, nullptr, atlas->GetGlyphRangesDefault());
 
-    font = (fs::MISC / "font" / "Lucide" / "Lucide.ttf").string();
+    font = (fs::APPDATA / "font" / "Lucide" / "Lucide.ttf").string();
     _FONT[SMALL | ICON] = atlas->AddFontFromFileTTF(
         font.c_str(), 0.75 * fsize, nullptr, icon_ranges);
     _FONT[NORMAL | ICON]
@@ -171,86 +173,86 @@ static void _set_colors(
 
     clr_gui[ImGuiCol_WindowBg]       = t.bg;
     clr_gui[ImGuiCol_Text]           = t.fg;
-    clr_gui[ImGuiCol_TextDisabled]   = V4MUL(t.fg, 0.7f);
-    clr_gui[ImGuiCol_TextSelectedBg] = V4MUL(t.blue, 0.8f);
+    clr_gui[ImGuiCol_TextDisabled]   = v4mul(t.fg, 0.7f);
+    clr_gui[ImGuiCol_TextSelectedBg] = v4mul(t.blue, 0.8f);
     clr_gui[ImGuiCol_TextLink]       = t.blue_bright;
 
     // Headers
-    clr_gui[ImGuiCol_MenuBarBg] = V4MUL(t.bg, DL(0.5f, 0.8f));
-    clr_gui[ImGuiCol_Header]    = V4MUL(DL(t.black, t.white), DL(0.5f, 0.8f));
+    clr_gui[ImGuiCol_MenuBarBg] = v4mul(t.bg, DL(0.5f, 0.8f));
+    clr_gui[ImGuiCol_Header]    = v4mul(DL(t.black, t.white), DL(0.5f, 0.8f));
     clr_gui[ImGuiCol_HeaderHovered]
-        = V4MUL(DL(t.black, t.white), DL(0.7f, 1.f));
+        = v4mul(DL(t.black, t.white), DL(0.7f, 1.f));
     clr_gui[ImGuiCol_HeaderActive]
-        = V4MUL(DL(t.black, t.white), DL(0.75f, 1.05f));
+        = v4mul(DL(t.black, t.white), DL(0.75f, 1.05f));
 
     // Buttons
-    clr_gui[ImGuiCol_Button] = V4MUL(DL(t.blue, t.blue_bright), DL(0.5f, 0.9f));
+    clr_gui[ImGuiCol_Button] = v4mul(DL(t.blue, t.blue_bright), DL(0.5f, 0.9f));
     clr_gui[ImGuiCol_ButtonHovered]
-        = V4MUL(DL(t.blue, t.blue_bright), DL(0.8f, 1.0f));
+        = v4mul(DL(t.blue, t.blue_bright), DL(0.8f, 1.0f));
     clr_gui[ImGuiCol_ButtonActive]
-        = V4MUL(DL(t.blue, t.blue_bright), DL(0.8f, 1.1f));
+        = v4mul(DL(t.blue, t.blue_bright), DL(0.8f, 1.1f));
     clr_gui[ImGuiCol_CheckMark] = t.yellow;
 
-    clr_gui[ImGuiCol_DockingPreview] = V4MUL(t.blue_bright, 1.f, *0.5f);
-    clr_gui[ImGuiCol_DockingEmptyBg] = V4MUL(t.blue_bright, 1.f, *0.5f);
+    clr_gui[ImGuiCol_DockingPreview] = v4mul(t.blue_bright, 1.f, 0.5f);
+    clr_gui[ImGuiCol_DockingEmptyBg] = v4mul(t.blue_bright, 1.f, 0.5f);
 
     // Frame BG
-    clr_gui[ImGuiCol_FrameBg]        = V4MUL(t.bg, DL(0.5f, 0.8f));
-    clr_gui[ImGuiCol_FrameBgHovered] = V4MUL(t.bg, DL(1.7f, 1.2f));
-    clr_gui[ImGuiCol_FrameBgActive]  = V4MUL(t.bg, DL(1.7f, 1.2f));
-    clr_gui[ImGuiCol_ChildBg]        = V4MUL(t.bg, DL(0.75f, 0.9f));
-    clr_gui[ImGuiCol_PopupBg]        = V4MUL(t.bg, DL(0.75f, 0.9f));
+    clr_gui[ImGuiCol_FrameBg]        = v4mul(t.bg, DL(0.5f, 0.8f));
+    clr_gui[ImGuiCol_FrameBgHovered] = v4mul(t.bg, DL(1.7f, 1.2f));
+    clr_gui[ImGuiCol_FrameBgActive]  = v4mul(t.bg, DL(1.7f, 1.2f));
+    clr_gui[ImGuiCol_ChildBg]        = v4mul(t.bg, DL(0.75f, 0.9f));
+    clr_gui[ImGuiCol_PopupBg]        = v4mul(t.bg, DL(0.75f, 0.9f));
     clr_gui[ImGuiCol_ModalWindowDimBg]
-        = V4MUL(DL(t.black, t.white), 0.5f, *0.5f);
+        = v4mul(DL(t.black, t.white), 0.5f, 0.5f);
 
     // Tabs
-    clr_gui[ImGuiCol_Tab]                = V4MUL(DL(t.black, t.white), 0.8f);
-    clr_gui[ImGuiCol_TabHovered]         = V4MUL(DL(t.black, t.white), 1.f);
-    clr_gui[ImGuiCol_TabActive]          = V4MUL(DL(t.black, t.white), 0.9f);
-    clr_gui[ImGuiCol_TabUnfocused]       = V4MUL(DL(t.black, t.white), 0.5f);
-    clr_gui[ImGuiCol_TabUnfocusedActive] = V4MUL(DL(t.black, t.white), 0.7f);
+    clr_gui[ImGuiCol_Tab]                = v4mul(DL(t.black, t.white), 0.8f);
+    clr_gui[ImGuiCol_TabHovered]         = v4mul(DL(t.black, t.white), 1.f);
+    clr_gui[ImGuiCol_TabActive]          = v4mul(DL(t.black, t.white), 0.9f);
+    clr_gui[ImGuiCol_TabUnfocused]       = v4mul(DL(t.black, t.white), 0.5f);
+    clr_gui[ImGuiCol_TabUnfocusedActive] = v4mul(DL(t.black, t.white), 0.7f);
 
     // Title
-    clr_gui[ImGuiCol_TitleBg]          = V4MUL(DL(t.black, t.white), 0.8f);
-    clr_gui[ImGuiCol_TitleBgActive]    = V4MUL(DL(t.black, t.white), 0.9f);
+    clr_gui[ImGuiCol_TitleBg]          = v4mul(DL(t.black, t.white), 0.8f);
+    clr_gui[ImGuiCol_TitleBgActive]    = v4mul(DL(t.black, t.white), 0.9f);
     clr_gui[ImGuiCol_TitleBgCollapsed] = t.bg;
 
-    clr_gui[ImGuiCol_Border]            = V4MUL(DL(t.black, t.white), 0.9f);
-    clr_gui[ImGuiCol_ResizeGrip]        = V4MUL(DL(t.black, t.white), 0.9f);
+    clr_gui[ImGuiCol_Border]            = v4mul(DL(t.black, t.white), 0.9f);
+    clr_gui[ImGuiCol_ResizeGrip]        = v4mul(DL(t.black, t.white), 0.9f);
     clr_gui[ImGuiCol_ResizeGripHovered] = t.fg;
     clr_gui[ImGuiCol_ResizeGripActive]  = t.fg;
-    clr_gui[ImGuiCol_Separator]         = V4MUL(DL(t.black, t.white), 0.9f);
+    clr_gui[ImGuiCol_Separator]         = v4mul(DL(t.black, t.white), 0.9f);
     clr_gui[ImGuiCol_SeparatorHovered]  = t.fg;
     clr_gui[ImGuiCol_SeparatorActive]   = t.fg;
-    clr_gui[ImGuiCol_TableBorderStrong] = V4MUL(DL(t.black, t.white), 0.9f);
-    clr_gui[ImGuiCol_TableBorderLight]  = V4MUL(DL(t.black, t.white), 0.9f);
+    clr_gui[ImGuiCol_TableBorderStrong] = v4mul(DL(t.black, t.white), 0.9f);
+    clr_gui[ImGuiCol_TableBorderLight]  = v4mul(DL(t.black, t.white), 0.9f);
 
-    clr_gui[ImGuiCol_ScrollbarBg] = V4MUL(DL(t.black, t.white), DL(0.5f, 0.8f));
-    clr_gui[ImGuiCol_ScrollbarGrab] = V4MUL(DL(t.black, t.white), 0.9f);
+    clr_gui[ImGuiCol_ScrollbarBg] = v4mul(DL(t.black, t.white), DL(0.5f, 0.8f));
+    clr_gui[ImGuiCol_ScrollbarGrab] = v4mul(DL(t.black, t.white), 0.9f);
     clr_gui[ImGuiCol_ScrollbarGrabHovered]
-        = V4MUL(DL(t.black, t.white), DL(0.7f, 1.f));
+        = v4mul(DL(t.black, t.white), DL(0.7f, 1.f));
     clr_gui[ImGuiCol_ScrollbarGrabActive]
-        = V4MUL(DL(t.black, t.white), DL(0.75f, 1.05f));
+        = v4mul(DL(t.black, t.white), DL(0.75f, 1.05f));
 
     clr_gui[ImGuiCol_TableHeaderBg]
-        = V4MUL(DL(t.yellow, t.yellow_bright), DL(0.8f, 1.f));
+        = v4mul(DL(t.yellow, t.yellow_bright), DL(0.8f, 1.f));
     clr_gui[ImGuiCol_TableRowBg]    = t.bg;
-    clr_gui[ImGuiCol_TableRowBgAlt] = V4MUL(t.bg, 0.8f);
+    clr_gui[ImGuiCol_TableRowBgAlt] = v4mul(t.bg, 0.8f);
 
-    clr_gui[ImGuiCol_PlotLines] = V4MUL(DL(t.green, t.yellow_bright), 0.9f);
+    clr_gui[ImGuiCol_PlotLines] = v4mul(DL(t.green, t.yellow_bright), 0.9f);
     clr_gui[ImGuiCol_PlotLinesHovered]
-        = V4MUL(DL(t.green, t.yellow_bright), 1.0f);
-    clr_gui[ImGuiCol_PlotHistogram] = V4MUL(DL(t.green, t.yellow_bright), 0.9f);
+        = v4mul(DL(t.green, t.yellow_bright), 1.0f);
+    clr_gui[ImGuiCol_PlotHistogram] = v4mul(DL(t.green, t.yellow_bright), 0.9f);
     clr_gui[ImGuiCol_PlotHistogramHovered]
-        = V4MUL(DL(t.green, t.yellow_bright), 1.0f);
-    clr_node[ImNodesCol_GridBackground] = CLRU32(V4MUL(t.bg, DL(1.2f, 0.8f)));
-    clr_node[ImNodesCol_GridLine]       = CLRU32(V4MUL(t.fg, 0.5f));
+        = v4mul(DL(t.green, t.yellow_bright), 1.0f);
+    clr_node[ImNodesCol_GridBackground] = CLRU32(v4mul(t.bg, DL(1.2f, 0.8f)));
+    clr_node[ImNodesCol_GridLine]       = CLRU32(v4mul(t.fg, 0.5f));
     //    clr_node[ImNodesCol_GridLinePrimary] = CLRU32(ImGuiCol_FrameBgActive);
     clr_node[ImNodesCol_NodeBackground]         = CLRU32(ImGuiCol_WindowBg);
-    clr_node[ImNodesCol_NodeBackgroundHovered]  = CLRU32(V4MUL(t.bg, 1.3f));
-    clr_node[ImNodesCol_NodeBackgroundSelected] = CLRU32(V4MUL(t.bg, 1.5f));
+    clr_node[ImNodesCol_NodeBackgroundHovered]  = CLRU32(v4mul(t.bg, 1.3f));
+    clr_node[ImNodesCol_NodeBackgroundSelected] = CLRU32(v4mul(t.bg, 1.5f));
 
-    clr_node[ImNodesCol_NodeOutline] = CLRU32(V4MUL(t.fg, 0.5f));
+    clr_node[ImNodesCol_NodeOutline] = CLRU32(v4mul(t.fg, 0.5f));
 
     clr_node[ImNodesCol_TitleBar]         = CLRU32(ImGuiCol_Tab);
     clr_node[ImNodesCol_TitleBarHovered]  = CLRU32(ImGuiCol_TabHovered);
@@ -258,8 +260,8 @@ static void _set_colors(
     clr_node[ImNodesCol_Link]             = CLRU32(ImGuiCol_Button);
     clr_node[ImNodesCol_LinkHovered]      = CLRU32(ImGuiCol_ButtonHovered);
     clr_node[ImNodesCol_LinkSelected]     = CLRU32(ImGuiCol_ButtonActive);
-    clr_node[ImNodesCol_Pin]              = CLRU32(V4MUL(t.yellow, 1.0f));
-    clr_node[ImNodesCol_PinHovered]  = CLRU32(V4MUL(t.yellow_bright, 1.2f));
+    clr_node[ImNodesCol_Pin]              = CLRU32(v4mul(t.yellow, 1.0f));
+    clr_node[ImNodesCol_PinHovered]  = CLRU32(v4mul(t.yellow_bright, 1.2f));
     clr_node[ImNodesCol_BoxSelector] = CLRU32(ImGuiCol_DockingPreview);
     clr_node[ImNodesCol_BoxSelectorOutline] = CLRU32(ImGuiCol_DockingEmptyBg);
 
@@ -271,9 +273,9 @@ static void _set_colors(
 
     clr_node[ImNodesCol_MiniMapNodeBackground] = CLRU32(ImGuiCol_WindowBg);
     clr_node[ImNodesCol_MiniMapNodeBackgroundHovered]
-        = CLRU32(V4MUL(DL(t.black, t.white), 1.1f));
+        = CLRU32(v4mul(DL(t.black, t.white), 1.1f));
     clr_node[ImNodesCol_MiniMapNodeBackgroundSelected]
-        = CLRU32(V4MUL(DL(t.black, t.white), 1.1f));
+        = CLRU32(v4mul(DL(t.black, t.white), 1.1f));
     //    clr_node[ImNodesCol_MiniMapNodeOutline] =
     //    clr_node[ImNodesCol_MiniMapLink] =
     //    clr_node[ImNodesCol_MiniMapLinkSelected] =
@@ -293,7 +295,7 @@ static void _init_themes(Configuration& cfg)
     Json::Value v {};
     Json::Reader r;
     std::string data;
-    if (fs::read(fs::MISC / "themes.json", data)) {
+    if (fs::read(fs::CONFIG / "themes.json", data)) {
         lcs_assert(r.parse(data, v));
         lcs_assert(v.isArray());
         for (const auto& element : v) {
