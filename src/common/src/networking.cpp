@@ -157,7 +157,7 @@ void init(bool)
             + std::string(curl_easy_strerror(res)));
     }
     _thread = std::thread { [&]() {
-        L_INFO("Module lcs::net is ready");
+        L_DEBUG("Module lcs::net is ready");
         bool term = false;
         while (true) {
             std::vector<size_t> erase_list;
@@ -197,7 +197,7 @@ void close(void)
     if (_thread.joinable()) {
         _thread.join();
     }
-    L_INFO("Module lcs::net is closed.");
+    L_DEBUG("Module lcs::net is closed.");
 }
 
 uint64_t get_request(const std::string& URL, const std::string& authorization)

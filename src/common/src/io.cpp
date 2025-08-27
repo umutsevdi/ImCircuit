@@ -1,10 +1,290 @@
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <map>
+#include <mutex>
 #include "common.h"
 
 namespace lcs {
-std::chrono::time_point<std::chrono::steady_clock> app_start_time;
+static std::chrono::time_point<std::chrono::steady_clock> app_start_time;
+namespace fs {
+    bool ready = false;
+    bool is_testing;
+
+    std::filesystem::path APPDATA;
+    std::filesystem::path LOCALE;
+    std::filesystem::path CACHE;
+    std::filesystem::path LIBRARY;
+    std::filesystem::path CONFIG;
+    std::filesystem::path LOGPATH;
+
+    static void _clone_local_fs(void)
+    {
+        try {
+            if (!std::filesystem::exists(CACHE)) {
+                L_DEBUG("Creating %s directory.", CACHE.c_str());
+                std::filesystem::create_directories(CACHE);
+            }
+            if (!std::filesystem::exists(LIBRARY)) {
+                L_DEBUG("Creating %s directory.", LIBRARY.c_str());
+                std::filesystem::create_directories(LIBRARY);
+            }
+            if (!std::filesystem::exists(CONFIG)) {
+                L_DEBUG("Creating %s directory.", CONFIG.c_str());
+                std::filesystem::create_directories(CONFIG);
+                std::filesystem::copy_file(
+                    APPDATA / "default.ini", CONFIG / "default.ini");
+                std::filesystem::copy_file(
+                    APPDATA / "themes.json", CONFIG / "themes.json");
+                std::filesystem::copy_file(
+                    APPDATA / "config.json", CONFIG / "config.json");
+            }
+        } catch (const std::exception& e) {
+            L_ERROR("Directory creation failed. %s ", e.what());
+        }
+    }
+
+    void init(bool _is_testing)
+    {
+        if (ready) {
+            throw "Filesystem is already initialized";
+        }
+        ready          = true;
+        is_testing     = _is_testing;
+        app_start_time = std::chrono::steady_clock::now();
+        auto home      = std::filesystem::path {
+#ifdef _WIN32
+            is_testing ? getenv("TEMP") : getenv("LOCALAPPDATA")
+#else
+            is_testing ? "/tmp" : getenv("HOME")
+#endif
+        };
+        if (is_testing) {
+            time_t now = time(nullptr);
+            tm* t      = localtime(&now);
+            static char folder[1024] {};
+            std::snprintf(folder, 1024, "run_%02d%02d%02d_%s", t->tm_hour,
+                t->tm_min, t->tm_sec, APPOS);
+            LOGPATH = home / APPNAME_BIN / folder / "log";
+            std::filesystem::create_directories(LOGPATH);
+        }
+#ifdef _WIN32
+        APPDATA
+            = std::filesystem::path { getenv("ProgramFiles") } / APPNAME_LONG;
+        LOCALE  = APPDATA / "locale";
+        CACHE   = home / APPNAME_BIN / "Cache";
+        CONFIG  = home / APPNAME_BIN / "Config";
+        LIBRARY = home / APPNAME_BIN / "Pkg";
+#elif defined(__linux__)
+        APPDATA = "/usr/share/" APPNAME_BIN;
+        LOCALE  = "/usr/share/locale/";
+
+        CACHE   = home / ".cache" / APPNAME_BIN;
+        CONFIG  = home / ".config" / APPNAME_BIN;
+        LIBRARY = home / ".local/share" / APPNAME_BIN / "pkg";
+#elif defined(__unix__)
+        // TODO For BSD & Mac
+#endif
+        if (!is_testing) {
+            lcs_assert(std::filesystem::exists(APPDATA));
+            lcs_assert(std::filesystem::exists(LOCALE));
+        }
+        _clone_local_fs();
+
+        for (size_t i = 0; i < localsize(); i++) {
+            if (std::filesystem::is_directory(LOCALE / locales()[i])) {
+                L_DEBUG("Discovered %s(%s)", locales()[i], localnames()[i]);
+            } else {
+                L_WARN("Locale %s not found!", locales()[i]);
+            }
+        }
+        L_DEBUG("Module lcs::fs is ready");
+    }
+
+    bool write(const std::filesystem::path& path, const std::string& data)
+    {
+        L_DEBUG("Save %s.", path.c_str());
+        try {
+            std::filesystem::create_directories(path.parent_path());
+            std::ofstream outfile { path };
+            if (outfile) {
+                outfile << data;
+                return true;
+            }
+            L_ERROR("Failed to open file for writing %s.", path.c_str());
+        } catch (const std::exception& e) {
+            L_ERROR("Exception occurred while writing %s.", e.what());
+        }
+        return false;
+    }
+
+    bool write(
+        const std::filesystem::path& path, std::vector<unsigned char>& data)
+    {
+        L_DEBUG("Save %s.", path.c_str());
+        try {
+            std::filesystem::create_directories(path.parent_path());
+            std::ofstream outfile { path, std::ios::binary };
+            if (outfile) {
+                outfile.write((char*)data.data(), data.size());
+                return true;
+            }
+            L_ERROR("Failed to open file for writing %s.", path.c_str());
+        } catch (const std::exception& e) {
+            L_ERROR("Exception occurred while writing %s.", e.what());
+        }
+        return false;
+    }
+
+    bool read(const std::filesystem::path& path, std::string& data)
+    {
+        L_DEBUG("Opening %s.", (char*)path.c_str());
+        std::ifstream infile { path };
+        std::string content((std::istreambuf_iterator<char>(infile)),
+            std::istreambuf_iterator<char>());
+        data = content;
+        return !content.empty();
+    }
+
+    bool read(
+        const std::filesystem::path& path, std::vector<unsigned char>& data)
+    {
+        L_DEBUG("Opening %s.", path.c_str());
+        std::ifstream infile { path, std::ios::binary };
+        std::vector<unsigned char> buffer(
+            std::istreambuf_iterator<char>(infile), {});
+        data = std::move(buffer);
+        return !data.empty();
+    }
+
+#include "po.h"
+    const char** locales(void) { return __LOCALES__; }
+    const char** localnames(void) { return __NAMES__; }
+    size_t localsize(void) { return __LOCALE_S; }
+#ifndef _WIN32
+#define F_BOLD "\033[1m"
+#define F_UNDERLINE "\033[4m"
+#define F_RED "\033[31m"
+#define F_GREEN "\033[32m"
+#define F_BLUE "\033[34m"
+#define F_INVERT "\033[7m"
+#define F_RESET "\033[0m"
+#define F_TEAL "\033[96m"
+#else
+#define F_BOLD ""
+#define F_UNDERLINE ""
+#define F_RED ""
+#define F_GREEN ""
+#define F_BLUE ""
+#define F_INVERT ""
+#define F_RESET ""
+#define F_TEAL ""
+#endif
+
+    static constexpr int LINE_SIZE = 200;
+    static std::array<Message, LINE_SIZE> _buffer {};
+    // next item slot to write
+    static size_t _next = 0;
+    static size_t _size = 0;
+
+    static FILE* _target_fp;
+    static std::string _target_filename;
+    static std::mutex _target_fp_mtx;
+
+    void set_log_target(const char* file)
+    {
+        if (_target_filename == file) {
+            return;
+        }
+        std::lock_guard<std::mutex> lock(_target_fp_mtx);
+        if (_target_fp != nullptr) {
+            fclose(_target_fp);
+            _target_fp = nullptr;
+        }
+        std::string filepath = (fs::LOGPATH / file).string();
+#ifdef _MSC_VER
+        _target_fp = _wfopen(filepath.c_str(), L"w");
+#else
+        _target_fp = std::fopen(filepath.c_str(), "w");
+#endif
+        _target_filename = file;
+    }
+
+    void _log(const Message& l)
+    {
+        std::lock_guard<std::mutex> lock(_target_fp_mtx);
+        if (Message::DEBUG != l.severity) {
+            if (_size < LINE_SIZE) {
+                _buffer[_next] = l;
+                _next++;
+                _size++;
+            } else {
+                _next          = (_next + 1) % _size;
+                _buffer[_next] = l;
+            }
+        }
+#ifdef NDEBUG
+        else {
+            return;
+        }
+#endif
+        const char* clr;
+        switch (l.severity) {
+        case Message::FATAL:
+        case Message::ERROR: clr = F_RED; break;
+        case Message::INFO: clr = F_GREEN; break;
+        default: clr = F_TEAL; break;
+        }
+
+        printf(F_BLUE "[%s] " F_BOLD "%s%-6s" F_RESET F_GREEN "|" F_RESET
+                      "%-20s" F_GREEN " |%-18s|" F_RESET F_TEAL
+                      "%-25s" F_RESET F_GREEN "|" F_RESET "%s%s\r\n" F_RESET,
+            l.time_str.data(), clr, l.log_level.data(), l.file_line.data(),
+            l.obj.data(), l.fn.data(),
+            l.severity == Message::FATAL ? F_INVERT F_BOLD F_RED : "",
+            l.expr.data());
+
+        if (_target_fp != nullptr) {
+            fprintf(_target_fp, "[%s] %-6s | %-20s | %-18s | %-25s | %s\r\n",
+                l.time_str.data(), l.log_level.data(), l.file_line.data(),
+                l.obj.data(), l.fn.data(), l.expr.data());
+        }
+    }
+
+    void close(void)
+    {
+        std::lock_guard<std::mutex> lock(_target_fp_mtx);
+        if (_target_fp != nullptr) {
+            fclose(_target_fp);
+        }
+        L_DEBUG("Module lcs::fs is closed.");
+    }
+
+    void logs_for_each(std::function<void(size_t, const Message& l)> fn)
+    {
+        if (_size < LINE_SIZE) {
+            for (size_t i = 0; i < _size; i++) {
+                fn(i, _buffer[i]);
+            }
+        } else {
+            // if the buffer is full. The item we're about the write into is
+            // the oldest
+            size_t idx = (_next) % _size;
+            while (idx != (_next - 1) % LINE_SIZE) {
+                fn(idx, _buffer[idx]);
+                idx = (idx + 1) % _size;
+            }
+        }
+    }
+
+    void clear_log(void)
+    {
+        _next = 0;
+        _size = 0;
+    }
+
+} // namespace fs
+
 void Message::_set_time(void)
 {
     using namespace std::chrono;
@@ -83,268 +363,4 @@ void Message::_fn_parse(const char* name)
     }
 }
 
-namespace fs {
-
-#include "po.h"
-    const char** locales(void) { return __LOCALES__; }
-    const char** localnames(void) { return __NAMES__; }
-    size_t localsize(void) { return __LOCALE_S; }
-
-    bool ready = false;
-    bool is_testing;
-
-    // /usr/share/LogicCircuitSimulator/
-    std::filesystem::path APPDATA;
-    // $HOME/.local/share/
-    std::filesystem::path LOCALE;
-    // $HOME/.cache/${APPNAME_BIN}/
-    std::filesystem::path CACHE;
-    // $HOME/.local/share/${APPNAME_BIN}/
-    std::filesystem::path LIBRARY;
-    // $HOME/.local/share/${APPNAME_BIN}/
-    std::filesystem::path CONFIG;
-    FILE* __TEST_LOG__ = nullptr;
-
-    static constexpr int LINE_SIZE = 200;
-    static std::array<Message, LINE_SIZE> _buffer {};
-    // next item slot to write
-    static size_t _next = 0;
-    static size_t _size = 0;
-
-    void init(bool _is_testing)
-    {
-        if (ready) {
-            throw "Filesystem is already initialized";
-        }
-        ready          = true;
-        is_testing     = _is_testing;
-        app_start_time = std::chrono::steady_clock::now();
-        auto home      = std::filesystem::path {
-#ifdef _WIN32
-            is_testing ? getenv("TEMP") : getenv("LOCALAPPDATA")
-#else
-            is_testing ? getenv("HOME") : "/tmp"
-#endif
-        };
-        if (is_testing) {
-            time_t now = time(nullptr);
-            tm* t      = localtime(&now);
-            static char folder[1024] {};
-            std::snprintf(folder, 1024, "run_%02d%02d%02d_%s", t->tm_hour,
-                t->tm_min, t->tm_sec,
-#ifdef NDEBUG
-                "rel"
-#else
-                "dbg"
-#endif
-            );
-            home = home / APPNAME_BIN / folder;
-            std::filesystem::create_directories(home);
-            auto logfile = home / "log.txt";
-#ifdef _MSC_VER
-            __TEST_LOG__ = _wfopen(logfile.c_str(), L"w");
-#else
-            __TEST_LOG__ = std::fopen(logfile.c_str(), "w");
-#endif
-        }
-#ifdef _WIN32
-        APPDATA
-            = std::filesystem::path { getenv("ProgramFiles") } / APPNAME_LONG;
-        LOCALE  = APPDATA / "locale";
-        CACHE   = home / APPNAME_BIN / "Cache";
-        CONFIG  = home / APPNAME_BIN / "Config";
-        LIBRARY = home / APPNAME_BIN / "Pkg";
-#elif defined(__linux__)
-        APPDATA = "/usr/share/" APPNAME_BIN;
-        LOCALE  = "/usr/share/locale/";
-
-        CACHE   = home / ".cache" / APPNAME_BIN;
-        CONFIG  = home / ".config" / APPNAME_BIN;
-        LIBRARY = home / ".local/share" / APPNAME_BIN / "pkg";
-#elif defined(__unix__)
-        // TODO For BSD & Mac
-#endif
-        if (!is_testing) {
-            lcs_assert(std::filesystem::exists(APPDATA));
-            lcs_assert(std::filesystem::exists(LOCALE));
-        }
-        try {
-            if (!std::filesystem::exists(CACHE)) {
-                L_DEBUG("Creating %s directory.", CACHE.c_str());
-                std::filesystem::create_directories(CACHE);
-            }
-            if (!std::filesystem::exists(LIBRARY)) {
-                L_DEBUG("Creating %s directory.", LIBRARY.c_str());
-                std::filesystem::create_directories(LIBRARY);
-            }
-            if (!std::filesystem::exists(CONFIG)) {
-                L_DEBUG("Creating %s directory.", CONFIG.c_str());
-                std::filesystem::create_directories(CONFIG);
-                std::filesystem::copy_file(
-                    APPDATA / "default.ini", CONFIG / "default.ini");
-                std::filesystem::copy_file(
-                    APPDATA / "themes.json", CONFIG / "themes.json");
-                std::filesystem::copy_file(
-                    APPDATA / "config.json", CONFIG / "config.json");
-            }
-        } catch (const std::exception& e) {
-            L_ERROR("Directory creation failed. %s ", e.what());
-        }
-        for (size_t i = 0; i < localsize(); i++) {
-            if (std::filesystem::is_directory(LOCALE / locales()[i])) {
-                L_DEBUG("Discovered %s(%s)", locales()[i], localnames()[i]);
-            } else {
-                L_WARN("Locale %s not found!", locales()[i]);
-            }
-        }
-        L_INFO("Module lcs::fs is ready");
-    }
-
-#ifndef _WIN32
-#define F_BOLD "\033[1m"
-#define F_UNDERLINE "\033[4m"
-#define F_RED "\033[31m"
-#define F_GREEN "\033[32m"
-#define F_BLUE "\033[34m"
-#define F_INVERT "\033[7m"
-#define F_RESET "\033[0m"
-#define F_TEAL "\033[96m"
-#else
-#define F_BOLD ""
-#define F_UNDERLINE ""
-#define F_RED ""
-#define F_GREEN ""
-#define F_BLUE ""
-#define F_INVERT ""
-#define F_RESET ""
-#define F_TEAL ""
-#endif
-
-    void _log(const Message& l)
-    {
-
-#ifdef NDEBUG
-        if (Message::DEBUG == l.severity) {
-            return;
-        }
-#endif
-        if (_size < LINE_SIZE) {
-            _buffer[_next] = l;
-            _next++;
-            _size++;
-        } else {
-            _next          = (_next + 1) % _size;
-            _buffer[_next] = l;
-        }
-
-        const char* clr;
-        switch (l.severity) {
-        case Message::FATAL:
-        case Message::ERROR: clr = F_RED; break;
-        case Message::INFO: clr = F_GREEN; break;
-        default: clr = F_TEAL; break;
-        }
-
-        printf(F_BLUE "[%s] " F_BOLD "%s%-6s" F_RESET F_GREEN "|" F_RESET
-                      "%-20s" F_GREEN " |%-18s|" F_RESET F_TEAL
-                      "%-25s" F_RESET F_GREEN "|" F_RESET "%s%s\r\n" F_RESET,
-            l.time_str.data(), clr, l.log_level_str.data(), l.file_line.data(),
-            l.obj.data(), l.fn.data(),
-            l.severity == Message::FATAL ? F_INVERT F_BOLD F_RED : "",
-            l.expr.data());
-        if (is_testing) {
-            fprintf(__TEST_LOG__, "[%s] %-6s | %-20s | %-18s | %-25s | %s\r\n",
-                l.time_str.data(), l.log_level_str.data(), l.file_line.data(),
-                l.obj.data(), l.fn.data(), l.expr.data());
-        }
-    }
-
-    void close(void)
-    {
-        if (__TEST_LOG__ != nullptr) {
-            fclose(__TEST_LOG__);
-        }
-        L_INFO("Module lcs::fs is closed.");
-    }
-
-    void logs_for_each(std::function<void(size_t, const Message& l)> fn)
-    {
-        if (_size < LINE_SIZE) {
-            for (size_t i = 0; i < _size; i++) {
-                fn(i, _buffer[i]);
-            }
-        } else {
-            // if the buffer is full. The item we're about the write into is
-            // the oldest
-            size_t idx = (_next) % _size;
-            while (idx != (_next - 1) % LINE_SIZE) {
-                fn(idx, _buffer[idx]);
-                idx = (idx + 1) % _size;
-            }
-        }
-    }
-
-    void clear_log(void)
-    {
-        _next = 0;
-        _size = 0;
-    }
-
-    bool write(const std::filesystem::path& path, const std::string& data)
-    {
-        L_DEBUG("Save %s.", path.c_str());
-        try {
-            std::filesystem::create_directories(path.parent_path());
-            std::ofstream outfile { path };
-            if (outfile) {
-                outfile << data;
-                return true;
-            }
-            L_ERROR("Failed to open file for writing %s.", path.c_str());
-        } catch (const std::exception& e) {
-            L_ERROR("Exception occurred while writing %s.", e.what());
-        }
-        return false;
-    }
-
-    bool write(
-        const std::filesystem::path& path, std::vector<unsigned char>& data)
-    {
-        L_DEBUG("Save %s.", path.c_str());
-        try {
-            std::filesystem::create_directories(path.parent_path());
-            std::ofstream outfile { path, std::ios::binary };
-            if (outfile) {
-                outfile.write((char*)data.data(), data.size());
-                return true;
-            }
-            L_ERROR("Failed to open file for writing %s.", path.c_str());
-        } catch (const std::exception& e) {
-            L_ERROR("Exception occurred while writing %s.", e.what());
-        }
-        return false;
-    }
-
-    bool read(const std::filesystem::path& path, std::string& data)
-    {
-        L_DEBUG("Opening %s.", (char*)path.c_str());
-        std::ifstream infile { path };
-        std::string content((std::istreambuf_iterator<char>(infile)),
-            std::istreambuf_iterator<char>());
-        data = content;
-        return !content.empty();
-    }
-
-    bool read(
-        const std::filesystem::path& path, std::vector<unsigned char>& data)
-    {
-        L_DEBUG("Opening %s.", path.c_str());
-        std::ifstream infile { path, std::ios::binary };
-        std::vector<unsigned char> buffer(
-            std::istreambuf_iterator<char>(infile), {});
-        data = std::move(buffer);
-        return !data.empty();
-    }
-
-} // namespace fs
 } // namespace lcs

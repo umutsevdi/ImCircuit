@@ -39,19 +39,20 @@ void set_style(ImGuiIO& io, bool init)
     ImNodesStyle& nodestyle = ImNodes::GetStyle();
     if (init) {
         _init_fonts(io);
-        io.FontDefault = _FONT[REGULAR | NORMAL];
+        io.FontDefault = _FONT[REGULAR];
         _init_themes(cfg);
     }
     _set_colors(style.Colors, nodestyle.Colors);
 
-    style.Alpha             = 1.0f;
-    style.FrameRounding     = cfg.rounded_corners;
-    style.WindowRounding    = cfg.rounded_corners;
-    style.ChildRounding     = cfg.rounded_corners;
-    style.GrabRounding      = cfg.rounded_corners;
-    style.PopupRounding     = cfg.rounded_corners;
-    style.ScrollbarRounding = cfg.rounded_corners;
-    style.TabRounding       = cfg.rounded_corners;
+    style.WindowMenuButtonPosition = ImGuiDir_Right;
+    style.Alpha                    = 1.0f;
+    style.FrameRounding            = cfg.rounded_corners;
+    style.WindowRounding           = cfg.rounded_corners;
+    style.ChildRounding            = cfg.rounded_corners;
+    style.GrabRounding             = cfg.rounded_corners;
+    style.PopupRounding            = cfg.rounded_corners;
+    style.ScrollbarRounding        = cfg.rounded_corners;
+    style.TabRounding              = cfg.rounded_corners;
 
     style.WindowTitleAlign = ImVec2(0.5, 0.5);
     style.WindowPadding    = ImVec2(10, 15);
@@ -69,7 +70,8 @@ void set_style(ImGuiIO& io, bool init)
     style.WindowBorderSize        = 1.f;
     style.SeparatorTextBorderSize = 0.f;
 
-    io.FontGlobalScale = cfg.scale / 100.f * 2 / 3 /* font downscale factor*/;
+    style.FontSizeBase  = FONT_NORMAL;
+    style.FontScaleMain = cfg.scale / 100.f;
     style.ScaleAllSizes(cfg.scale / 100.f);
     if (init) {
         L_DEBUG("Styling is completed.");
@@ -111,57 +113,19 @@ static void _init_fonts(ImGuiIO& io)
     L_DEBUG("Load fonts.");
     // Load the fonts twice the size and scale them back to have clear
     // visuals.
-    float fsize = 16.f * 3 / 2;
-
-    ImFontAtlas* atlas = io.Fonts;
-    atlas->Clear();
     io.Fonts->AddFontDefault();
-    static const ImWchar icon_ranges[] = { ICON_MIN_LC, ICON_MAX_LC, 0 };
-
     auto dir         = fs::APPDATA / "font" / "Archivo" / "ttf";
     auto font_lucide = fs::APPDATA / "font" / "Lucide" / "Lucide.ttf";
 
-    std::string font = (dir / "Archivo-Regular.ttf").string();
-    _FONT[SMALL | REGULAR]
-        = atlas->AddFontFromFileTTF(font.c_str(), 0.75 * fsize, nullptr);
-    _FONT[NORMAL | REGULAR]
-        = atlas->AddFontFromFileTTF(font.c_str(), fsize, nullptr);
-    _FONT[LARGE | REGULAR]
-        = atlas->AddFontFromFileTTF(font.c_str(), 1.25 * fsize, nullptr);
-
-    font = (dir / "Archivo-Italic.ttf").string();
-    _FONT[SMALL | ITALIC]
-        = atlas->AddFontFromFileTTF(font.c_str(), 0.75 * fsize, nullptr);
-    _FONT[NORMAL | ITALIC]
-        = atlas->AddFontFromFileTTF(font.c_str(), fsize, nullptr);
-    _FONT[LARGE | ITALIC]
-        = atlas->AddFontFromFileTTF(font.c_str(), 1.25 * fsize, nullptr);
-
-    font                = (dir / "Archivo-Bold.ttf").string();
-    _FONT[SMALL | BOLD] = atlas->AddFontFromFileTTF(
-        font.c_str(), 0.75 * fsize, nullptr, atlas->GetGlyphRangesDefault());
-    _FONT[NORMAL | BOLD] = atlas->AddFontFromFileTTF(
-        font.c_str(), fsize, nullptr, atlas->GetGlyphRangesDefault());
-    _FONT[LARGE | BOLD] = atlas->AddFontFromFileTTF(
-        font.c_str(), 1.25 * fsize, nullptr, atlas->GetGlyphRangesDefault());
-
-    font                         = (dir / "Archivo-BoldItalic.ttf").string();
-    _FONT[SMALL | BOLD | ITALIC] = atlas->AddFontFromFileTTF(
-        font.c_str(), 0.75 * fsize, nullptr, atlas->GetGlyphRangesDefault());
-    _FONT[NORMAL | BOLD | ITALIC] = atlas->AddFontFromFileTTF(
-        font.c_str(), fsize, nullptr, atlas->GetGlyphRangesDefault());
-    _FONT[LARGE | BOLD | ITALIC] = atlas->AddFontFromFileTTF(
-        font.c_str(), 1.25 * fsize, nullptr, atlas->GetGlyphRangesDefault());
-
-    font = (fs::APPDATA / "font" / "Lucide" / "Lucide.ttf").string();
-    _FONT[SMALL | ICON] = atlas->AddFontFromFileTTF(
-        font.c_str(), 0.75 * fsize, nullptr, icon_ranges);
-    _FONT[NORMAL | ICON]
-        = atlas->AddFontFromFileTTF(font.c_str(), fsize, nullptr, icon_ranges);
-    _FONT[LARGE | ICON] = atlas->AddFontFromFileTTF(
-        font.c_str(), 1.25 * fsize, nullptr, icon_ranges);
-    _FONT[ULTRA | ICON] = atlas->AddFontFromFileTTF(
-        font.c_str(), 2.5 * fsize, nullptr, icon_ranges);
+    std::string font     = (dir / "Archivo-Regular.ttf").string();
+    _FONT[REGULAR]       = io.Fonts->AddFontFromFileTTF(font.c_str());
+    font                 = (dir / "Archivo-Bold.ttf").string();
+    _FONT[BOLD]          = io.Fonts->AddFontFromFileTTF(font.c_str());
+    font                 = (dir / "Archivo-Italic.ttf").string();
+    _FONT[ITALIC]        = io.Fonts->AddFontFromFileTTF(font.c_str());
+    font                 = (dir / "Archivo-BoldItalic.ttf").string();
+    _FONT[BOLD | ITALIC] = io.Fonts->AddFontFromFileTTF(font.c_str());
+    _FONT[ICON]          = io.Fonts->AddFontFromFileTTF(font_lucide.c_str());
 }
 
 #define CLRU32(...) ImGui::GetColorU32(__VA_ARGS__)

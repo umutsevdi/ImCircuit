@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstdio>
+#include "common.h"
+#include "doctest.h"
 #define _create_full_adder_io(s)                                               \
     using namespace lcs;                                                       \
     Node a     = s.add_node<Input>();                                          \
@@ -46,3 +49,100 @@ inline bool scene_cmp(lcs::Scene& s1, lcs::Scene& s2)
     }
     return true;
 }
+
+namespace lcs {
+struct LcsReporter : public doctest::IReporter {
+    const doctest::ContextOptions& opt;
+    const doctest::TestCaseData* tc = nullptr;
+    std::string name;
+
+    LcsReporter(const doctest::ContextOptions& in)
+        : opt(in)
+    {
+    }
+
+    void report_query(const doctest::QueryData& /*in*/) override { }
+
+    void test_run_start() override { }
+
+    void test_run_end(const doctest::TestRunStats& in) override
+    {
+        fs::set_log_target("RESULT.txt");
+        fs::_log(Message(Message::INFO, APPNAME_BIN, -1, "Reporter",
+            "\r\n"
+            "┌──────────────╢ Test Results ╟──────────────┐\r\n"
+            "│   TEST CASE         ┬     %5d/%-5d      │\r\n"
+            "│   ASSERTIONS CASE   │     %5d/%-5d      │\r\n"
+            "└─────────────────────┴──────────────────────┘\r\n",
+            in.numTestCases - in.numTestCasesFailed, in.numTestCases,
+            in.numAsserts - in.numAssertsFailed, in.numAsserts));
+        if (in.numAssertsFailed > 0) {
+            fs::_log(Message(Message::INFO, APPNAME_BIN, -1, "Reporter",
+                "%d assertions failed in %d test cases", in.numAssertsFailed,
+                in.numTestCasesFailed));
+        }
+    }
+
+    void test_case_start(const doctest::TestCaseData& in) override
+    {
+        tc = &in;
+        std::filesystem::path file { in.m_file.c_str() };
+        name = file.filename().replace_extension(".log").string();
+
+        lcs::fs::set_log_target(name.c_str());
+        fs::_log(Message(Message::INFO, APPNAME_BIN, -1, "start_test",
+            "TEST CASE \"%s\"\r\n", in.m_name));
+    }
+
+    void test_case_reenter(const doctest::TestCaseData& /*in*/) override { }
+
+    void test_case_end(const doctest::CurrentTestCaseStats& stats) override
+    {
+        fs::_log(Message(Message::INFO, APPNAME_BIN, -1, "Reporter",
+            "\r\n"
+            "┌────────╢ Test Case End [%.4f s] ╟────────┐\r\n"
+            "│   ASSERTIONS CASE   │     %5d/%-5d      │\r\n"
+            "└────────────────╢ %-7s ╟─────────────────┘\r\n",
+            stats.seconds,
+            stats.numAssertsCurrentTest - stats.numAssertsFailedCurrentTest,
+            stats.numAssertsCurrentTest,
+            stats.testCaseSuccess ? "SUCCESS" : "FAILURE"));
+    }
+
+    void test_case_exception(const doctest::TestCaseException& in) override
+    {
+        fs::_log(Message(Message::ERROR, name.c_str(), tc->m_line,
+            "exception_handler",
+            "Test case \"%s\" failed with an exception %s.", tc->m_name,
+            in.error_string.c_str()));
+    }
+
+    void subcase_start(const doctest::SubcaseSignature& /*in*/) override { }
+
+    void subcase_end() override { }
+
+    void log_assert(const doctest::AssertData& in) override
+    {
+        if (!in.m_failed && !opt.success) {
+            return;
+        }
+        if (in.m_threw) {
+            fs::_log(Message(Message::ERROR, name.c_str(), in.m_line,
+                "test_runner", "Assertion \"%s\" failed with an exception: %s.",
+                in.m_expr, in.m_exception_string.c_str()));
+        } else {
+            fs::_log(Message(Message::ERROR, name.c_str(), in.m_line,
+                "test_runner", "Assertion \"%s\" failed.", in.m_expr));
+        }
+    }
+
+    void log_message(const doctest::MessageData& msg) override
+    {
+        fs::_log(Message(Message::INFO, name.c_str(), msg.m_line, "test_runner",
+            "%s", msg.m_string.c_str()));
+    }
+
+    void test_case_skipped(const doctest::TestCaseData& /*in*/) override { }
+};
+} // namespace lcs
+REGISTER_REPORTER("lcs", 1, lcs::LcsReporter);

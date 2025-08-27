@@ -167,9 +167,10 @@ void Scene::remove_node(Node id)
     if (_last_node[id.type].index >= id.index) {
         _last_node[id.type].index = id.index;
     }
-    L_DEBUG("%s was invalidated. Last node for %s was updated to %d",
-        to_str<Node>(id), to_str<Node::Type>(id.type),
-        _last_node[id.type].index);
+    L_DEBUG("%s@%d was invalidated. Last node for %s was updated to %d",
+        to_str<Node::Type>(id.type), id.index, _last_node[id.type].index);
+    L_INFO(
+        "Removed %s@%d from the scene.", to_str<Node::Type>(id.type), id.index);
 }
 
 NRef<Rel> Scene::get_rel(relid idx)
@@ -178,8 +179,7 @@ NRef<Rel> Scene::get_rel(relid idx)
         return nullptr;
     }
     auto n = _relations.find(idx);
-    return n != _relations.end() ? &n->second
-                                 : (S_ERROR("Rel not found", nullptr));
+    return n != _relations.end() ? &n->second : nullptr;
 }
 
 Error Scene::connect_with_id(
@@ -273,7 +273,9 @@ Error Scene::connect_with_id(
         break;
     default: return ERROR(Error::INVALID_TO_TYPE);
     }
-    L_DEBUG("Connect completed.");
+    L_INFO("Connected %s@%d to %s%d.",
+        to_str<Node::Type>(from_node.type), from_node.index,
+        to_str<Node::Type>(to_node.type), to_node.index);
     return OK;
 }
 
@@ -359,8 +361,10 @@ Error Scene::disconnect(relid id)
     }
     default: lcs_assert(r->second.from_node.type == Node::Type::INPUT); break;
     }
+    L_INFO("Disconnected %s@%d from %s%d.",
+        to_str<Node::Type>(r->second.from_node.type), r->second.from_node.index,
+        to_str<Node::Type>(r->second.to_node.type), r->second.to_node.index);
     _relations.erase(id);
-    L_DEBUG("Disconnect completed.");
     return OK;
 }
 
@@ -371,10 +375,11 @@ void Scene::signal(relid id, State value)
     lcs_assert(r != nullptr);
     if (r->value != value || r->value == DISABLED) {
         r->value = value;
-        L_INFO("%s:rel@%-2d %s:%d sent %s to %s:%d",
+        L_DEBUG("%s:rel@%-2d %s@%d:%d sent %s to %s@%d:%d",
             _parent != nullptr ? name.data() : "root", id,
-            to_str<Node>(r->from_node), r->from_sock, to_str<State>(r->value),
-            to_str<Node>(r->to_node), r->to_sock);
+            to_str<Node::Type>(from_node.type), from_node.index, r->from_sock,
+            to_str<State>(r->value), to_str<Node::Type>(to_node.type),
+            to_node.index, r->to_sock);
         if (r->to_node.type != Node::Type::COMPONENT_OUTPUT) {
             auto n = get_base(r->to_node);
             lcs_assert(n != nullptr);
@@ -429,8 +434,6 @@ void Scene::run(float delta)
     frame_s += delta;
     uint32_t frame = frame_s * 10;
     if (frame != frame_pre) {
-        //        L_INFO("delta: %f frame:%d frame_pre:%d", delta, frame,
-        //        frame_pre);
         for (auto& in : _inputs) {
             if (!in.is_null() && in.is_timer()) {
                 if (frame % in._freq == 0) {

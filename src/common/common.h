@@ -18,16 +18,39 @@
 #include <libintl.h>
 #include <string>
 #include <vector>
-#include "errors.h"
-
-#define _(String) gettext(String)
+#ifdef ERROR
+#undef ERROR
+#endif
+#ifdef TRUE
+#undef TRUE
+#endif
+#ifdef FALSE
+#undef FALSE
+#endif
 
 #define VERSION 1
 
-#define APP_PKG "com.lcs.app"
-#define APPNAME "LCS"
+#define APPVERSION "0.0.1"
+#define APPPKG "com.lcs.app"
+#define APPNAME "Logic Circuit Simulator"
 #define APPNAME_BIN "LogicCircuitSimulator"
-#define APPNAME_LONG "Logic Circuit Simulator"
+#ifdef _WIN32
+#define APPOS "win"
+#elif __APPLE__
+#define APPOS "apple"
+#elif defined(__linux__)
+#define APPOS "linux"
+#elif defined(__unix__)
+#define APPOS "unix"
+#else
+#error "Unsupported platform"
+#endif
+
+#ifdef NDEBUG
+#define APPBUILD "rel"
+#else
+#define APPBUILD "dbg"
+#endif
 
 #ifndef API_ENDPOINT
 #ifndef NDEBUG
@@ -36,6 +59,10 @@
 #define API_ENDPOINT "https://lcs2.com"
 #endif
 #endif
+#include "errors.h"
+
+#define _(str) gettext(str)
+
 #define LCS_ERROR [[nodiscard("Error codes must be handled")]] Error
 
 namespace lcs {
@@ -83,11 +110,13 @@ struct Message {
     Message()         = default;
     Severity severity = DEBUG;
     std::array<char, 12> time_str {};
-    std::array<char, 6> log_level_str {};
+    std::array<char, 6> log_level {};
     std::array<char, 18> obj {};
+    std::array<char, 20> file {};
     std::array<char, 20> file_line {};
     std::array<char, 25> fn {};
-    std::array<char, 512> expr {};
+    std::array<char, 380> expr {};
+    int line = 0;
 
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
@@ -97,17 +126,19 @@ struct Message {
 #pragma warning(push)
 #endif
     template <typename... Args>
-    Message(Severity l, const char* file, int line, const char* _fn,
-        const char* fmt, Args... args)
+    Message(Severity _severity, const char* _file, int _line, const char* _fn,
+        const char* _fmt, Args... _args)
     {
         _set_time();
-        severity = l;
+        severity = _severity;
+        line     = _line;
         std::strncpy(
-            log_level_str.data(), _severity_to_str(l), log_level_str.size());
+            log_level.data(), _severity_to_str(_severity), log_level.size());
+        std::snprintf(file.data(), file.max_size(), "%s", _file);
         std::snprintf(
-            file_line.data(), file_line.max_size(), "%s:%-4d", file, line);
+            file_line.data(), file_line.max_size(), "%s:%-4d", _file, _line);
         _fn_parse(_fn);
-        std::snprintf(expr.data(), expr.max_size(), fmt, args...);
+        std::snprintf(expr.data(), expr.max_size(), _fmt, _args...);
     }
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
@@ -143,6 +174,11 @@ namespace fs {
         Message { STATUS, __FILENAME__, __LINE__, __FUNCSIG__, __VA_ARGS__ })
 #endif
 
+// #ifndef NDEBUG
+// #define L_DEBUG(...) __LLOG__(Message::DEBUG, __VA_ARGS__)
+// #else
+#define L_DEBUG(...)
+// #endif
 #define L_INFO(...) __LLOG__(Message::INFO, __VA_ARGS__)
 #define L_WARN(...) __LLOG__(Message::WARN, __VA_ARGS__)
 #define L_ERROR(...) __LLOG__(Message::ERROR, __VA_ARGS__)
@@ -169,19 +205,7 @@ namespace fs {
         }                                                                      \
     }
 
-#ifndef NDEBUG
-#define L_DEBUG(...) __LLOG__(Message::DEBUG, __VA_ARGS__)
-
-#else
-#define L_DEBUG(...)
-#endif
-
-#define S_ERROR(msg, ...) (L_ERROR(msg)), __VA_ARGS__
 #define ERROR(err) ((L_ERROR("%s(%d): %s", #err, err, errmsg(err))), err)
-#define VEC_TO_STR(os, vec, ...)                                               \
-    for (const auto& iter : vec) {                                             \
-        os << __VA_ARGS__(iter) << ",\t";                                      \
-    }
 
     /**
      * Initializes required folder structure for the application.
@@ -201,13 +225,25 @@ namespace fs {
     void clear_log(void);
 
     extern bool is_testing;
+    /** Root level directory where required files live.
+     * - Default configuration values.
+     * - Fonts
+     *
+     * NOTE: On Windows also contains the executable, locales and DLLs.
+     */
     extern std::filesystem::path APPDATA;
+    /** Path to translations. */
     extern std::filesystem::path LOCALE;
     /** Contains caches of images, package downloads. */
     extern std::filesystem::path CACHE;
+    /** Path where external scenes and components are installed. */
     extern std::filesystem::path LIBRARY;
+    /** Path to configuration files of the user. */
     extern std::filesystem::path CONFIG;
-    extern FILE* __TEST_LOG__;
+    /** NOTE: Active only in tests. Path to test run directory's log path. */
+    extern std::filesystem::path LOGPATH;
+    /** Set the target file name for logging. NOTE: Intended for tests. */
+    void set_log_target(const char*);
 
     const char** locales(void);
     const char** localnames(void);

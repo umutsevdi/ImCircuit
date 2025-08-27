@@ -111,14 +111,14 @@ static bool _show_toast(
 
     ImGui::PushStyleColor(
         ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Border));
-    IconText<LARGE>(n.icon, "%s", n.title.data());
+    IconText(n.icon, FONT_LARGE, "%s", n.title.data());
     ImGui::PopStyleColor();
     ImGui::ProgressBar(n.duration / (float)MAX_DURATION,
         ImVec2(ImGui::GetWindowWidth(), ImGui::GetStyle().ItemSpacing.y), "##");
     height += ImGui::GetWindowHeight() + ImGui::GetStyle().ItemSpacing.y;
     ImGui::TextUnformatted(n.message.data());
 
-    if (IconButton<NORMAL>(ICON_LC_EYE_OFF, _("Dismiss"))) {
+    if (IconButton(ICON_LC_EYE_OFF, _("Dismiss"))) {
         n.duration = 0;
     }
     ImGui::End();

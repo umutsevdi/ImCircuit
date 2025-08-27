@@ -56,7 +56,7 @@ int init()
 
     Configuration& cfg = load_config();
     GLFWwindow* window = glfwCreateWindow(
-        cfg.startup_win_x, cfg.startup_win_y, APPNAME_LONG, nullptr, nullptr);
+        cfg.startup_win_x, cfg.startup_win_y, APPNAME, nullptr, nullptr);
     if (window == nullptr) {
         return 1;
     }

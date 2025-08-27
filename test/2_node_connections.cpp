@@ -1,5 +1,5 @@
-#include "core.h"
 #include <doctest.h>
+#include "core.h"
 
 using namespace lcs;
 TEST_CASE("Basic Connect/Disconnect/Reconnect Test")

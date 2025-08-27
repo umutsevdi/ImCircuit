@@ -382,6 +382,9 @@ LCS_ERROR Scene::read_from(const std::vector<uint8_t>& buffer)
             return err;
         }
     }
+    for (auto& n : null_list) {
+        get_base(n)->set_null();
+    }
     return Error::OK;
 }
 

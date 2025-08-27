@@ -2,6 +2,7 @@
 #include <imnodes.h>
 #include <nfd.h>
 #include "common.h"
+#include "components.h"
 #include "configuration.h"
 #include "ui.h"
 
@@ -19,6 +20,7 @@ void before(void)
 
     imio.ConfigFlags
         |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable;
+    imio.BackendFlags |= ImGuiBackendFlags_RendererHasTextures;
     NFD_Init();
     ImNodes::CreateContext();
     set_style(imio, true);

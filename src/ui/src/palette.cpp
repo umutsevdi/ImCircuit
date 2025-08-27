@@ -78,7 +78,8 @@ void Palette(NRef<Scene> scene)
 
         if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) { }
         if (is_dragging) {
-            L_DEBUG("%s", to_str<Node>(dragged_node));
+            L_DEBUG("%s@%d", to_str<Node::Type>(dragged_node.type),
+                dragged_node.index);
             ImNodes::SetNodeGridSpacePos(
                 dragged_node.numeric(), ImGui::GetCursorPos());
             if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) {

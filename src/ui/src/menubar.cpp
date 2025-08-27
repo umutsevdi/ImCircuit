@@ -27,30 +27,30 @@ void MenuBar(void)
     ImGui::PushStyleColor(
         ImGuiCol_ButtonActive, ImGui::GetStyleColorVec4(ImGuiCol_HeaderActive));
 
-    ImGui::PushFont(get_font(FontFlags::NORMAL));
+    ImGui::PushFont(nullptr, 0.f);
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu(_("File"))) {
-            if (IconButton<NORMAL>(ICON_LC_PLUS, _("New"))) {
+            if (IconButton(ICON_LC_PLUS, _("New"))) {
                 _show_new = true;
             }
-            if (IconButton<NORMAL>(ICON_LC_FOLDER_OPEN, _("Open"))) {
+            if (IconButton(ICON_LC_FOLDER_OPEN, _("Open"))) {
                 dialog::open_file();
             }
             ImGui::BeginDisabled(tabs::active() == nullptr);
-            if (IconButton<NORMAL>(ICON_LC_SAVE, _("Save"))) {
+            if (IconButton(ICON_LC_SAVE, _("Save"))) {
                 if (tabs::save() == Error::NO_SAVE_PATH_DEFINED) {
                     dialog::save_file_as();
                 };
             }
 
-            if (IconButton<NORMAL>(ICON_LC_SAVE_ALL, _("Save As"))) {
+            if (IconButton(ICON_LC_SAVE_ALL, _("Save As"))) {
                 dialog::save_file_as();
             }
             ImGui::EndDisabled();
-            if (IconButton<NORMAL>(ICON_LC_SETTINGS_2, _("Preferences"))) {
+            if (IconButton(ICON_LC_SETTINGS_2, _("Preferences"))) {
                 _show_pref = true;
             }
-            if (IconButton<NORMAL>(ICON_LC_X, _("Close"))) {
+            if (IconButton(ICON_LC_X, _("Close"))) {
                 _popup_close();
             }
             ImGui::EndMenu();
@@ -66,7 +66,7 @@ void MenuBar(void)
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu(_("Help"))) {
-            if (IconButton<NORMAL>(ICON_LC_INFO, _("About"))) {
+            if (IconButton(ICON_LC_INFO, _("About"))) {
                 _show_about = true;
             }
             ImGui::EndMenu();
@@ -105,9 +105,9 @@ void MenuBar(void)
         //              if (ImGui::BeginPopup(
         //                      "Profile Settings", ImGuiWindowFlags_ChildMenu))
         //                      {
-        //                  if (IconButton<NORMAL>(ICON_LC_SETTINGS_2,
+        //                  if (IconButton(ICON_LC_SETTINGS_2,
         //                  "Settings")) { } if
-        //                  (IconButton<NORMAL>(ICON_LC_LOG_OUT, "Log out")) {
+        //                  (IconButton(ICON_LC_LOG_OUT, "Log out")) {
         //                      net::get_flow().resolve();
         //                  }
         //                  ImGui::EndPopup();
@@ -120,7 +120,7 @@ void MenuBar(void)
         //              == net::AuthenticationFlow::State::POLLING);
         //          ImGui::SetCursorPosY(ImGui::GetStyle().ItemSpacing.y
         //              + ImGui::GetStyle().ItemInnerSpacing.y);
-        //          if (IconButton<NORMAL>(ICON_LC_LOG_IN, "Login")) {
+        //          if (IconButton(ICON_LC_LOG_IN, "Login")) {
         //              L_INFO("Login button pressed");
         //              df_show = true;
         //          }
@@ -217,13 +217,13 @@ static void _popup_new(void)
                     is_scene = true;
                 });
             ImGui::SameLine();
-            IconText<NORMAL>(ICON_LC_LAND_PLOT, _("Scene"));
+            IconText(ICON_LC_LAND_PLOT,FONT_NORMAL, _("Scene"));
             ImGui::SameLine();
             if (ImGui::RadioButton("##IsComponent", !is_scene)) {
                 is_scene = false;
             }
             ImGui::SameLine();
-            IconText<NORMAL>(ICON_LC_PACKAGE, _("Component"));
+            IconText(ICON_LC_PACKAGE,FONT_NORMAL, _("Component"));
 
             if (!is_scene) {
                 ImGui::Separator();
@@ -270,15 +270,14 @@ static void _popup_close(void)
                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
             ImGui::Text(_("You have unsaved changes. Would you like to save "
                           "your changes before closing?"));
-            if (IconButton<NORMAL>(ICON_LC_SAVE, _("Save & Close"))
+            if (IconButton(ICON_LC_SAVE, _("Save & Close"))
                 && dialog::save_file_as() == Error::OK) {
                 if (!tabs::close()) {
                     _show_close = false;
                 }
             }
             ImGui::SameLine();
-            if (IconButton<NORMAL>(
-                    ICON_LC_SAVE_OFF, _("Exit Without Saving"))) {
+            if (IconButton(ICON_LC_SAVE_OFF, _("Exit Without Saving"))) {
                 if (!tabs::close()) {
                     _show_close = false;
                 }
@@ -319,21 +318,22 @@ static void _popup_about(void)
         if (ImGui::TextLink("GitHub.")) {
             open_browser(prj);
         }
+        ImGui::TextUnformatted(APPOS "." APPBUILD "." APPVERSION);
         ImGui::BeginChild(
             "License", ImVec2(0, 450), ImGuiChildFlags_FrameStyle);
         ImGui::TextUnformatted(license_info.c_str());
         ImGui::EndChild();
         ImGui::TextUnformatted(_("Contact"));
         ImGui::SameLine();
-        if (IconButton<NORMAL>(ICON_LC_MAIL, _("Email"))) {
+        if (IconButton(ICON_LC_MAIL, _("Email"))) {
             open_browser(mail);
         }
         ImGui::SameLine();
-        if (IconButton<NORMAL>(ICON_LC_LINK, _("Website"))) {
+        if (IconButton(ICON_LC_LINK, _("Website"))) {
             open_browser(site);
         }
         ImGui::SameLine();
-        if (IconButton<NORMAL>(ICON_LC_GITHUB, "GitHub")) {
+        if (IconButton(ICON_LC_GITHUB, "GitHub")) {
             open_browser(gh);
         }
         ImGui::EndPopup();
@@ -487,7 +487,7 @@ void _popup_pref(void)
     ImGui::Text(
         "FPS: %4.f Uptime: %4.f seconds", imio.Framerate, ImGui::GetTime());
     ImGui::BeginDisabled(cfg.is_applied);
-    if (IconButton<NORMAL>(ICON_LC_REDO_DOT, _("Apply"))) {
+    if (IconButton(ICON_LC_REDO_DOT, _("Apply"))) {
         cfg.is_saved = false;
         set_config(cfg);
         cfg            = get_config();
@@ -498,7 +498,7 @@ void _popup_pref(void)
     ImGui::EndDisabled();
     ImGui::SameLine(ImGui::GetWindowSize().x * 5 / 6);
     ImGui::BeginDisabled(cfg.is_saved);
-    if (IconButton<NORMAL>(ICON_LC_SAVE, _("Save"))) {
+    if (IconButton(ICON_LC_SAVE, _("Save"))) {
         set_config(cfg);
         cfg = get_config();
         save_config();

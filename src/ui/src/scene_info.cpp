@@ -104,11 +104,11 @@ void SceneInfo(NRef<Scene> scene)
                     }
                 }
                 ImGui::EndTable();
-                IconButton<NORMAL>(ICON_LC_PACKAGE, _("Add Component"));
+                IconButton(ICON_LC_PACKAGE, _("Add Component"));
             }
             EndSection();
         }
-        if (IconButton<NORMAL>(ICON_LC_UPLOAD, _("Upload"))) {
+        if (IconButton(ICON_LC_UPLOAD, _("Upload"))) {
             std::string resp;
             // net::upload_scene(&scene, resp);
         }

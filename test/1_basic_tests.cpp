@@ -1,7 +1,8 @@
+#include <doctest.h>
 #include "common.h"
 #include "core.h"
 #include "test_util.h"
-#include <doctest.h>
+
 using namespace lcs;
 
 TEST_CASE("Connect IN to OUT, Update")
@@ -28,7 +29,6 @@ TEST_CASE("Connect IN to OUT, update and disconnect")
     s.get_node<Input>(v)->set(true);
     REQUIRE_EQ(s.get_node<Output>(o)->get(), State::TRUE);
     s.disconnect(r);
-    L_INFO("%s", to_str<State>(s.get_node<Output>(o)->get()));
     REQUIRE_EQ(s.get_node<Output>(o)->get(), State::DISABLED);
 }
 

@@ -28,7 +28,7 @@ void Inspector(NRef<Scene> scene)
     std::string title = std::string { _("Inspector") } + "###Inspector";
     if (ImGui::Begin(title.c_str(), &user_data.inspector)) {
         HINT("CTRL+I", _("Inspector"),
-            _(" A panel that displays and allows you to modify the\n"
+            _("A panel that displays and allows you to modify the\n"
               "attributes of the currently selected logic gate node."));
         if (scene != nullptr && ImNodes::NumSelectedNodes() > 0) {
             int len = ImNodes::NumSelectedNodes();
@@ -47,15 +47,16 @@ void Inspector(NRef<Scene> scene)
                     };
                 }
                 ImGui::EndTabBar();
-                ImGui::PushFont(get_font(FontFlags::SMALL | FontFlags::ITALIC));
+                ImGui::PushFont(get_font(FontFlags::ITALIC), FONT_SMALL);
                 ImGui::Text(_("%d items selected."), len);
                 ImGui::PopFont();
                 ImGui::SameLine();
-                if (IconButton<NORMAL>(ICON_LC_TRASH_2, _("Delete All"))) {
+                if (IconButton(ICON_LC_TRASH_2, _("Delete All"))) {
                     ImNodes::ClearNodeSelection();
                     for (int i = 0; i < len; i++) {
                         Node node = decode_pair(nodeids[i]);
-                        L_DEBUG("Delete %s", to_str<Node>(node), node.index);
+                        L_DEBUG("Delete %s@%d", to_str<Node::Type>(node.type),
+                            node.index);
                         scene->remove_node(node);
                     }
                 }
@@ -72,10 +73,10 @@ static void _inspector_tab(NRef<Scene> scene, Node node)
 {
     const static ImVec2 __table_l_size = ImGui::CalcTextSize("SOCKET COUNT");
 
-    ImGui::PushFont(get_font(FontFlags::LARGE | FontFlags::REGULAR));
+    ImGui::PushFont(get_font(FontFlags::REGULAR), FONT_LARGE);
     ImGui::Text("%s@%d", to_str<Node::Type>(node.type), node.index);
     ImGui::PopFont();
-    if (IconButton<NORMAL>(ICON_LC_EYE, _("Select Node"))) {
+    if (IconButton(ICON_LC_EYE, _("Select Node"))) {
         ImNodes::ClearNodeSelection();
         switch (node.type) {
         case Node::Type::COMPONENT_INPUT:
@@ -88,9 +89,9 @@ static void _inspector_tab(NRef<Scene> scene, Node node)
     if (node.type != Node::Type::COMPONENT_OUTPUT
         && node.type != Node::Type::COMPONENT_INPUT) {
         ImGui::SameLine();
-        if (IconButton<NORMAL>(ICON_LC_TRASH, _("Delete Node"))) {
+        if (IconButton(ICON_LC_TRASH, _("Delete Node"))) {
             ImNodes::ClearNodeSelection();
-            L_INFO("Remove %s", to_str<Node>(node));
+            L_INFO("Remove %s@%d", to_str<Node::Type>(node.type), node.index);
             scene->remove_node(node);
             return;
         }
@@ -322,7 +323,7 @@ static void _input_table(NRef<Scene> scene, const std::vector<relid>& inputs)
         for (size_t i = 0; i < inputs.size(); i++) {
             TableKey(Field("%zu", i + 1));
             ImGui::SameLine();
-            ImGui::PushFont(get_font(FontFlags::BOLD | FontFlags::NORMAL));
+            ImGui::PushFont(get_font(FontFlags::BOLD), 0.f);
             State value = State::DISABLED;
             if (inputs[i] != 0) {
                 NRef<Rel> r = scene->get_rel(inputs[i]);
@@ -332,7 +333,7 @@ static void _input_table(NRef<Scene> scene, const std::vector<relid>& inputs)
             ImGui::TableSetColumnIndex(2);
             ImGui::BeginDisabled(inputs[i] == 0);
             ImGui::PushID(std::to_string(i).c_str());
-            if (IconButton<NORMAL>(ICON_LC_CIRCLE_SLASH_2, "")) {
+            if (IconButton(ICON_LC_CIRCLE_SLASH_2, "")) {
                 scene->disconnect(inputs[i]);
                 tabs::notify();
             }
@@ -362,7 +363,7 @@ static void _output_table(NRef<Scene> scene, const std::vector<relid>& outputs)
         for (size_t i = 0; i < outputs.size(); i++) {
             ImGui ::TableNextRow();
             ImGui ::TableSetColumnIndex(0);
-            ImGui::PushFont(get_font(FontFlags::BOLD | FontFlags::NORMAL));
+            ImGui::PushFont(get_font(FontFlags::BOLD), 0.f);
             if (outputs[i] == 0) {
                 ImGui::TextColored(get_active_style().black_bright, "%s",
                     to_str<State>(State::DISABLED));
@@ -375,7 +376,7 @@ static void _output_table(NRef<Scene> scene, const std::vector<relid>& outputs)
 
             ImGui::BeginDisabled(outputs[i] == 0);
             ImGui::PushID(("output_" + std::to_string(i)).c_str());
-            if (IconButton<NORMAL>(ICON_LC_CIRCLE_SLASH_2, "")) {
+            if (IconButton(ICON_LC_CIRCLE_SLASH_2, "")) {
                 scene->disconnect(outputs[i]);
                 tabs::notify();
             }

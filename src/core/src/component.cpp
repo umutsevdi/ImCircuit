@@ -94,7 +94,7 @@ void ComponentContext::set_value(Node id, State value)
 
 uint64_t ComponentContext::run()
 {
-    L_INFO("Execute component: %b", _execution_input.to_ullong());
+    L_DEBUG("Execute component: %b", _execution_input.to_ullong());
     _execution_output = 0;
     for (size_t i = 0; i < inputs.size(); i++) {
         State result = _execution_input[i] ? State::TRUE : State::FALSE;
@@ -109,7 +109,7 @@ uint64_t ComponentContext::run()
                 i, _parent->get_rel(outputs[i])->value == State::TRUE);
         }
     }
-    L_INFO("Execute output: %b", _execution_output.to_ullong());
+    L_DEBUG("Execute output: %b", _execution_output.to_ullong());
     return _execution_output.to_ullong();
 }
 

@@ -16,26 +16,18 @@
 
 namespace lcs::ui {
 
+constexpr float FONT_SMALL  = 12.f;
+constexpr float FONT_NORMAL = 16.f;
+constexpr float FONT_LARGE  = 24.f;
+constexpr float FONT_ULTRA  = 48.f;
 enum FontFlags {
-    /** Size Flag: SMALL */
-    SMALL = 0b00000,
-    /** Size Flag: NORMAL */
-    NORMAL = 0b00001,
-    /** Size Flag: LARGE */
-    LARGE = 0b00010,
-    /** Size Flag: ULTRA: Only for icons */
-    ULTRA = 0b00100,
-    /** Format Flag: REGULAR */
-    REGULAR = 0b00000,
-    /** Format Flag: ITALIC */
-    ITALIC = 0b001000,
-    /** Format Flag: BOLD */
-    BOLD = 0b010000,
-    /** Format Flag: ICON */
-    ICON = 0b100000,
+    /** Format Flag: REGULAR */ REGULAR = 0b000000,
+    /** Format Flag: ITALIC */ ITALIC   = 0b000001,
+    /** Format Flag: BOLD */ BOLD       = 0b000010,
+    /** Format Flag: ICON */ ICON       = 0b000100,
 
     // Small/Regular/Large * BOLD|ITALIC|REGULAR|BOLD-ITALIC
-    FONT_S = ICON | ULTRA | 1
+    FONT_S
 };
 
 ImFont* get_font(int attributes);
@@ -82,15 +74,15 @@ State ToggleButton(State, bool clickable = false);
 void NodeTypeTitle(Node n);
 void NodeTypeTitle(Node n, sockid sock);
 
-inline void ShowIcon(FontFlags size, const char* icon)
+inline void ShowIcon(const char* icon)
 {
-    ImGui::PushFont(get_font(FontFlags::ICON | size));
+    ImGui::PushFont(get_font(FontFlags::ICON), 0.f);
     ImGui::Text("%s", icon);
     ImGui::PopFont();
 }
 
-template <int SIZE, typename... Args>
-bool IconButton(const char* icon, Args... args)
+template <typename... Args>
+bool IconButton(const char* icon, float size, Args... args)
 {
     ImGui::BeginGroup();
     bool has_text           = strnlen(get_first<const char*>(args...), 5);
@@ -100,7 +92,7 @@ bool IconButton(const char* icon, Args... args)
         snprintf(buffer + 2, 254, args...);
         text_s = ImGui::CalcTextSize(buffer + 2);
     }
-    ImGui::PushFont(get_font(ICON | SIZE));
+    ImGui::PushFont(get_font(ICON), size);
     ImVec2 icon_s = ImGui::CalcTextSize(icon);
     ImVec2 btn_s  = ImVec2(text_s.x + icon_s.x
              + (has_text ? 1.5f : 1.f) * ImGui::GetStyle().ItemSpacing.x,
@@ -123,12 +115,17 @@ bool IconButton(const char* icon, Args... args)
     return pressed;
 }
 
-template <int SIZE, typename... Args>
-void IconText(const char* icon, Args... args)
+template <typename... Args> bool IconButton(const char* icon, Args... args)
+{
+    return IconButton(icon, 0.f, args...);
+}
+
+template <typename... Args>
+void IconText(const char* icon, float size, Args... args)
 {
     ImGui::BeginGroup();
     bool has_text = strnlen(get_first<const char*>(args...), 5);
-    ImGui::PushFont(get_font(ICON | SIZE));
+    ImGui::PushFont(get_font(ICON), size);
     ImGui::Text("%s", icon);
     ImGui::PopFont();
     if (has_text) {
@@ -143,7 +140,7 @@ template <typename... Args> inline void Section(Args... args)
     ImGui::BeginGroup();
     static char buffer[1024] = "##";
     snprintf(buffer + 2, 1022, args...);
-    ImGui::PushFont(get_font(FontFlags::LARGE | FontFlags::REGULAR));
+    ImGui::PushFont(get_font(REGULAR), FONT_LARGE);
     ImGui::TextUnformatted(buffer + 2);
     ImGui::PopFont();
     ImGui::BeginChild(buffer, ImVec2(0, 0),
@@ -155,7 +152,7 @@ template <typename... Args> inline void SubSection(Args... args)
     ImGui::BeginGroup();
     static char buffer[1024] = "##";
     snprintf(buffer + 2, 1022, args...);
-    ImGui::PushFont(get_font(FontFlags::NORMAL | FontFlags::BOLD));
+    ImGui::PushFont(get_font(FontFlags::BOLD), 0.f);
     ImGui::TextUnformatted(buffer + 2);
     ImGui::PopFont();
     ImGui::BeginChild(buffer, ImVec2(0, 0),
@@ -171,7 +168,7 @@ inline void EndSection()
 template <typename... Args> inline void Field(Args... args)
 {
     ImGui::BeginGroup();
-    ImGui::PushFont(get_font(FontFlags::BOLD | FontFlags::NORMAL));
+    ImGui::PushFont(get_font(FontFlags::BOLD), 0.0f);
     ImGui::PushStyleColor(ImGuiCol_Text, get_active_style().cyan);
     ImGui::Text(args...);
     ImGui::PopFont();
@@ -205,9 +202,9 @@ inline bool BeginTooltip(const char* icon, Args... args)
 {
     bool bgn = ImGui::BeginTooltip();
     if (bgn) {
-        ImGui::PushFont(get_font(NORMAL | BOLD));
+        ImGui::PushFont(get_font(BOLD));
         if (icon != nullptr) {
-            ShowIcon(FontFlags::LARGE, icon);
+            ShowIcon(icon);
         }
         ImGui::SameLine();
         ImGui::Text(args...);

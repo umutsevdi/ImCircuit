@@ -106,10 +106,11 @@ if(LCS_GUI)
         api
         common
         core
-        jsoncpp_static
-        keychain
         ui
-        api)
+        api
+        jsoncpp_static
+        spdlog
+        keychain)
 
     target_include_directories(LogicCircuitSimulator PRIVATE include)
 endif()
@@ -174,35 +175,36 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_ENABLE_DOXYGEN)
     endif()
 endif()
 
+add_custom_target(bundle)
+set(PKGDIR "${CMAKE_BINARY_DIR}/package")
+add_custom_command(TARGET bundle POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/pkg/${PROJECT_NAME}"
+            "${PKGDIR}/win32/${PROJECT_LONG}")
+add_custom_command(TARGET bundle POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/pkg/locale
+                "${PKGDIR}/win32/${PROJECT_LONG}/locale")
+add_custom_command(TARGET bundle POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_SOURCE_DIR}/pkg/LogicCircuitSimulator.ico
+                "${PKGDIR}/win32/${PROJECT_LONG}/bin/LogicCircuitSimulator.ico")
+
+add_custom_command(TARGET bundle POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/pkg/locale
+                "${PKGDIR}/usr/share/locale")
+add_custom_command(TARGET bundle POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/pkg/${PROJECT_NAME}
+        "${PKGDIR}/usr/share/${PROJECT_NAME}")
+add_custom_command(TARGET bundle POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_SOURCE_DIR}/pkg/logic-circuit-simulator.desktop
+                "${PKGDIR}/usr/share/applications/logic-circuit-simulator.desktop")
+
 if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_GUI AND LCS_PACKAGE)
-	message("Start packaging")
-	set(PKGDIR "${CMAKE_BINARY_DIR}/package")
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_directory
-				"${CMAKE_SOURCE_DIR}/pkg/${PROJECT_NAME}"
-				"${PKGDIR}/win32/${PROJECT_LONG}")
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_directory
-					${CMAKE_SOURCE_DIR}/pkg/locale
-					"${PKGDIR}/win32/${PROJECT_LONG}/locale")
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy
-					${CMAKE_SOURCE_DIR}/pkg/LogicCircuitSimulator.ico
-                    "${PKGDIR}/win32/${PROJECT_LONG}/bin/LogicCircuitSimulator.ico")
-
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_directory
-					${CMAKE_SOURCE_DIR}/pkg/locale
-					"${PKGDIR}/usr/share/locale")
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_directory
-			${CMAKE_SOURCE_DIR}/pkg/${PROJECT_NAME}
-			"${PKGDIR}/usr/share/${PROJECT_NAME}")
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy
-					${CMAKE_SOURCE_DIR}/pkg/logic-circuit-simulator.desktop
-					"${PKGDIR}/usr/share/applications/logic-circuit-simulator.desktop")
-
+    add_dependencies(${PROJECT_NAME} bundle)
 	if(NOT WIN32)
 		set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 		set(CPACK_PACKAGE_VERSION "1.0.0")

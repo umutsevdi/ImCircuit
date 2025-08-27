@@ -29,7 +29,7 @@ void Console(void)
     std::string title     = std::string { _("Console") } + "###Console";
     if (ImGui::Begin(title.c_str(), &user_data.console)) {
         HINT(nullptr, _("Console"), _("Displays warning messages."));
-        if (IconButton<NORMAL>(ICON_LC_TRASH, _("Clear"))) {
+        if (IconButton(ICON_LC_TRASH, _("Clear"))) {
             lcs::fs::clear_log();
         }
         HINT(nullptr, _("Clear"), _("Clears all log messages."));

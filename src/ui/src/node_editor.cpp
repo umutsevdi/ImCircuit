@@ -272,7 +272,7 @@ void NodeEditor(NRef<Scene> scene)
                             }
                             ImGui::Text(")");
                         } if (!n->is_connected()) {
-                            ImGui::PushFont(get_font(SMALL));
+                            ImGui::PushFont(nullptr, FONT_SMALL);
                             ImGui::TextColored(get_active_style().red,
                                 _("Please connect all pins."));
                             ImGui::PopFont();

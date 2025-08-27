@@ -18,8 +18,10 @@ xgettext \
 
 merge_po()
 {
-    local locales=("fr_FR" "de_DE" "tr_TR" "en_US" "ru_RU")
-    local names=("Français" "Deutsch" "Türkçe" "English" "Русский")
+    local locales=("fr_FR" "de_DE" "tr_TR" "en"
+                   "ru" "ko_KR" "zh")
+    local names=("Français" "Deutsch" "Türkçe" "English"
+                 "Русский" "한국인" "中国人")
 
     for loc in "${locales[@]}"; do
         loc+=".po"
@@ -57,10 +59,10 @@ merge_po()
 
 make_mo()
 {
-    rm -rf pkg/usr/locale
+    rm -rf pkg/locale
     for i in i18n/*.po; do
         base=`basename -s .po $i`
-        target="pkg/usr/locale/$base/LC_MESSAGES/"
+        target="pkg/locale/$base/LC_MESSAGES/"
         mkdir -p $target
         msgfmt -o ${target}/${APPNAME_BIN}.mo $i
     done

@@ -1,8 +1,7 @@
+#include <doctest.h>
 #include "common.h"
 #include "core.h"
 #include "test_util.h"
-#include <doctest.h>
-#include <json/json.h>
 
 using namespace lcs;
 TEST_CASE("parse Scene subnodes")

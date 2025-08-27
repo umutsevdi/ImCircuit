@@ -1,4 +1,5 @@
-#include <cstdlib>
+#include "common.h"
+#include "port.h"
 #ifndef __TESTING__
 #define __TESTING__ 0
 #endif
@@ -7,9 +8,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <doctest.h>
 #endif
-
-#include "common.h"
-#include "port.h"
 
 namespace lcs::ui {
 extern int init(void);
@@ -39,6 +37,7 @@ int main(int argc, char* argv[])
     std::atexit(_cleanup);
 #if __TESTING__
     doctest::Context context;
+    context.setOption("--reporters", "lcs");
     context.applyCommandLine(argc, argv);
     return context.run();
 #else

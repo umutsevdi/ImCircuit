@@ -15,14 +15,6 @@ template <> const char* to_str<Node::Type>(Node::Type s)
     }
 }
 
-template <> const char* to_str<Node>(Node node)
-{
-    static std::array<char, 64> buf;
-    std::snprintf(buf.data(), buf.size(), "%s@%d",
-        to_str<Node::Type>(node.type), node.index);
-    return buf.data();
-}
-
 template <> const char* to_str<State>(State s)
 {
     switch (s) {

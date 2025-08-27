@@ -1,4 +1,4 @@
-# French translations for LogicCircuitSimulator package.
+# Chinese translations for LogicCircuitSimulator package.
 # Copyright (C) 2025 Umut Sevdi
 # This file is distributed under the same license as the LogicCircuitSimulator package.
 # Automatically generated, 2025.
@@ -8,14 +8,13 @@ msgstr ""
 "Project-Id-Version: LogicCircuitSimulator 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-08-27 17:02+0300\n"
-"PO-Revision-Date: 2025-08-22 18:05+0300\n"
+"PO-Revision-Date: 2025-08-27 17:02+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
-"Language: fr\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ASCII\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: src/ui/components.h:222
 #, c-format

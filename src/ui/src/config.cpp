@@ -40,6 +40,7 @@ namespace ui {
 
     Configuration& load_config(void)
     {
+        std::string old_locale = _config.language;
         std::string data;
         if (!fs::read(fs::CONFIG / "config.json", data)) {
             L_WARN("Configuration file was not found at %s. Initializing "
@@ -62,7 +63,7 @@ namespace ui {
             L_ERROR("Parse error.");
             _config = Configuration();
         }
-        if (_config.language != "en_US") {
+        if (old_locale != _config.language) {
             _set_locale(_config.language);
         }
         L_DEBUG("Configuration was loaded.");
@@ -74,7 +75,6 @@ namespace ui {
     void set_config(Configuration& cfg)
     {
         if (cfg.language != _config.language) {
-            L_INFO("Update locale to %s", cfg.language.c_str());
             if (_set_locale(cfg.language)) {
                 cfg.language = _config.language;
             }
@@ -145,6 +145,7 @@ namespace ui {
 
     static Error _set_locale(const std::string& locale)
     {
+        L_DEBUG("Updating locale to %s", locale.c_str());
         const char* domain = APPNAME_BIN;
         std::string dir    = fs::LOCALE.string();
         if (!(bindtextdomain(domain, dir.c_str())
@@ -157,7 +158,6 @@ namespace ui {
         if (
 #ifdef _WIN32
             _putenv_s("LC_ALL", locale.c_str())
-
 #else
             setenv("LC_ALL", locale.c_str(), 1)
 #endif
@@ -208,7 +208,7 @@ namespace ui {
     static void _write_all(
         ImGuiContext*, ImGuiSettingsHandler*, ImGuiTextBuffer* buf)
     {
-        buf->appendf("[%s][%s]\n", APPNAME_LONG, "default");
+        buf->appendf("[%s][%s]\n", APPNAME, "default");
         uint32_t layout = user_data.palette | (user_data.inspector << 1)
             | (user_data.scene_info << 2) | (user_data.console << 3);
         buf->appendf("layout=0x%X\n", layout);
@@ -218,8 +218,8 @@ namespace ui {
     void bind_config(ImGuiContext* ctx)
     {
         ImGuiSettingsHandler handler {};
-        handler.TypeName   = APPNAME_LONG;
-        handler.TypeHash   = ImHashStr(APPNAME_LONG);
+        handler.TypeName   = APPNAME;
+        handler.TypeHash   = ImHashStr(APPNAME);
         handler.ReadOpenFn = _read_open;
         handler.ReadLineFn = _read_line;
         handler.WriteAllFn = _write_all;

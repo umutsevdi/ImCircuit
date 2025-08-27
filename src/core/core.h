@@ -446,6 +446,8 @@ public:
             L_DEBUG("Last node found at %zu/%zu for %s", i, vec.size(),
                 to_str<Node::Type>(node_type));
         }
+        L_INFO(
+            "Added %s@%d to the scene.", to_str<Node::Type>(id.type), id.index);
         return id;
     }
 

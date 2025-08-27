@@ -90,7 +90,7 @@ constexpr const char* errmsg(Error e)
         return "Deserialization failed due to unexpected byte in the file.";
     case INVALID_STRING: return "Parser encountered a invalid string. ";
     case INVALID_NODEID: return "Object has invalid ID.";
-    case INVALID_RELID: return "Object has invalid relaitonship ID.";
+    case INVALID_RELID: return "Object has invalid relationship ID.";
     case REL_NOT_FOUND: return "The relationship was not found.";
     case INVALID_FROM_TYPE: return "Outputs can not be used as a from type.";
     case NOT_A_COMPONENT: return "Only components can have CIN or COUT.";
@@ -118,14 +118,4 @@ constexpr const char* errmsg(Error e)
     case ERROR_S: return "Unknown Error.";
     }
 };
-
-#ifdef ERROR
-#undef ERROR
-#endif
-#ifdef TRUE
-#undef TRUE
-#endif
-#ifdef FALSE
-#undef FALSE
-#endif
 } // namespace lcs
