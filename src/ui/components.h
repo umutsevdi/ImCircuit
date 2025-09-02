@@ -6,7 +6,7 @@
  * Author: Umut Sevdi
  * Description:
  *
- * Project: umutsevdi/logic-circuit-simulator-2.git
+ * Project: umutsevdi/logic-circuit-simulator-2
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 
@@ -21,12 +21,10 @@ constexpr float FONT_NORMAL = 16.f;
 constexpr float FONT_LARGE  = 24.f;
 constexpr float FONT_ULTRA  = 48.f;
 enum FontFlags {
-    /** Format Flag: REGULAR */ REGULAR = 0b000000,
-    /** Format Flag: ITALIC */ ITALIC   = 0b000001,
-    /** Format Flag: BOLD */ BOLD       = 0b000010,
-    /** Format Flag: ICON */ ICON       = 0b000100,
-
-    // Small/Regular/Large * BOLD|ITALIC|REGULAR|BOLD-ITALIC
+    /** Format Flag: REGULAR */ REGULAR,
+    /** Format Flag: ITALIC */ ITALIC,
+    /** Format Flag: BOLD */ BOLD,
+    /** Format Flag: ICON */ ICON,
     FONT_S
 };
 

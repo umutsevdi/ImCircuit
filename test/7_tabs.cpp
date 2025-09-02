@@ -7,13 +7,13 @@ using namespace lcs;
 TEST_CASE("Save a scene and load")
 {
     size_t s_handle = tabs::create("subnode", "author", "", 1);
-    NRef<Scene> s   = tabs::active(s_handle);
-    auto g_or       = s->add_node<Gate>(Gate::Type::OR);
-    auto g_and      = s->add_node<Gate>(Gate::Type::AND);
-    auto v1         = s->add_node<Input>();
-    auto v2         = s->add_node<Input>();
-    auto v3         = s->add_node<Input>();
-    auto o          = s->add_node<Output>();
+    auto s          = tabs::active(s_handle);
+    Node g_or       = s->add_node<Gate>(Gate::Type::OR);
+    Node g_and      = s->add_node<Gate>(Gate::Type::AND);
+    Node v1         = s->add_node<Input>();
+    Node v2         = s->add_node<Input>();
+    Node v3         = s->add_node<Input>();
+    Node o          = s->add_node<Output>();
 
     s->connect(g_or, 0, v1);
     s->connect(g_or, 1, v2);
@@ -24,10 +24,26 @@ TEST_CASE("Save a scene and load")
     REQUIRE_EQ(
         tabs::save_as(lcs::fs::LIBRARY / "test.lcs", s_handle), Error::OK);
     REQUIRE_EQ(tabs::close(s_handle), Error::OK);
-    size_t idx = -1;
-    REQUIRE_EQ(tabs::open(lcs::fs::LIBRARY / "test.lcs", idx), Error::OK);
-    REQUIRE(idx != -1);
-    REQUIRE_EQ(tabs::close(idx), Error::OK);
+    REQUIRE_EQ(tabs::open(lcs::fs::LIBRARY / "test.lcs"), Error::OK);
+    REQUIRE_EQ(tabs::close(), Error::OK);
+}
+
+TEST_CASE("Try Invalid Actions")
+{
+    REQUIRE_NE(tabs::close(42), Error::OK);
+    REQUIRE_NE(tabs::open(fs::LIBRARY / "NOT_FOUND.SCENE"), Error::OK);
+    fs::write(fs::LIBRARY / "INVALID_SCENE.lcs", "INVALID_BYTES");
+    REQUIRE_NE(tabs::open(fs::LIBRARY / "INVALID_SCENE.lcs"), Error::OK);
+}
+
+TEST_CASE("Notify")
+{
+    tabs::create("UpdatedScene", "Author", "", 1);
+    tabs::notify();
+    REQUIRE_FALSE(tabs::is_saved());
+    REQUIRE(tabs::is_changed());
+    REQUIRE_FALSE(tabs::is_changed());
+    REQUIRE_EQ(tabs::close(), Error::OK);
 }
 
 TEST_CASE("Create tabs and then close")
@@ -45,9 +61,9 @@ TEST_CASE("Open save close reopen")
 {
     size_t id = tabs::create("scene", "Author", "", 0);
     REQUIRE_EQ(tabs::save_as(fs::LIBRARY / "scene.lcs", id), Error::OK);
-    REQUIRE_EQ(tabs::close(id), Error::OK);
+    REQUIRE_EQ(tabs::close(), Error::OK);
     REQUIRE_EQ(tabs::active(), nullptr);
-    REQUIRE_EQ(tabs::open(fs::LIBRARY / "scene.lcs", id), Error::OK);
+    REQUIRE_EQ(tabs::open(fs::LIBRARY / "scene.lcs"), Error::OK);
     REQUIRE_NE(tabs::active(), nullptr);
 }
 
@@ -60,7 +76,7 @@ TEST_CASE("Get result from saved scene")
     Node dead_node = scene->add_node<Output>();
     Node gate      = scene->add_node<Gate>(Gate::Type::OR);
     Node output    = scene->add_node<Output>();
-    scene->get_base(dead_node)->set_null();
+    scene->remove_node(dead_node);
     scene->connect(gate, 0, input);
     scene->connect(gate, 1, input2);
     scene->connect(output, 0, gate);
@@ -68,9 +84,9 @@ TEST_CASE("Get result from saved scene")
 
     REQUIRE_EQ(scene->get_node<Output>(output)->get(), State::TRUE);
     REQUIRE_EQ(tabs::save_as(fs::LIBRARY / "or_scene.lcs", id), Error::OK);
-    REQUIRE_EQ(tabs::close(id), Error::OK);
-    REQUIRE_EQ(tabs::open(fs::LIBRARY / "scene.lcs", id), Error::OK);
+    REQUIRE_EQ(tabs::close(), Error::OK);
+    REQUIRE_EQ(tabs::open(fs::LIBRARY / "scene.lcs"), Error::OK);
     auto scene2 = tabs::active();
     REQUIRE_EQ(scene->get_node<Output>(output)->get(), State::TRUE);
-    REQUIRE_EQ(tabs::close(id), Error::OK);
+    REQUIRE_EQ(tabs::close(), Error::OK);
 }

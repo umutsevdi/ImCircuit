@@ -8,54 +8,59 @@ A free and open-source cross-platform Logic Circuit Simulator rewritten in C++.
 
 https://github.com/user-attachments/assets/a770f99d-ed13-40cf-bca7-54b13cea11b8
 
-## Installation
+## Roadmap
 
-### With Installer
-* Installers are located [here](https://github.com/umutsevdi/logic-circuit-simulator-2/releases/tag/v0.01).
-* Download the dedicated installer and run.
+- Testing & Utilities
+    - [X] Add tests for core library.
+    - [X] Add tests for rest of testable methods.
+    - [X] Test report generation.
+    - [X] Testing pipeline
+    - [X] Doxygen support
+    - [X] Automated linux packaging 
+    - [ ] Run tests on pipeline using generated package.
+- Linux
+    - [X] Create executable.
+    - [X] Add packaging.
+- Windows
+    - [X] Create executable.
+    - [X] Create installer.
+    - [X] Reduce required permissions for the installer.
+- Core Library
+    - [X] Feature compatibility with in the logic circuit simulator.
+    - [X] Implement serialization/deserialization.
+    - [X] Indexed component context.
+    - [X] Timer node execution on dependencies.
+    - [X] Timer node execution on dependencies.
+    - [ ] Refactor scene API to match with tabs API.
+    - [ ] Implement undo mechanism.
+- User Interface
+    - [X] Upgrade to docking mode
+    - [X] Save panel layout.
+    - [X] Save positions of panels.
+    - [X] Non-blocking native file dialogs.
+    - [X] Theming options.
+    - [X] Localization implementation.
+    - [ ] Dependency explorer.
+    - [ ] Package manager UI.
+    - [ ] Profile viewer.
+- Command Line Interface
+    - [X] Add basic command line interface
+    - [X] Implement a CLI shell with -i, --interactive arguments.
+    - [X] Implement suggestions and hints.
+- Network
+    - [X] Implement networking utilities. 
+    - [X] Implement async networking.
+    - [X] Safe password storage.
+    - [ ] Implement api handlers.
+    - [ ] Develop a website to host packages.
+        - [ ] Landing page
+        - [ ] User profile pages
+        - [ ] Package searching
+        - [ ] Package uploading
+        - [ ] API Endpoints
+- Build System
+    - [X] Windows DLL packaging with vcpkg.
+    - [X] Add LCS_GUI option.
+    - [X] Add LCS_PACKAGE target.
+    - [X] Add bundle target.
 
-### Compiling From Source
-
-#### Windows
-1. Install build dependencies.
-```bat
-    vckpg.exe install
-```
-2. Compile project using Visual Studio.
-3. Download [Inno Setup](https://jrsoftware.org/download.php/is.exe?site=2) tool.
-4. Generate the installer using Inno Setup.
-5. Run.
-
-> [!NOTE]
-> You can also install without the Inno Setup Installer.
-> Package artifacts will be built to `build\package\win32` and the executable will be build to
-> `build\release` directories. 
-> 1. Copy `build\package\win32\Logic Circuit Simulator\` to `C:\Program Files\`.
-> 2. Copy the executable and DLL files generated at `build\release` to  `C:\Program Files\Logic Circuit Simulator\bin\`
-
-### Linux
-1. Install the following dependencies:
-
-|Library|Package Name (Fedora)| Package Name (Debian Based)|
-|---------|-------|---|
-|curl     |libcurl-devel|libcurl4-openssl-dev|
-|glfw     |glfw-devel|libglfw3-dev|
-|OpenGL   |mesa-libGL-devel|libgl1-mesa-dev|
-|libsecret|libsecret-devel|libsecret-1-dev|
-
-2. CMake Installation
-```sh
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make 
-cpack
-```
-3. This will generate APT and RPM builds. Run them with your package manager
-to install/uninstall.
-
-> [!NOTE]
-> You can also install the executable without a package manager.
-> To do that copy files found under `build/package/` folder. This directory will
-> mirror the root `/` in UNIX. Copy files in the `/usr/`
-> to their dedicated locations.

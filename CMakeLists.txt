@@ -80,13 +80,15 @@ include_directories(${jsoncpp_SOURCE_DIR}/include)
 
 include_directories(src/common)
 include_directories(src/core)
+include_directories(src/cli)
 add_subdirectory(src/common)
 add_subdirectory(src/core)
+add_subdirectory(src/cli)
+
+include_directories(src/api)
+add_subdirectory(src/api)
 
 if(LCS_GUI)
-    include_directories(include)
-    include_directories(src/api)
-    add_subdirectory(src/api)
     include_directories(src/ui)
     add_subdirectory(src/ui)
     if (WIN32)
@@ -99,22 +101,34 @@ if(LCS_GUI)
 	# This ensures the application is treated as a Windows GUI application
 	if((CMAKE_BUILD_TYPE STREQUAL "Release") AND WIN32)
 		set_target_properties(${PROJECT_NAME} PROPERTIES
-			WIN32_EXECUTABLE TRUE  
+			WIN32_EXECUTABLE TRUE
 		)
 	endif()
     target_link_libraries(LogicCircuitSimulator PRIVATE
         api
         common
         core
-        ui
-        api
         jsoncpp_static
-        spdlog
-        keychain)
-
-    target_include_directories(LogicCircuitSimulator PRIVATE include)
+        keychain
+        cli
+        ui)
+    target_compile_definitions(LogicCircuitSimulator
+        PRIVATE
+        LCS_GUI=1
+    )
+else()
+    # Build with cli only
+    file(GLOB SOURCES src/main.cpp)
+    add_executable(LogicCircuitSimulator ${SOURCES})
+    target_link_libraries(LogicCircuitSimulator PRIVATE
+        api
+        common
+        core
+        jsoncpp_static
+        keychain
+        cli
+    )
 endif()
-
 if(LCS_BUILD_TESTS)
     FetchContent_Declare(doctest
         GIT_REPOSITORY https://github.com/doctest/doctest.git
@@ -126,8 +140,8 @@ if(LCS_BUILD_TESTS)
     target_link_libraries(LogicCircuitSimulator.tst PRIVATE
         common
         core
-        jsoncpp_static
-        doctest::doctest)
+        doctest::doctest
+        jsoncpp_static)
 
     target_include_directories(LogicCircuitSimulator.tst PRIVATE
         ${doctest_SOURCE_DIR}/doctest
@@ -135,7 +149,7 @@ if(LCS_BUILD_TESTS)
 
     target_compile_definitions(LogicCircuitSimulator.tst
         PRIVATE
-         __TESTING__=1
+        LCS_TEST=1
     )
 
     add_custom_target(run_tests
@@ -183,16 +197,20 @@ add_custom_command(TARGET bundle POST_BUILD
             "${PKGDIR}/win32/${PROJECT_LONG}")
 add_custom_command(TARGET bundle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/pkg/locale
+                ${CMAKE_BINARY_DIR}/locale
                 "${PKGDIR}/win32/${PROJECT_LONG}/locale")
 add_custom_command(TARGET bundle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_SOURCE_DIR}/pkg/LogicCircuitSimulator.ico
                 "${PKGDIR}/win32/${PROJECT_LONG}/bin/LogicCircuitSimulator.ico")
+add_custom_command(TARGET bundle POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/CHANGELOG.txt
+        "${PKGDIR}/win32/${PROJECT_LONG}/")
 
 add_custom_command(TARGET bundle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/pkg/locale
+                ${CMAKE_BINARY_DIR}/locale
                 "${PKGDIR}/usr/share/locale")
 add_custom_command(TARGET bundle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -202,12 +220,15 @@ add_custom_command(TARGET bundle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_SOURCE_DIR}/pkg/logic-circuit-simulator.desktop
                 "${PKGDIR}/usr/share/applications/logic-circuit-simulator.desktop")
+add_custom_command(TARGET bundle POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/CHANGELOG.txt "${PKGDIR}/usr/share/${PROJECT_NAME}")
+add_dependencies(${PROJECT_NAME} bundle)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_GUI AND LCS_PACKAGE)
-    add_dependencies(${PROJECT_NAME} bundle)
+if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_PACKAGE)
 	if(NOT WIN32)
 		set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
-		set(CPACK_PACKAGE_VERSION "1.0.0")
+		set(CPACK_PACKAGE_VERSION "0.0.2")
 		set(CPACK_PACKAGE_DESCRIPTION "A free and open-source cross-platform Logic Circuit Simulator.")
 		set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${CPACK_PACKAGE_DESCRIPTION})
 		set(CPACK_PACKAGE_VENDOR "Umut Sevdi")
@@ -218,9 +239,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_GUI AND LCS_PACKAGE)
 		set(CPACK_GENERATOR "DEB;RPM")  
 		set(CPACK_RPM_PACKAGE_LICENSE "GPL")  
 		set(CPACK_RPM_PACKAGE_GROUP "Development")  
-		set(CPACK_RPM_PACKAGE_REQUIRES "glib2, libcurl, libsecret, glfw, mesa-libGL")
+		set(CPACK_RPM_PACKAGE_REQUIRES "libcurl, libsecret, glfw, mesa-libGL")
 		set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Umut Sevdi <mail@umutsevdi.com>")
-		set(CPACK_DEBIAN_PACKAGE_DEPENDS "libglib2.0-0, libcurl4, libsecret-1-0, libglfw3, libopenGL0")
+		set(CPACK_DEBIAN_PACKAGE_DEPENDS "libcurl4, libsecret-1-0, libglfw3")
 
 		install(FILES "build/release/LogicCircuitSimulator"
 				DESTINATION "/usr/bin/"

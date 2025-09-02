@@ -51,7 +51,10 @@ inline bool scene_cmp(lcs::Scene& s1, lcs::Scene& s2)
 }
 
 namespace lcs {
+#define REPORT(...)                                                            \
+    fs::_log(Message { Message::INFO, "", 0, "Reporter", __VA_ARGS__ })
 struct LcsReporter : public doctest::IReporter {
+    std::vector<Message> failed_cases;
     const doctest::ContextOptions& opt;
     const doctest::TestCaseData* tc = nullptr;
     std::string name;
@@ -68,18 +71,20 @@ struct LcsReporter : public doctest::IReporter {
     void test_run_end(const doctest::TestRunStats& in) override
     {
         fs::set_log_target("RESULT.txt");
-        fs::_log(Message(Message::INFO, APPNAME_BIN, -1, "Reporter",
-            "\r\n"
-            "┌──────────────╢ Test Results ╟──────────────┐\r\n"
-            "│   TEST CASE         ┬     %5d/%-5d      │\r\n"
-            "│   ASSERTIONS CASE   │     %5d/%-5d      │\r\n"
-            "└─────────────────────┴──────────────────────┘\r\n",
-            in.numTestCases - in.numTestCasesFailed, in.numTestCases,
-            in.numAsserts - in.numAssertsFailed, in.numAsserts));
+
+        REPORT("");
+        REPORT("┌──────────────╢ Test Results ╟──────────────┐");
+        REPORT("│   TEST CASE         ┬     %5d/%-5d      │",
+            in.numTestCases - in.numTestCasesFailed, in.numTestCases);
+        REPORT("│   ASSERTIONS CASE   │     %5d/%-5d      │",
+            in.numAsserts - in.numAssertsFailed, in.numAsserts, );
+        REPORT("└─────────────────────┴──────────────────────┘");
         if (in.numAssertsFailed > 0) {
-            fs::_log(Message(Message::INFO, APPNAME_BIN, -1, "Reporter",
-                "%d assertions failed in %d test cases", in.numAssertsFailed,
-                in.numTestCasesFailed));
+            REPORT("Failed Cases:");
+            for (const auto& msg : failed_cases) {
+                lcs::fs::_log(msg);
+            }
+            exit(1);
         }
     }
 
@@ -90,23 +95,21 @@ struct LcsReporter : public doctest::IReporter {
         name = file.filename().replace_extension(".log").string();
 
         lcs::fs::set_log_target(name.c_str());
-        fs::_log(Message(Message::INFO, APPNAME_BIN, -1, "start_test",
-            "TEST CASE \"%s\"\r\n", in.m_name));
+        REPORT("TEST CASE \"%s\"", in.m_name);
     }
 
     void test_case_reenter(const doctest::TestCaseData& /*in*/) override { }
 
     void test_case_end(const doctest::CurrentTestCaseStats& stats) override
     {
-        fs::_log(Message(Message::INFO, APPNAME_BIN, -1, "Reporter",
-            "\r\n"
-            "┌────────╢ Test Case End [%.4f s] ╟────────┐\r\n"
-            "│   ASSERTIONS CASE   │     %5d/%-5d      │\r\n"
-            "└────────────────╢ %-7s ╟─────────────────┘\r\n",
-            stats.seconds,
+        REPORT("");
+        REPORT("┌────────╢ Test Case End [%.4f s] ╟────────┐", stats.seconds);
+        REPORT("│   ASSERTIONS CASE   │     %5d/%-5d      │",
             stats.numAssertsCurrentTest - stats.numAssertsFailedCurrentTest,
-            stats.numAssertsCurrentTest,
-            stats.testCaseSuccess ? "SUCCESS" : "FAILURE"));
+            stats.numAssertsCurrentTest);
+        REPORT("└────────────────╢ %-7s ╟─────────────────┘",
+            stats.testCaseSuccess ? "SUCCESS" : "FAILURE");
+        REPORT("");
     }
 
     void test_case_exception(const doctest::TestCaseException& in) override
@@ -115,6 +118,9 @@ struct LcsReporter : public doctest::IReporter {
             "exception_handler",
             "Test case \"%s\" failed with an exception %s.", tc->m_name,
             in.error_string.c_str()));
+        if (in.is_crash) {
+            exit(1);
+        }
     }
 
     void subcase_start(const doctest::SubcaseSignature& /*in*/) override { }
@@ -127,12 +133,19 @@ struct LcsReporter : public doctest::IReporter {
             return;
         }
         if (in.m_threw) {
-            fs::_log(Message(Message::ERROR, name.c_str(), in.m_line,
-                "test_runner", "Assertion \"%s\" failed with an exception: %s.",
-                in.m_expr, in.m_exception_string.c_str()));
+            Message m(Message::ERROR, name.c_str(), in.m_line, "test_runner",
+                "Assertion %s(\"%s\") failed with an exception: %s.",
+                doctest::assertString(in.m_at), in.m_expr,
+                in.m_exception_string.c_str());
+            fs::_log(m);
+            failed_cases.push_back(m);
         } else {
-            fs::_log(Message(Message::ERROR, name.c_str(), in.m_line,
-                "test_runner", "Assertion \"%s\" failed.", in.m_expr));
+            Message m(Message::ERROR, name.c_str(), in.m_line, "test_runner",
+                "Assertion %s(\"%s\") failed. Evaluation %s(%s).",
+                doctest::assertString(in.m_at), in.m_expr,
+                doctest::assertString(in.m_at), in.m_decomp.c_str());
+            failed_cases.push_back(m);
+            fs::_log(m);
         }
     }
 

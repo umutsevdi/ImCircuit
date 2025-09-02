@@ -13,7 +13,7 @@ target_include_directories(common PUBLIC
     ../../i18n/
 )
 
-target_link_libraries(common PUBLIC
+target_link_libraries(common
     ${CURL_LIBRARIES}
     ${Intl_LIBRARY}
 )

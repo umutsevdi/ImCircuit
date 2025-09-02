@@ -1,12 +1,12 @@
 #include <IconsLucide.h>
 #include <clocale>
 #include <filesystem>
+#include <imgui_internal.h>
 #include <json/reader.h>
+#include <json/value.h>
 #include <libintl.h>
 #include "common.h"
 #include "configuration.h"
-#include "imgui_internal.h"
-#include "json/value.h"
 
 namespace lcs {
 

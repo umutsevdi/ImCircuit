@@ -4,21 +4,23 @@
 #include "common.h"
 #include "components.h"
 #include "configuration.h"
-#include "port.h"
 #include "ui.h"
 
 namespace lcs::ui::layout {
 
 Configuration cfg {};
-static bool _show_new   = false;
-static bool _show_close = false;
-static bool _show_about = false;
-static bool _show_pref  = false;
+static bool _show_new       = false;
+static bool _show_close     = false;
+static bool _show_about     = false;
+static bool _show_pref      = false;
+static bool _show_changelog = false;
 static void tab_window(void);
 static void _popup_new(void);
 static void _popup_about(void);
 static void _popup_close(void);
 static void _popup_pref(void);
+static void _changelog_popup(void);
+static ImVec2 line_size(0, 0);
 bool df_show = false;
 void MenuBar(void)
 {
@@ -66,7 +68,10 @@ void MenuBar(void)
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu(_("Help"))) {
-            if (IconButton(ICON_LC_INFO, _("About"))) {
+            if (IconButton(ICON_LC_GIT_MERGE, _("Changelog"))) {
+                _show_changelog = true;
+            }
+            if (IconButton(ICON_LC_COPYRIGHT, _("About"))) {
                 _show_about = true;
             }
             ImGui::EndMenu();
@@ -140,6 +145,7 @@ void MenuBar(void)
     _popup_close();
     _popup_about();
     _popup_pref();
+    _changelog_popup();
 }
 
 void tab_window(void)
@@ -301,6 +307,11 @@ static void _popup_about(void)
     if (!_show_about) {
         return;
     }
+    if (line_size.x == 0) {
+        line_size
+            = ImGui::CalcTextSize("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                                  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    }
     std::string title = std::string { _("About") } + "###About";
     ImGui::OpenPopup(title.c_str());
     if (ImGui::BeginPopupModal(title.c_str(), &_show_about,
@@ -318,10 +329,14 @@ static void _popup_about(void)
         if (ImGui::TextLink("GitHub.")) {
             open_browser(prj);
         }
+        ImGui::Text(_("Version: "));
+        ImGui::SameLine();
         ImGui::TextUnformatted(APPOS "." APPBUILD "." APPVERSION);
         ImGui::BeginChild(
-            "License", ImVec2(0, 450), ImGuiChildFlags_FrameStyle);
-        ImGui::TextUnformatted(license_info.c_str());
+            "License", ImVec2(line_size.x, 450), ImGuiChildFlags_FrameStyle);
+        ImGui::InputTextMultiline("##LicenseText", license_info.data(),
+            license_info.size(), ImGui::GetContentRegionAvail(),
+            ImGuiInputTextFlags_ReadOnly);
         ImGui::EndChild();
         ImGui::TextUnformatted(_("Contact"));
         ImGui::SameLine();
@@ -336,6 +351,34 @@ static void _popup_about(void)
         if (IconButton(ICON_LC_GITHUB, "GitHub")) {
             open_browser(gh);
         }
+        ImGui::EndPopup();
+    }
+}
+
+static std::string changelog_info;
+static void _changelog_popup(void)
+{
+    if (changelog_info == "") {
+        fs::read(fs::APPDATA / "CHANGELOG.txt", changelog_info);
+    }
+    if (line_size.x == 0) {
+        line_size
+            = ImGui::CalcTextSize("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                                  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    }
+    if (!_show_changelog) {
+        return;
+    }
+    std::string title = std::string { _("Changelog") } + "###Changelog";
+    ImGui::OpenPopup(title.c_str());
+    if (ImGui::BeginPopupModal(title.c_str(), &_show_changelog,
+            ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
+        ImGui::BeginChild("Changelog", ImVec2(line_size.x, 450),
+            ImGuiChildFlags_FrameStyle | ImGuiChildFlags_AutoResizeX);
+        ImGui::InputTextMultiline("##LicenseText", changelog_info.data(),
+            changelog_info.size(), ImGui::GetContentRegionAvail(),
+            ImGuiInputTextFlags_ReadOnly);
+        ImGui::EndChild();
         ImGui::EndPopup();
     }
 }

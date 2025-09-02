@@ -6,7 +6,7 @@
  * Author: Umut Sevdi
  * Description:
  *
- * Project: umutsevdi/logic-circuit-simulator-2.git
+ * Project: umutsevdi/logic-circuit-simulator-2
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 

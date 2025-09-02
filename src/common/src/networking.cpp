@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <thread>
 #include "common.h"
-#include "port.h"
 
 namespace lcs::net {
 
@@ -256,3 +255,15 @@ bool pull_response(uint64_t id, HttpResponse& resp)
 }
 
 } // namespace lcs::net
+
+void lcs::open_browser(const std::string& url)
+{
+#ifdef _WIN32
+    std::string command = "start " + url;
+#elif __APPLE__
+    std::string command = "open " + url;
+#else
+    std::string command = "xdg-open " + url; // For Linux
+#endif
+    system(command.c_str());
+}

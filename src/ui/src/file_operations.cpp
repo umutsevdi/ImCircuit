@@ -23,8 +23,7 @@ namespace dialog {
             return Error::NFD;
         } else if (result == NFD_OKAY) {
             std::vector<uint8_t> data;
-            size_t idx = 0;
-            Error err  = tabs::open(out, idx);
+            Error err = tabs::open(out);
             NFD_FreePathU8(out);
             return err;
         }

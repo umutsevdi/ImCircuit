@@ -4,9 +4,9 @@
  * File: core.h
  * Created: 01/18/25
  * Author: Umut Sevdi
- * Description:
+ * Description: Core logic circuit engine.
  *
- * Project: umutsevdi/lc-simulator-2
+ * Project: umutsevdi/logic-circuit-simulator-2
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 
@@ -456,7 +456,7 @@ public:
      *
      * @param id node to remove
      */
-    void remove_node(Node id);
+    LCS_ERROR remove_node(Node id);
 
     /**
      * Obtain a temporary node reference from the scene.
@@ -468,7 +468,8 @@ public:
     {
         std::vector<T>& vec = vector<T>();
         lcs_assert(id.type == as_node_type<T>());
-        return id.index < vec.size() ? &vec[id.index] : nullptr;
+        return id.index < vec.size() || vec[id.index].is_null() ? &vec[id.index]
+                                                                : nullptr;
     }
 
     /**
@@ -644,14 +645,12 @@ namespace tabs {
     /**
      * Reads scene data from given file.
      * @param path to file
-     * @param idx on successful scene_open calls idx will be updated to a
-     * valid idx to access scene.
      * @returns Error on failure:
      *
      * - Error::NOT_FOUND
      * - deserialize
      */
-    LCS_ERROR open(const std::filesystem::path& path, size_t& idx);
+    LCS_ERROR open(const std::filesystem::path& path);
 
     /**
      * Closes the scene with selected path, erasing from memory.
@@ -718,6 +717,26 @@ namespace tabs {
      * @returns whether there are changes within the scene
      */
     bool is_changed(void);
+
+    /**
+     * Safely disconnects a node relationship.
+     * @param id relid to disconnect
+     * @returns Error on failure:
+     *
+     * - Error::INVALID_RELID
+     * - Error::REL_NOT_FOUND
+     * - Error::NOT_CONNECTED
+     */
+    LCS_ERROR disconnect(relid id);
+    LCS_ERROR connect(
+        Node to_node, sockid to_sock, Node from_node, sockid from_sock = 0);
+    void run(float delta);
+    template <class T, class... Args> Node add_node(Args&&... args);
+    LCS_ERROR remove_node(Node id);
+    LCS_ERROR move(Node id, Point p);
+
+    LCS_ERROR add_dependency(const std::string& dependency);
+    void remove_dependency(size_t idx);
 } // namespace tabs
 
 /**

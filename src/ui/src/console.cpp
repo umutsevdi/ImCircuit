@@ -38,7 +38,7 @@ void Console(void)
         HINT(nullptr, _("Auto-scroll"),
             _("When enabled, the scrollbar will be locked to the bottom \n"
               "to display live updates."));
-        if (ImGui::BeginTable("##ConsoleTable", 5,
+        if (ImGui::BeginTable("##ConsoleTable", 4,
                 ImGuiTableFlags_Reorderable | ImGuiTableFlags_BordersInner
                     | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY
                     | ImGuiTableColumnFlags_NoResize)) {
@@ -50,9 +50,6 @@ void Console(void)
             ImGui::NextColumn();
             ImGui::TableSetupColumn(
                 _("Module"), ImGuiTableColumnFlags_WidthFixed);
-            ImGui::NextColumn();
-            ImGui::TableSetupColumn(
-                _("Function"), ImGuiTableColumnFlags_WidthFixed);
             ImGui::NextColumn();
             ImGui::TableSetupColumn(
                 _("Message"), ImGuiTableColumnFlags_WidthStretch);
@@ -68,8 +65,8 @@ void Console(void)
                 ImGui::TextUnformatted(l.time_str.data());
 
                 ImGui::TableSetColumnIndex(1);
-                ImGui::TextColored(_log_color(style, l.severity), "%s",
-                    l.log_level_str.data());
+                ImGui::TextColored(
+                    _log_color(style, l.severity), "%s", l.log_level.data());
                 if (!std::string_view { l.obj.data() }.empty()) {
                     ImGui::TableSetColumnIndex(2);
                     ImGui::PushID(idx);
@@ -77,15 +74,13 @@ void Console(void)
                     ImGui::PopID();
                 }
                 ImGui::TableSetColumnIndex(3);
-                ImGui::TextColored(style.cyan, "%s", l.fn.data());
-                ImGui::TableSetColumnIndex(4);
                 ImGui::TextUnformatted(l.expr.data());
 
                 if (selected) {
                     std::stringstream buffer {};
-                    buffer << l.log_level_str.data() << '\t'
-                           << l.file_line.data() << '\t' << l.obj.data() << "\t"
-                           << l.fn.data() << '\t' << l.expr.data() << std::endl;
+                    buffer << l.log_level.data() << '\t' << l.file_line.data()
+                           << '\t' << l.obj.data() << "\t" << l.fn.data()
+                           << '\t' << l.expr.data() << std::endl;
                     Toast(ICON_LC_CLIPBOARD_COPY, _("Clipboard"),
                         _("Message is copied to the clipboard."));
                     ImGui::SetClipboardText(buffer.str().c_str());

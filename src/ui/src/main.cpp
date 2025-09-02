@@ -20,7 +20,7 @@ static void glcb(int error, const char* description)
     L_ERROR("GLFW Error %d: %s\n", error, description);
 }
 
-int init()
+int run()
 {
     glfwSetErrorCallback(glcb);
     if (!glfwInit()) {

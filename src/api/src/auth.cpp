@@ -4,7 +4,6 @@
 #include <keychain/keychain.h>
 #include "api.h"
 #include "common.h"
-#include "port.h"
 
 namespace lcs::api {
 

@@ -19,6 +19,8 @@ build/_deps/imnodes-src/
 -I
 build/_deps/keychain-src/include/
 -I
+build/_deps/replxx-src/include/
+-I
 src/common/
 -I
 src/core/
@@ -28,5 +30,7 @@ src/port/
 src/ui/
 -I
 src/ui/include/
+-I
+src/cli/
 -I
 i18n/

@@ -18,13 +18,12 @@ struct Inode {
 static std::vector<Inode> SCENE_STORAGE;
 static size_t active_scene = SIZE_MAX;
 
-LCS_ERROR open(const std::filesystem::path& path, size_t& idx)
+LCS_ERROR open(const std::filesystem::path& path)
 {
     for (size_t i = 0; i < SCENE_STORAGE.size(); i++) {
         if (SCENE_STORAGE[i].path == path) {
-            idx = i;
-            if (idx != active_scene) {
-                active_scene                 = idx;
+            if (i != active_scene) {
+                active_scene                 = i;
                 SCENE_STORAGE[i].has_changes = true;
             }
             return OK;
@@ -39,10 +38,10 @@ LCS_ERROR open(const std::filesystem::path& path, size_t& idx)
         return err;
     }
     SCENE_STORAGE.push_back(std::move(inode));
-    idx                            = SCENE_STORAGE.size() - 1;
-    active_scene                   = idx;
-    SCENE_STORAGE[idx].has_changes = true;
-    L_INFO("Scene \"%s\" is opened.", inode.scene.name.data());
+    active_scene                            = SCENE_STORAGE.size() - 1;
+    SCENE_STORAGE[active_scene].has_changes = true;
+    L_INFO("Scene \"%s\" is opened.",
+        SCENE_STORAGE[active_scene].scene.name.data());
     return OK;
 }
 
@@ -51,10 +50,9 @@ LCS_ERROR close(size_t idx)
     if (idx == SIZE_MAX) {
         idx = active_scene;
     }
-    if (SCENE_STORAGE.empty()) {
-        return Error::OK;
+    if (SCENE_STORAGE.empty() || idx >= SCENE_STORAGE.size()) {
+        return ERROR(Error::INVALID_TAB);
     }
-    lcs_assert(idx < SCENE_STORAGE.size());
     if (idx != active_scene) {
         L_INFO("Tab %zu is closed.", idx);
     } else {
@@ -129,10 +127,13 @@ LCS_ERROR save_as(const std::filesystem::path& new_path, size_t idx)
     if (inode.path == new_path) {
         return OK;
     }
-    inode.path     = new_path;
-    inode.is_saved = false;
-    Error err      = save(idx);
+    std::filesystem::path oldpath = inode.path;
+    inode.path                    = new_path;
+    inode.is_saved                = false;
+    Error err                     = save(idx);
     if (err) {
+        inode.path     = oldpath;
+        inode.is_saved = true;
         return err;
     }
     return OK;
@@ -194,4 +195,15 @@ bool is_changed(void)
     }
     return false;
 }
+
+Error add_dependency(const std::string& dependency)
+{
+    Scene dep {};
+    if (Error err = load_dependency(dependency, dep)) {
+        return err;
+    }
+    tabs::active()->add_dependency(std::move(dep));
+    return Error::OK;
+}
+
 } // namespace lcs::tabs

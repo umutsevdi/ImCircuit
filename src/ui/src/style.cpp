@@ -114,17 +114,15 @@ static void _init_fonts(ImGuiIO& io)
     // Load the fonts twice the size and scale them back to have clear
     // visuals.
     io.Fonts->AddFontDefault();
-    auto dir         = fs::APPDATA / "font" / "Archivo" / "ttf";
+    auto dir         = fs::APPDATA / "font" / "MPLUS1p";
     auto font_lucide = fs::APPDATA / "font" / "Lucide" / "Lucide.ttf";
 
-    std::string font     = (dir / "Archivo-Regular.ttf").string();
+    std::string font     = (dir / "MPLUS1p-Regular.ttf").string();
     _FONT[REGULAR]       = io.Fonts->AddFontFromFileTTF(font.c_str());
-    font                 = (dir / "Archivo-Bold.ttf").string();
+    font                 = (dir / "MPLUS1p-Bold.ttf").string();
     _FONT[BOLD]          = io.Fonts->AddFontFromFileTTF(font.c_str());
-    font                 = (dir / "Archivo-Italic.ttf").string();
+    font                 = (dir / "MPLUS1p-Light.ttf").string();
     _FONT[ITALIC]        = io.Fonts->AddFontFromFileTTF(font.c_str());
-    font                 = (dir / "Archivo-BoldItalic.ttf").string();
-    _FONT[BOLD | ITALIC] = io.Fonts->AddFontFromFileTTF(font.c_str());
     _FONT[ICON]          = io.Fonts->AddFontFromFileTTF(font_lucide.c_str());
 }
 

@@ -8,6 +8,7 @@
 namespace lcs {
 static std::chrono::time_point<std::chrono::steady_clock> app_start_time;
 namespace fs {
+    bool is_verbose;
     bool ready = false;
     bool is_testing;
 
@@ -18,8 +19,33 @@ namespace fs {
     std::filesystem::path CONFIG;
     std::filesystem::path LOGPATH;
 
-    static void _clone_local_fs(void)
+    static inline void _set_dirs(const std::filesystem::path& home)
     {
+#ifdef _WIN32
+        APPDATA = std::filesystem::path { home } / Programs / APPNAME_LONG;
+        LOCALE  = APPDATA / "locale";
+        CACHE   = home / APPNAME_BIN / "Cache";
+        CONFIG  = home / APPNAME_BIN / "Config";
+        LIBRARY = home / APPNAME_BIN / "Pkg";
+#elif defined(__linux__)
+        APPDATA = "/usr/share/" APPNAME_BIN;
+        LOCALE  = "/usr/share/locale/";
+
+        CACHE   = home / ".cache" / APPNAME_BIN;
+        CONFIG  = home / ".config" / APPNAME_BIN;
+        LIBRARY = home / ".local/share" / APPNAME_BIN / "pkg";
+#elif defined(__unix__)
+        // TODO For BSD & Mac
+#endif
+        L_DEBUG("AppData: %s", APPDATA.string().c_str());
+        L_DEBUG("Locale: %s", LOCALE.string().c_str());
+        L_DEBUG("Cache: %s", CACHE.string().c_str());
+        L_DEBUG("Library: %s", LIBRARY.string().c_str());
+        L_DEBUG("Config: %s", CONFIG.string().c_str());
+        if (!is_testing) {
+            lcs_assert(std::filesystem::exists(APPDATA));
+            lcs_assert(std::filesystem::exists(LOCALE));
+        }
         try {
             if (!std::filesystem::exists(CACHE)) {
                 L_DEBUG("Creating %s directory.", CACHE.c_str());
@@ -63,34 +89,13 @@ namespace fs {
             time_t now = time(nullptr);
             tm* t      = localtime(&now);
             static char folder[1024] {};
-            std::snprintf(folder, 1024, "run_%02d%02d%02d_%s", t->tm_hour,
-                t->tm_min, t->tm_sec, APPOS);
-            LOGPATH = home / APPNAME_BIN / folder / "log";
+            std::snprintf(folder, 1024, "tst_%s_%02d_%02d_%02d",
+                APPOS "_" APPBUILD, t->tm_hour, t->tm_min, t->tm_sec);
+            home    = home / APPNAME_BIN / folder;
+            LOGPATH = home / "log";
             std::filesystem::create_directories(LOGPATH);
         }
-#ifdef _WIN32
-        APPDATA
-            = std::filesystem::path { getenv("ProgramFiles") } / APPNAME_LONG;
-        LOCALE  = APPDATA / "locale";
-        CACHE   = home / APPNAME_BIN / "Cache";
-        CONFIG  = home / APPNAME_BIN / "Config";
-        LIBRARY = home / APPNAME_BIN / "Pkg";
-#elif defined(__linux__)
-        APPDATA = "/usr/share/" APPNAME_BIN;
-        LOCALE  = "/usr/share/locale/";
-
-        CACHE   = home / ".cache" / APPNAME_BIN;
-        CONFIG  = home / ".config" / APPNAME_BIN;
-        LIBRARY = home / ".local/share" / APPNAME_BIN / "pkg";
-#elif defined(__unix__)
-        // TODO For BSD & Mac
-#endif
-        if (!is_testing) {
-            lcs_assert(std::filesystem::exists(APPDATA));
-            lcs_assert(std::filesystem::exists(LOCALE));
-        }
-        _clone_local_fs();
-
+        _set_dirs(home);
         for (size_t i = 0; i < localsize(); i++) {
             if (std::filesystem::is_directory(LOCALE / locales()[i])) {
                 L_DEBUG("Discovered %s(%s)", locales()[i], localnames()[i]);
@@ -103,12 +108,12 @@ namespace fs {
 
     bool write(const std::filesystem::path& path, const std::string& data)
     {
-        L_DEBUG("Save %s.", path.c_str());
         try {
             std::filesystem::create_directories(path.parent_path());
             std::ofstream outfile { path };
             if (outfile) {
                 outfile << data;
+                L_INFO("%s is saved.", path.c_str());
                 return true;
             }
             L_ERROR("Failed to open file for writing %s.", path.c_str());
@@ -121,12 +126,12 @@ namespace fs {
     bool write(
         const std::filesystem::path& path, std::vector<unsigned char>& data)
     {
-        L_DEBUG("Save %s.", path.c_str());
         try {
             std::filesystem::create_directories(path.parent_path());
             std::ofstream outfile { path, std::ios::binary };
             if (outfile) {
                 outfile.write((char*)data.data(), data.size());
+                L_INFO("%s is saved.", path.c_str());
                 return true;
             }
             L_ERROR("Failed to open file for writing %s.", path.c_str());
@@ -138,7 +143,6 @@ namespace fs {
 
     bool read(const std::filesystem::path& path, std::string& data)
     {
-        L_DEBUG("Opening %s.", (char*)path.c_str());
         std::ifstream infile { path };
         std::string content((std::istreambuf_iterator<char>(infile)),
             std::istreambuf_iterator<char>());
@@ -149,7 +153,6 @@ namespace fs {
     bool read(
         const std::filesystem::path& path, std::vector<unsigned char>& data)
     {
-        L_DEBUG("Opening %s.", path.c_str());
         std::ifstream infile { path, std::ios::binary };
         std::vector<unsigned char> buffer(
             std::istreambuf_iterator<char>(infile), {});
@@ -222,39 +225,50 @@ namespace fs {
                 _next          = (_next + 1) % _size;
                 _buffer[_next] = l;
             }
-        }
-#ifdef NDEBUG
-        else {
+        } else if (!is_verbose) {
             return;
         }
-#endif
         const char* clr;
         switch (l.severity) {
         case Message::FATAL:
         case Message::ERROR: clr = F_RED; break;
-        case Message::INFO: clr = F_GREEN; break;
-        default: clr = F_TEAL; break;
+        case Message::WARN: clr = F_GREEN; break;
+        case Message::INFO: clr = F_TEAL; break;
+        case Message::DEBUG: clr = F_RESET; break;
         }
 
-        printf(F_BLUE "[%s] " F_BOLD "%s%-6s" F_RESET F_GREEN "|" F_RESET
-                      "%-20s" F_GREEN " |%-18s|" F_RESET F_TEAL
-                      "%-25s" F_RESET F_GREEN "|" F_RESET "%s%s\r\n" F_RESET,
-            l.time_str.data(), clr, l.log_level.data(), l.file_line.data(),
-            l.obj.data(), l.fn.data(),
-            l.severity == Message::FATAL ? F_INVERT F_BOLD F_RED : "",
-            l.expr.data());
-
-        if (_target_fp != nullptr) {
-            fprintf(_target_fp, "[%s] %-6s | %-20s | %-18s | %-25s | %s\r\n",
-                l.time_str.data(), l.log_level.data(), l.file_line.data(),
-                l.obj.data(), l.fn.data(), l.expr.data());
+        // Testing mode
+        if (is_testing) {
+            printf(F_BLUE "[%s] " F_BOLD "%s%-6s" F_RESET F_GREEN
+                          "|%-15s|" F_RESET F_TEAL "%-16s" F_RESET F_GREEN
+                          "|" F_RESET " %s%s\r\n" F_RESET,
+                l.time_str.data(), clr, l.log_level.data(), l.file_line.data(),
+                l.fn.data(),
+                l.severity == Message::FATAL ? F_INVERT F_BOLD F_RED : "",
+                l.expr.data());
+            if (_target_fp != nullptr) {
+                fprintf(_target_fp, "[%s] %-6s|%-15s|%-16s|%s\r\n",
+                    l.time_str.data(), l.log_level.data(), l.file_line.data(),
+                    l.fn.data(), l.expr.data());
+            }
+        } else if (is_verbose) {
+            printf(F_BLUE "[%s] " F_BOLD "%s%-6s" F_RESET F_GREEN
+                          "|%-15s|" F_RESET F_TEAL "%-16s" F_RESET F_GREEN
+                          "|" F_RESET " %s%s\r\n" F_RESET,
+                l.time_str.data(), clr, l.log_level.data(), l.file_line.data(),
+                l.fn.data(),
+                l.severity == Message::FATAL ? F_INVERT F_BOLD F_RED : "",
+                l.expr.data());
+        } else {
+            printf(F_BLUE "[%s] " F_BOLD "%s%s" F_RESET "\r\n",
+                l.time_str.data(), clr, l.expr.data());
         }
     }
 
     void close(void)
     {
-        std::lock_guard<std::mutex> lock(_target_fp_mtx);
         if (_target_fp != nullptr) {
+            std::lock_guard<std::mutex> lock(_target_fp_mtx);
             fclose(_target_fp);
         }
         L_DEBUG("Module lcs::fs is closed.");

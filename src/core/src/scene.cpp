@@ -135,33 +135,40 @@ void Scene::_move_from(Scene&& other)
     }
 }
 
-void Scene::remove_node(Node id)
+Error Scene::remove_node(Node id)
 {
     BaseNode* node = nullptr;
     switch (id.type) {
     case Node::Type::GATE: {
-        lcs_assert(id.index < _gates.size());
+        if (_gates.size() < id.index) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
         node = &_gates[id.index];
         break;
     }
     case Node::Type::COMPONENT: {
-        lcs_assert(id.index < _components.size());
+        if (_components.size() < id.index) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
         node = &_components[id.index];
         break;
     }
     case Node::Type::INPUT: {
-        lcs_assert(id.index < _inputs.size());
+        if (_inputs.size() < id.index) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
         node = &_inputs[id.index];
         break;
     }
     case Node::Type::OUTPUT: {
-        lcs_assert(id.index < _outputs.size());
+        if (_outputs.size() < id.index) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
         node = &_outputs[id.index];
         break;
     }
     default: break;
     }
-    lcs_assert(node != nullptr);
     node->clean();
     node->set_null();
     if (_last_node[id.type].index >= id.index) {
@@ -171,6 +178,7 @@ void Scene::remove_node(Node id)
         to_str<Node::Type>(id.type), id.index, _last_node[id.type].index);
     L_INFO(
         "Removed %s@%d from the scene.", to_str<Node::Type>(id.type), id.index);
+    return Error::OK;
 }
 
 NRef<Rel> Scene::get_rel(relid idx)
@@ -273,9 +281,8 @@ Error Scene::connect_with_id(
         break;
     default: return ERROR(Error::INVALID_TO_TYPE);
     }
-    L_INFO("Connected %s@%d to %s%d.",
-        to_str<Node::Type>(from_node.type), from_node.index,
-        to_str<Node::Type>(to_node.type), to_node.index);
+    L_INFO("Connected %s@%d to %s@%d.", to_str<Node::Type>(from_node.type),
+        from_node.index, to_str<Node::Type>(to_node.type), to_node.index);
     return OK;
 }
 
@@ -377,9 +384,9 @@ void Scene::signal(relid id, State value)
         r->value = value;
         L_DEBUG("%s:rel@%-2d %s@%d:%d sent %s to %s@%d:%d",
             _parent != nullptr ? name.data() : "root", id,
-            to_str<Node::Type>(from_node.type), from_node.index, r->from_sock,
-            to_str<State>(r->value), to_str<Node::Type>(to_node.type),
-            to_node.index, r->to_sock);
+            to_str<Node::Type>(r->from_node.type), r->from_node.index,
+            r->from_sock, to_str<State>(r->value),
+            to_str<Node::Type>(r->to_node.type), r->to_node.index, r->to_sock);
         if (r->to_node.type != Node::Type::COMPONENT_OUTPUT) {
             auto n = get_base(r->to_node);
             lcs_assert(n != nullptr);

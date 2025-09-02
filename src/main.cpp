@@ -1,47 +1,60 @@
+#include <csignal>
+#include "cli.h"
 #include "common.h"
-#include "port.h"
-#ifndef __TESTING__
-#define __TESTING__ 0
-#endif
+using namespace lcs;
 
-#if __TESTING__
+#if LCS_TEST
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <doctest.h>
-#endif
-
-namespace lcs::ui {
-extern int init(void);
-}
-using namespace lcs;
-static void _cleanup(void)
-{
-    fs::close();
-    net::close();
-}
-
-#if defined(_WIN32) && NDEBUG && __TESTING__ == 0
-#include <windows.h>
-int WINAPI WinMain(
-    HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-    fs::init(__TESTING__);
-    net::init(__TESTING__);
-    std::atexit(_cleanup);
-    return ui::init();
-}
-#else
 int main(int argc, char* argv[])
 {
-    fs::init(__TESTING__);
-    net::init(__TESTING__);
-    std::atexit(_cleanup);
-#if __TESTING__
+    fs::init(LCS_TEST);
+    net::init(LCS_TEST);
+    std::atexit([]() {
+        fs::close();
+        net::close();
+    });
     doctest::Context context;
     context.setOption("--reporters", "lcs");
     context.applyCommandLine(argc, argv);
     return context.run();
-#else
-    return ui::init();
-#endif
 }
+#else
+#ifdef LCS_GUI
+namespace lcs::ui {
+extern int run(void);
+}
+#endif
+constexpr int START_UI = -1;
+static int _start(int argc, char* argv[])
+{
+    int code = cli::parse_args(argc, argv);
+    fs::init();
+    net::init();
+    std::atexit([]() {
+        fs::close();
+        net::close();
+    });
+    if (code == START_UI) {
+#ifdef LCS_GUI
+        return ui::run();
+#else
+        code = ERROR(Error::GUI_NOT_SUPPORTED);
+#endif
+    }
+    if (code == 0) {
+        return cli::run();
+    }
+    return code;
+}
+#if defined(_WIN32) && defined(LCS_GUI) == 1 && NDEBUG
+#include <windows.h>
+int WINAPI WinMain(
+    HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+    return _start(__argc, __argv);
+}
+#else
+int main(int argc, char* argv[]) { return _start(argc, argv); }
+#endif
 #endif

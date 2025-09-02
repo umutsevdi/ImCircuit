@@ -1,4 +1,4 @@
-# Turkish translations for LogicCircuitSimulator package
+# Chinese translations for LogicCircuitSimulator package.
 # Copyright (C) 2025 Umut Sevdi
 # This file is distributed under the same license as the LogicCircuitSimulator package.
 # Automatically generated, 2025.
@@ -8,75 +8,74 @@ msgstr ""
 "Project-Id-Version: LogicCircuitSimulator 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-07 17:56+0300\n"
-"PO-Revision-Date: 2025-08-22 17:12+0300\n"
+"PO-Revision-Date: 2025-08-27 17:02+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
-"Language: tr\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=ASCII\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/ui/src/menubar.cpp:34
 msgid "File"
-msgstr "Dosya"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:35
 msgid "New"
-msgstr "Yeni"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:38
 msgid "Open"
-msgstr "Aç"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:42 src/ui/src/menubar.cpp:544
 msgid "Save"
-msgstr "Kaydet"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:48
 msgid "Save As"
-msgstr "Farklı Kaydet"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:52 src/ui/src/menubar.cpp:465
 #: src/ui/src/menubar.cpp:538 src/ui/src/menubar.cpp:551
 #: src/ui/src/menubar.cpp:559
 msgid "Preferences"
-msgstr "Ayarlar"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:55
 msgid "Close"
-msgstr "Kapat"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:60
 msgid "Edit"
-msgstr "Düzen"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:63
 msgid "View"
-msgstr "Görünüm"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:64 src/ui/src/palette.cpp:17
 #: src/ui/src/palette.cpp:19
 msgid "Palette"
-msgstr "Palet"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:65 src/ui/src/inspector.cpp:28
 #: src/ui/src/inspector.cpp:30 src/ui/src/inspector.cpp:116
 msgid "Inspector"
-msgstr "Gözlemci"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:66 src/ui/src/console.cpp:29
 #: src/ui/src/console.cpp:31
 msgid "Console"
-msgstr "Konsol"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:67
 msgid "Scene Info"
-msgstr "Sahne Bilgisi"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:70
 msgid "Help"
-msgstr "Yardım"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:71 src/ui/src/menubar.cpp:372
 msgid "Changelog"
@@ -84,89 +83,86 @@ msgstr ""
 
 #: src/ui/src/menubar.cpp:74 src/ui/src/menubar.cpp:315
 msgid "About"
-msgstr "Hakkında"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:153
 msgid "Scene Tabs"
-msgstr "Sahne Sekmeleri"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:165
 msgid "Untitled Scene"
-msgstr "Adsız Sahne"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:197
 msgid "New Scene"
-msgstr "Yeni Sahne"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:208 src/ui/src/scene_info.cpp:21
 msgid "Scene Name"
-msgstr "Sahne Adı"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:212 src/ui/src/scene_info.cpp:67
 msgid "Author"
-msgstr "Yazar"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:216 src/ui/src/scene_info.cpp:28
 msgid "Description"
-msgstr "Açıklama"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:221 src/ui/src/inspector.cpp:110
 msgid "Type"
-msgstr "Tür"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:226 src/ui/src/scene_info.cpp:20
 msgid "Scene"
-msgstr "Sahne"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:232 src/core/src/engine.cpp:9
 msgid "Component"
-msgstr "Bileşen"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:236 src/ui/src/scene_info.cpp:47
 msgid "Input Size"
-msgstr "Girdi Sayısı"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:238 src/ui/src/scene_info.cpp:51
 msgid "Output Size"
-msgstr "Çıktı Sayısı"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:251
 msgid "Cancel"
-msgstr "İptal"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:273
 msgid "Close Scene"
-msgstr "Sahneyi Kapat"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:277
 msgid ""
 "You have unsaved changes. Would you like to save your changes before closing?"
 msgstr ""
-"Kaydedilmemiş değişiklikleriniz var. Kapatmadan önce kaydetmek ister misiniz?"
 
 #: src/ui/src/menubar.cpp:279
 msgid "Save & Close"
-msgstr "Kaydet ve Kapat"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:286
 msgid "Exit Without Saving"
-msgstr "Kaydetmeden Çık"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:320
 msgid ""
 "Logic Circuit Simulator is a free and open-source cross-platform desktop\n"
 "application to simulate logic circuits."
 msgstr ""
-"Logic Circuit Simulator, mantık devrelerini simüle etmek için ücretsiz ve\n"
-"açık kaynaklı, çok platformlu bir masaüstü uygulamasıdır."
 
 #: src/ui/src/menubar.cpp:322
 msgid "Developer: "
-msgstr "Geliştirici: "
+msgstr ""
 
 #: src/ui/src/menubar.cpp:327
 msgid "Source code is available at "
-msgstr "Kaynak kodu şu adreste bulunabilir: "
+msgstr ""
 
 #: src/ui/src/menubar.cpp:332
 msgid "Version: "
@@ -174,236 +170,232 @@ msgstr ""
 
 #: src/ui/src/menubar.cpp:341
 msgid "Contact"
-msgstr "İletişim"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:343
 msgid "Email"
-msgstr "E‑posta"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:347
 msgid "Website"
-msgstr "Web sitesi"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:389
 msgid "Background"
-msgstr "Arka Plan"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:391
 msgid "Foreground"
-msgstr "Ön Plan"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:393
 msgid "Black"
-msgstr "Siyah"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:395
 msgid "Red"
-msgstr "Kırmızı"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:397
 msgid "Green"
-msgstr "Yeşil"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:399
 msgid "Yellow"
-msgstr "Sarı"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:401
 msgid "Black Bright"
-msgstr "Açık Siyah"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:403
 msgid "Red Bright"
-msgstr "Açık Kırmızı"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:405
 msgid "Green Bright"
-msgstr "Açık Yeşil"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:407
 msgid "Yellow Bright"
-msgstr "Açık Sarı"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:409
 msgid "Blue"
-msgstr "Mavi"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:411
 msgid "Magenta"
-msgstr "Macenta"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:413
 msgid "Cyan"
-msgstr "Camgöbeği"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:415
 msgid "White"
-msgstr "Beyaz"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:417
 msgid "Blue Bright"
-msgstr "Açık Mavi"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:419
 msgid "Magenta Bright"
-msgstr "Açık Macenta"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:421
 msgid "Cyan Bright"
-msgstr "Açık Camgöbeği"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:423
 msgid "White Bright"
-msgstr "Açık Beyaz"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:442
 msgid "Follow Device"
-msgstr "Cihaz Temasını Kullan"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:443
 msgid "Light Theme"
-msgstr "Açık Tema"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:444
 msgid "Dark Theme"
-msgstr "Koyu Tema"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:474
 msgid "Appearance"
-msgstr "Görünüm"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:478
 msgid "UI Scale"
-msgstr "Arayüz Ölçeği"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:483
 msgid "Language"
-msgstr "Dil"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:490
 msgid "Light Theme Style"
-msgstr "Açık Tema Tercihi"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:497
 msgid "Dark Theme Style"
-msgstr "Koyu Tema Tercihi"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:504
 msgid "Rounded Corners"
-msgstr "Köşe Yuvarlaklığı"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:508
 msgid "Theme Preference"
-msgstr "Tema Tercihi"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:512
 msgid "Start in Fullscreen"
-msgstr "Tam Ekranda Başlat"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:517
 msgid "Startup Window"
-msgstr "Başlangıç Ölçüleri"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:533
 msgid "Apply"
-msgstr "Uygula"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:539
 msgid "Configuration changes were applied."
-msgstr "Değişiklikler uygulandı."
+msgstr ""
 
 #: src/ui/src/menubar.cpp:552
 msgid "Configuration changes were saved."
-msgstr "Değişiklikler kaydedildi."
+msgstr ""
 
 #: src/ui/src/menubar.cpp:560
 msgid "Configuration changes were reverted."
-msgstr "Değişiklikler geri alındı."
+msgstr ""
 
 #: src/ui/src/console.cpp:31
 msgid "Displays warning messages."
-msgstr "Uyarı mesajlarını gösterir."
+msgstr ""
 
 #: src/ui/src/console.cpp:32 src/ui/src/console.cpp:35
 msgid "Clear"
-msgstr "Temizle"
+msgstr ""
 
 #: src/ui/src/console.cpp:35
 msgid "Clears all log messages."
-msgstr "Tüm mesajları temizler."
+msgstr ""
 
 #: src/ui/src/console.cpp:37 src/ui/src/console.cpp:38
 msgid "Auto-scroll"
-msgstr "Aşağı Sabitle"
+msgstr ""
 
 #: src/ui/src/console.cpp:39
 msgid ""
 "When enabled, the scrollbar will be locked to the bottom \n"
 "to display live updates."
 msgstr ""
-"Güncel mesajları görüntüleyebilmek için\n"
-"kaydırma çubuğunu aşağı sabitler."
 
 #: src/ui/src/console.cpp:47
 msgid "Time"
-msgstr "Zaman"
+msgstr ""
 
 #: src/ui/src/console.cpp:49
 msgid "Severity"
-msgstr "Önem"
+msgstr ""
 
 #: src/ui/src/console.cpp:52
 msgid "Module"
-msgstr "Modül"
+msgstr ""
 
 #: src/ui/src/console.cpp:55
 msgid "Message"
-msgstr "Mesaj"
+msgstr ""
 
 #: src/ui/src/console.cpp:84 src/ui/src/scene_info.cpp:101
 msgid "Clipboard"
-msgstr "Panoya Kopyala"
+msgstr ""
 
 #: src/ui/src/console.cpp:85
 msgid "Message is copied to the clipboard."
-msgstr "Mesaj panoya kopyalandı."
+msgstr ""
 
 #: src/ui/src/notification.cpp:121
 msgid "Dismiss"
-msgstr "Gizle"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:31
 msgid ""
 "A panel that displays and allows you to modify the\n"
 "attributes of the currently selected logic gate node."
 msgstr ""
-"Mevcut sahnedeki seçili lojik biriminin özelliklerini\n"
-"görüntüleme ve güncelleme paneli."
 
 #: src/ui/src/inspector.cpp:51
 #, c-format
 msgid "%d items selected."
-msgstr "%d birim seçildi"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:54
 msgid "Delete All"
-msgstr "Tümünü Sil"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:79
 msgid "Select Node"
-msgstr "Birimi Seç"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:92
 msgid "Delete Node"
-msgstr "Birimi Sil"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:108
 msgid "Id"
-msgstr "Numara"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:114 src/ui/src/node_editor.cpp:260
 msgid "Position"
-msgstr "Konum"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:138 src/ui/src/inspector.cpp:156
 #: src/ui/src/inspector.cpp:169 src/ui/src/inspector.cpp:195
@@ -412,249 +404,249 @@ msgstr "Konum"
 #: src/ui/src/inspector.cpp:321 src/ui/src/node_editor.cpp:246
 #: src/ui/src/node_editor.cpp:262 src/ui/src/node_editor.cpp:300
 msgid "Value"
-msgstr "Değer"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:139
 msgid "Frequency"
-msgstr "Frekans"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:161 src/ui/src/inspector.cpp:219
 #: src/ui/src/inspector.cpp:249 src/ui/src/inspector.cpp:276
 #: src/ui/src/dbg_viewer.cpp:76
 msgid "Outputs"
-msgstr "Çıktılar"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:164 src/ui/src/inspector.cpp:222
 #: src/ui/src/inspector.cpp:252 src/ui/src/inspector.cpp:280
 #: src/ui/src/inspector.cpp:313
 msgid "Socket"
-msgstr "Soket"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:167 src/ui/src/inspector.cpp:225
 #: src/ui/src/inspector.cpp:283 src/ui/src/inspector.cpp:316
 #: src/ui/src/inspector.cpp:359
 msgid "Connection"
-msgstr "Bağlantı"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:186 src/ui/src/inspector.cpp:217
 #: src/ui/src/inspector.cpp:248 src/ui/src/inspector.cpp:303
 #: src/ui/src/dbg_viewer.cpp:70
 msgid "Inputs"
-msgstr "Girdiler"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:196
 msgid "Gate Type"
-msgstr "Kapı Türü"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:199
 msgid "Socket Count"
-msgstr "Soket Sayısı"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:362
 msgid "Disconnect"
-msgstr "Bağlantıyı Kes"
+msgstr ""
 
 #: src/ui/src/inspector.cpp:396
 msgid "Disconnect relation"
-msgstr "Bağlantıyı Kes"
+msgstr ""
 
 #: src/ui/src/palette.cpp:20
 msgid ""
 "A collection of available nodes that you can add to your\n"
 "project. Select a node from this panel to instantly place\n"
 "it into the editor."
-msgstr "Sahneye ekleyebileceğin lojik birimleri listeleyen panel."
+msgstr ""
 
 #: src/ui/src/palette.cpp:25 src/ui/src/dbg_viewer.cpp:64
 msgid "Gates"
-msgstr "Kapılar"
+msgstr ""
 
 #: src/ui/src/palette.cpp:31 src/ui/src/node_editor.cpp:82
 #: src/ui/src/node_editor.cpp:295 src/core/src/engine.cpp:10
 msgid "Input"
-msgstr "Girdi"
+msgstr ""
 
 #: src/ui/src/palette.cpp:35 src/ui/src/node_editor.cpp:295
 #: src/core/src/engine.cpp:11
 msgid "Output"
-msgstr "Çıktı"
+msgstr ""
 
 #: src/ui/src/palette.cpp:40 src/ui/src/node_editor.cpp:82
 msgid "Timer"
-msgstr "Zamanlayıcı"
+msgstr ""
 
 #: src/ui/src/palette.cpp:45
 msgid "NOT Gate"
-msgstr "NOT Kapısı"
+msgstr ""
 
 #: src/ui/src/palette.cpp:50
 msgid "AND Gate"
-msgstr "AND Kapısı"
+msgstr ""
 
 #: src/ui/src/palette.cpp:54
 msgid "NAND Gate"
-msgstr "NAND Kapısı"
+msgstr ""
 
 #: src/ui/src/palette.cpp:59
 msgid "OR Gate"
-msgstr "OR Kapısı"
+msgstr ""
 
 #: src/ui/src/palette.cpp:63
 msgid "NOR Gate"
-msgstr "NOR Kapısı"
+msgstr ""
 
 #: src/ui/src/palette.cpp:68
 msgid "XOR Gate"
-msgstr "XOR Kapısı"
+msgstr ""
 
 #: src/ui/src/palette.cpp:72
 msgid "XNOR Gate"
-msgstr "XNOR Kapısı"
+msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:16
 msgid "Memory Debugger"
-msgstr "Hafıza Ayıklayıcı"
+msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:27
 msgid "Meta"
-msgstr "Kılavuz"
+msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:28
 #, c-format
 msgid "Name: %s"
-msgstr "Ad: %s"
+msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:30
 #, c-format
 msgid "Description: %s"
-msgstr "Açıklama: %s"
+msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:31
 #, c-format
 msgid "Author: %s"
-msgstr "Yazar: %s"
+msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:32
 #, c-format
 msgid "Version: %d"
-msgstr "Versiyon: %d"
+msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:35 src/ui/src/scene_info.cpp:62
 #: src/ui/src/scene_info.cpp:63
 msgid "Dependencies"
-msgstr "Bağımlılıklar"
+msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:41
 msgid "Raw"
-msgstr "Ham"
+msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:82
 msgid "Components"
-msgstr "Bileşenler"
+msgstr ""
 
 #: src/ui/src/scene_info.cpp:13 src/ui/src/scene_info.cpp:15
 msgid "Scene Information"
-msgstr "Sahne Bilgileri"
+msgstr ""
 
 #: src/ui/src/scene_info.cpp:37 src/ui/src/scene_info.cpp:73
 msgid "Version"
-msgstr "Versiyon"
+msgstr ""
 
 #: src/ui/src/scene_info.cpp:46
 msgid "Component Attributes"
-msgstr "Bileşen Özellikleri"
+msgstr ""
 
 #: src/ui/src/scene_info.cpp:70
 msgid "Name"
-msgstr "Ad"
+msgstr ""
 
 #: src/ui/src/scene_info.cpp:76
 msgid "Number of Nodes"
-msgstr "Birim Sayısı"
+msgstr ""
 
 #: src/ui/src/scene_info.cpp:102
 msgid "Dependency name is copied to the clipboard."
-msgstr "Bağımlılık adı panoya kopyalandı."
+msgstr ""
 
 #: src/ui/src/scene_info.cpp:107
 msgid "Add Component"
-msgstr "Bileşen Ekle"
+msgstr ""
 
 #: src/ui/src/scene_info.cpp:111
 msgid "Upload"
-msgstr "Yükle"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:52 src/core/src/engine.cpp:12
 msgid "Component Input"
-msgstr "Bileşen Girdisi"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:64 src/core/src/engine.cpp:13
 msgid "Component Output"
-msgstr "Bileşen Çıktısı"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:117
 #, c-format
 msgid "Output %u"
-msgstr "%u. Çıktı"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:135
 #, c-format
 msgid "%s Gate %u"
-msgstr "%s Kapısı %u"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:163
 #, c-format
 msgid "Component Node %u"
-msgstr "%u. Bileşen Birimi"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:188 src/ui/src/node_editor.cpp:192
 msgid "Editor"
-msgstr "Editör"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:193
 msgid "A Panel to edit nodes in the selected scene."
-msgstr "Sahnedeki birimleri düzenleme paneli."
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:240
 #, c-format
 msgid "Relation %d"
-msgstr "%d. Bağlantı"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:242
 msgid "From"
-msgstr "Kaynak"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:244
 msgid "To"
-msgstr "Hedef"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:256
 #, c-format
 msgid "Node %s@%d"
-msgstr "%s@%d Birimi"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:277
 msgid "Please connect all pins."
-msgstr "Lütfen tüm soketleri bağlayınız."
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:294
 #, c-format
 msgid "%s Socket %u"
-msgstr "%s Soket %u"
+msgstr ""
 
 #: src/ui/src/node_editor.cpp:298
 msgid "Owner"
-msgstr "Sahip"
+msgstr ""
 
 #: src/ui/components.h:220
 #, c-format
 msgid "Shortcut: %s"
-msgstr "Kısayol: %s"
+msgstr ""
 
 #: src/core/src/engine.cpp:8
 msgid "Gate"
-msgstr "Kapı"
+msgstr ""
 
 #: src/core/src/engine.cpp:23
 msgid "DISABLED"
-msgstr "DEVRE DIŞI"
+msgstr ""

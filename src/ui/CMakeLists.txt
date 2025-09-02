@@ -54,11 +54,12 @@ target_include_directories(ui PRIVATE
     ${imgui_SOURCE_DIR}/backends
     ${imnodes_SOURCE_DIR}
     ${nfd_SOURCE_DIR}
-
 )
 target_link_libraries(ui PRIVATE
+    common
     core
     imgui
     nfd
+    jsoncpp_static
 )
 target_compile_definitions(ui PRIVATE IMGUI_DEFINE_MATH_OPERATORS)

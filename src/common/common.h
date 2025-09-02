@@ -4,9 +4,10 @@
  * File: common.h
  * Created: 02/04/25
  * Author: Umut Sevdi
- * Description:
+ * Description: Methods and values used across the application
+ * such as helpers for networking, file system access and logging
  *
- * Project: umutsevdi/lc-simulator-2
+ * Project: umutsevdi/logic-circuit-simulator-2
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 
@@ -28,9 +29,7 @@
 #undef FALSE
 #endif
 
-#define VERSION 1
-
-#define APPVERSION "0.0.1"
+#define APPVERSION "0.0.2"
 #define APPPKG "com.lcs.app"
 #define APPNAME "Logic Circuit Simulator"
 #define APPNAME_BIN "LogicCircuitSimulator"
@@ -98,7 +97,7 @@ private:
 };
 
 /******************************************************************************
-                                  LOGGING/
+                                  FILESYSTEM/
 ******************************************************************************/
 
 /**
@@ -111,10 +110,10 @@ struct Message {
     Severity severity = DEBUG;
     std::array<char, 12> time_str {};
     std::array<char, 6> log_level {};
-    std::array<char, 18> obj {};
-    std::array<char, 20> file {};
-    std::array<char, 20> file_line {};
-    std::array<char, 25> fn {};
+    std::array<char, 10> obj {};
+    std::array<char, 10> file {};
+    std::array<char, 15> file_line {};
+    std::array<char, 16> fn {};
     std::array<char, 380> expr {};
     int line = 0;
 
@@ -161,7 +160,6 @@ private:
 };
 
 namespace fs {
-
 #if defined(__GNUC__)
 #define __LLOG__(STATUS, ...)                                                  \
     lcs::fs::_log(Message {                                                    \
@@ -174,11 +172,7 @@ namespace fs {
         Message { STATUS, __FILENAME__, __LINE__, __FUNCSIG__, __VA_ARGS__ })
 #endif
 
-// #ifndef NDEBUG
-// #define L_DEBUG(...) __LLOG__(Message::DEBUG, __VA_ARGS__)
-// #else
-#define L_DEBUG(...)
-// #endif
+#define L_DEBUG(...) __LLOG__(Message::DEBUG, __VA_ARGS__)
 #define L_INFO(...) __LLOG__(Message::INFO, __VA_ARGS__)
 #define L_WARN(...) __LLOG__(Message::WARN, __VA_ARGS__)
 #define L_ERROR(...) __LLOG__(Message::ERROR, __VA_ARGS__)
@@ -213,6 +207,7 @@ namespace fs {
      * @param is_testing whether testing mode is enabled or not
      */
     void init(bool is_testing = false);
+
     void close(void);
 
     /**
@@ -225,6 +220,7 @@ namespace fs {
     void clear_log(void);
 
     extern bool is_testing;
+    extern bool is_verbose;
     /** Root level directory where required files live.
      * - Default configuration values.
      * - Fonts
@@ -295,9 +291,71 @@ namespace fs {
 
 } // namespace fs
 
-/******************************************************************************
-                                  /LOGGING
-******************************************************************************/
+namespace net {
+    void init(bool testing = false);
+    void close(void);
+
+    struct HttpResponse {
+        std::vector<uint8_t> data;
+        int status_code = 0;
+        Error err       = Error::OK;
+    };
+
+    /** Send a GET request to targeted URL.
+     * @param URL target URL.
+     * @param authorization header, optional.
+     *
+     * @returns HttpRequestId
+     */
+    uint64_t get_request(
+        const std::string& URL, const std::string& authorization = "");
+
+    /** Send a GET request to targeted URL. Execute a callback upon receiving
+     * response.
+     * @param cb callback function.
+     * @param URL target URL.
+     * @param authorization header, optional.
+     */
+    void get_request_then(std::function<void(HttpResponse& resp)> cb,
+        const std::string& URL, const std::string& authorization = "");
+
+    /** Send a POST request to targeted URL.
+     * @param URL target URL.
+     * @param req request body.
+     * @param authorization header, optional.
+     *
+     * @returns HttpRequestId
+     */
+    uint64_t post_request(const std::string& URL,
+        const std::vector<uint8_t>& req, const std::string& authorization = "");
+
+    /** Send a POST request to targeted URL. Execute a callback upon receiving
+     * response.
+     * @param cb callback function.
+     * @param URL target URL.
+     * @param req request body.
+     * @param authorization header, optional.
+     */
+    void post_request_then(std::function<void(HttpResponse& resp)> cb,
+        const std::string& URL, const std::vector<uint8_t>& req,
+        const std::string& authorization = "");
+
+    /**
+     * Attempts  to obtain a completed request, updating session on success.
+     * @param id to query.
+     * @param session to update
+     *
+     * @returns whether request is completed or not.
+     */
+    bool pull_response(uint64_t id, HttpResponse& session);
+
+} // namespace net
+
+/**
+ * Opens the provided URL on the operating system's preferred browser.
+ * @param url to open
+ */
+void open_browser(const std::string& url);
 
 } // namespace lcs
 

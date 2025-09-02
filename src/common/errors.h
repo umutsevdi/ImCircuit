@@ -14,11 +14,23 @@ namespace lcs {
 enum Error {
     /** Operation is successful. */
     OK,
+    /** This build of LCS does not support Graphical User Interface.*/
+    GUI_NOT_SUPPORTED,
+    /** File is not a LCS file. */
+    INVALID_FILE,
     /** Parser encountered end of file before end of a instruction. */
     INCOMPLETE_INSTR,
+    /** Attempted to execute a scene function while no scene is active. */
+    NO_SCENE,
+    /** Shell mode can only process one scene at a time. */
+    ALREADY_ACTIVE_SCENE,
+    /** Command requires an argument. */
+    NO_ARGUMENT,
+    /** Provided argument does not match with the required type. */
+    INVALID_ARGUMENT,
     /** Deserialization failed due to unexpected byte in the file. */
     INVALID_BYTE,
-    /** Parser encountered a invalid string. */
+    /** Invalid string, possibly too large or empty. */
     INVALID_STRING,
     /** Object has 0 as node id. */
     INVALID_NODEID,
@@ -49,6 +61,8 @@ enum Error {
     INVALID_JSON,
     /** No such file or directory in given path */
     NOT_FOUND,
+    /** Given node does not exist within the scene. */
+    NODE_NOT_FOUND,
     /** Failed to save file*/
     NO_SAVE_PATH_DEFINED,
     /** Failed to send the request to the server. Request didn't arrive to the
@@ -59,7 +73,8 @@ enum Error {
     RESPONSE_ERROR,
     /** Response is not a valid JSON string. */
     JSON_PARSE_ERROR,
-
+    /** Attempted to modify a scene that was closed. */
+    INVALID_TAB,
     /** See error message.*/
     KEYCHAIN_GENERIC_ERROR,
     /** Key not found.*/
@@ -84,11 +99,24 @@ constexpr const char* errmsg(Error e)
 {
     switch (e) {
     case OK: return "Operation is successful.";
+    case GUI_NOT_SUPPORTED:
+        return "This build does not support Graphical User Interface. Run with "
+               "--interactive parameter.";
+    case INVALID_FILE:
+        return "Unexpected file type. Expected file type is \".lcs\".";
     case INCOMPLETE_INSTR:
         return "Parser encountered end of file before end of a instruction.";
     case INVALID_BYTE:
         return "Deserialization failed due to unexpected byte in the file.";
-    case INVALID_STRING: return "Parser encountered a invalid string. ";
+    case NO_ARGUMENT: return "Command requires an argument. ";
+    case INVALID_ARGUMENT:
+        return "Provided argument does not match with the required type.";
+    case NO_SCENE:
+        return "Attempted to execute a scene function while no scene is "
+               "active.";
+    case ALREADY_ACTIVE_SCENE:
+        return "Shell mode can only process one scene at a time.";
+    case INVALID_STRING: return "Invalid string, possibly too large or empty. ";
     case INVALID_NODEID: return "Object has invalid ID.";
     case INVALID_RELID: return "Object has invalid relationship ID.";
     case REL_NOT_FOUND: return "The relationship was not found.";
@@ -103,15 +131,17 @@ constexpr const char* errmsg(Error e)
     case INVALID_JSON: return "Invalid JSON format.";
     case INVALID_SCENE_FORMAT: return "Invalid scene document.";
     case NOT_FOUND: return "No such file or directory.";
+    case NODE_NOT_FOUND: return "Given node does not exist within the scene.";
     case NO_SAVE_PATH_DEFINED: return "Failed to save file.";
     case REQUEST_FAILED: return "Failed to send the request.";
     case RESPONSE_ERROR: return "Bad request.";
     case JSON_PARSE_ERROR: return "Response is not a valid JSON string.";
+    case INVALID_TAB: return "No tab to close.";
     case KEYCHAIN_GENERIC_ERROR: return "Keychain couldn't load the password.";
     case KEYCHAIN_NOT_FOUND: return "Key was not found.";
     case KEYCHAIN_TOO_LONG: return "[WindowsOnly] key is too long.";
     case KEYCHAIN_ACCESS_DENIED: return "[AppleOnly] Authorization failure.";
-    case UNTERMINATED_FLOW: return "Already active flowl.";
+    case UNTERMINATED_FLOW: return "Already active flow.";
     case NFD: return "NFD Eror.";
     case LOCALE_ERROR: return "Error while updating the locale.";
 

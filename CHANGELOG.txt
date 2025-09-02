@@ -1,0 +1,37 @@
+
+Logic Circuit Simulator
+AUTHOR:           Umut Sevdi <mail@umutsevdi.com>
+SOURCE CODE:      https://github.com/umutsevdi/logic-circuit-simulator-2
+RELEASES:         https://github.com/umutsevdi/logic-circuit-simulator-2/releases
+ISSUES & SUPPORT: https://github.com/umutsevdi/logic-circuit-simulator-2/issues
+CODE DOCS:        https://docs.umutsevdi.com/lcs2/
+
+CHANGELOG
+
+-------------------------------------------------------------------------------
+0.0.2 - Fri, Sep 05 2025
+-------------------------------------------------------------------------------
+[https://github.com/owner/name/releases/tag/v0.0.2]
+
+Changes:
+    - Added support for different languages.
+    - Various UI improvements.
+    - Fixed bugs related to tab management.
+    - Added CLI option with an interactive shell.
+    - Windows build now targets local user.
+
+-------------------------------------------------------------------------------
+0.0.1 - Wed, Aug 26 2025
+-------------------------------------------------------------------------------
+[https://github.com/owner/name/releases/tag/v0.0.1]
+
+Changes:
+    - Create projects, including scenes and components.
+    - Utilize gates for both basic and complex logic calculations.
+    - Visualize connections and view all parameters of any logic gate within 
+your scenes.
+    - Save and load your progress seamlessly.
+    - Work with tabs to manage multiple scenes and components simultaneously.
+    - Save components for use across different scenes and even within other 
+components.
+    - Support for both Windows and Linux.

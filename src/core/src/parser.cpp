@@ -276,6 +276,7 @@ LCS_ERROR static inline _decode_node(const uint8_t** bgnptr,
         if (Error err = s.get_node<Component>(n)->set_component(dep_idx); err) {
             return err;
         }
+        cursor++;
     }
     if constexpr (std::is_same<T, Output>()) {
         n = s.add_node<Output>();

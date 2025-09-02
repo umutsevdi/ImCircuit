@@ -33,7 +33,7 @@
 *.app
 
 build/
-imgui.ini
+i18n/*~
 vcpkg/
 vcpkg_installed/
 out/
