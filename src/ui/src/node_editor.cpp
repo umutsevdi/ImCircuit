@@ -8,27 +8,24 @@
 #include "ui.h"
 
 namespace lcs::ui::layout {
-static void _show_node(NRef<Input> base_node, uint16_t id, bool has_changes);
-static void _show_node(NRef<Output> base_node, uint16_t id, bool has_changes);
-static void _show_node(NRef<Gate> base_node, uint16_t id, bool has_changes);
-static void _show_node(
-    NRef<Component> base_node, uint16_t id, bool has_changes);
-static void _show_node(
-    NRef<ComponentContext> base_node, uint16_t id, bool has_changes);
+static void _show_node(Input& node, uint16_t id, bool is_changed);
+static void _show_node(Output& node, uint16_t id, bool is_changed);
+static void _show_node(Gate& node, uint16_t id, bool is_changed);
+static void _show_node(Component& node, uint16_t id, bool is_changed);
+static void _show_node(ComponentContext& node, uint16_t, bool);
 
-void _sync_position(NRef<BaseNode> node, uint32_t node_id, bool has_changes)
+void _sync_position(BaseNode& node, uint32_t node_id, bool is_changed)
 {
-    if (has_changes) {
+    if (is_changed) {
         ImNodes::SetNodeGridSpacePos(
-            node_id, { (float)node->point.x, (float)node->point.y });
+            node_id, { (float)node.point().x, (float)node.point().y });
     } else {
         auto pos = ImNodes::GetNodeGridSpacePos(node_id);
         pos      = { std::floor(pos.x), std::floor(pos.y) };
         ImNodes::SetNodeGridSpacePos(node_id, pos);
-        if (pos.x != node->point.x || pos.y != node->point.y) {
-            node->point
-                = { static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y) };
-            tabs::notify();
+        if (pos.x != node.point().x || pos.y != node.point().y) {
+            node.move(
+                { static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y) });
         }
     }
 }
@@ -42,148 +39,7 @@ static inline ImNodesPinShape_ to_shape(bool value, bool is_input)
     return value ? ImNodesPinShape_QuadFilled : ImNodesPinShape_Quad;
 }
 
-void _show_node(NRef<ComponentContext> node, uint16_t, bool)
-{
-    uint32_t compin  = Node { 0, Node::COMPONENT_INPUT }.numeric();
-    uint32_t compout = Node { 0, Node::COMPONENT_OUTPUT }.numeric();
-
-    ImNodes::BeginNode(compin);
-    ImNodes::BeginNodeTitleBar();
-    ImGui::Text(_("Component Input"));
-    ImNodes::EndNodeTitleBar();
-    for (size_t i = 0; i < node->inputs.size(); i++) {
-        ImNodes::BeginOutputAttribute(encode_pair(node->get_input(i), 0, true),
-            to_shape(node->inputs[i].size() > 0, true));
-        ImGui::Text("%zu", i + 1);
-        ImNodes::EndInputAttribute();
-    }
-    ImNodes::EndNode();
-
-    ImNodes::BeginNode(compout);
-    ImNodes::BeginNodeTitleBar();
-    ImGui::Text(_("Component Output"));
-    ImNodes::EndNodeTitleBar();
-    for (size_t i = 0; i < node->outputs.size(); i++) {
-        ImNodes::BeginInputAttribute(encode_pair(node->get_output(i), 0, false),
-            to_shape(node->outputs[i] != 0, true));
-        ImGui::Text("%zu", i + 1);
-        ImNodes::EndInputAttribute();
-    }
-    ImNodes::EndNode();
-}
-
-void _show_node(NRef<Input> node, uint16_t id, bool has_changes)
-{
-    Node nodeinfo   = Node { id, Node::Type::INPUT };
-    uint32_t nodeid = nodeinfo.numeric();
-    ImNodes::BeginNode(nodeid);
-    _sync_position(node->base(), nodeid, has_changes);
-    ImNodes::BeginNodeTitleBar();
-    ImGui::Text("%s %u", node->is_timer() ? _("Timer") : _("Input"), id);
-    ImNodes::EndNodeTitleBar();
-
-    ImNodes::BeginOutputAttribute(encode_pair(nodeinfo, 0, true),
-        to_shape(node->output.size() > 0, false));
-    if (node->is_timer()) {
-        ImGui::PushItemWidth(60);
-        float freq_value = static_cast<float>(node->_freq) / 10.f;
-        if (ImGui::SliderFloat("Hz", &freq_value, 0.1f, 5.0f, "%.1f")) {
-            if (freq_value != node->_freq) {
-                node->_freq = freq_value * 10;
-                tabs::notify();
-            }
-        }
-        ImGui::PopItemWidth();
-    } else {
-        State old = node->get();
-        if (State t = ToggleButton(old, true); t != old) {
-            node->toggle();
-        }
-    }
-    ImGui::SameLine();
-    ImGui::Text("1");
-    ImNodes::EndOutputAttribute();
-
-    ImNodes::EndNode();
-}
-
-void _show_node(NRef<Output> node, uint16_t id, bool has_changes)
-{
-    Node nodeinfo   = Node { id, Node::Type::OUTPUT };
-    uint32_t nodeid = nodeinfo.numeric();
-    ImNodes::BeginNode(nodeid);
-    _sync_position(node->base(), nodeid, has_changes);
-    ImNodes::BeginNodeTitleBar();
-    ImGui::Text(_("Output %u"), id);
-    ImNodes::EndNodeTitleBar();
-
-    ImNodes::BeginInputAttribute(
-        encode_pair(nodeinfo, 0, false), to_shape(node->is_connected(), false));
-    ImGui::Text("1");
-    ImNodes::EndInputAttribute();
-
-    ImNodes::EndNode();
-}
-
-void _show_node(NRef<Gate> node, uint16_t id, bool has_changes)
-{
-    Node nodeinfo   = Node { id, Node::Type::GATE };
-    uint32_t nodeid = nodeinfo.numeric();
-    ImNodes::BeginNode(nodeid);
-    _sync_position(node->base(), nodeid, has_changes);
-    ImNodes::BeginNodeTitleBar();
-    ImGui::Text(_("%s Gate %u"), to_str<Gate::Type>(node->type()), id);
-    ImNodes::EndNodeTitleBar();
-
-    for (size_t i = 0; i < node->inputs.size(); i++) {
-        if (i == node->inputs.size() / 2) {
-            ImNodes::BeginOutputAttribute(encode_pair(nodeinfo, 0, true),
-                to_shape(node->output.size() > 0, false));
-            ImGui::SetCursorPosX(
-                ImGui::GetCursorPosX() + ImGui::CalcTextSize("         ").x);
-            ImGui::Text("1");
-            ImNodes::EndOutputAttribute();
-        }
-        ImNodes::BeginInputAttribute(encode_pair(nodeinfo, i, false),
-            to_shape(node->is_connected(), true));
-        ImGui::Text("%zu", i + 1);
-        ImNodes::EndInputAttribute();
-    }
-
-    ImNodes::EndNode();
-}
-
-void _show_node(NRef<Component> node, uint16_t id, bool has_changes)
-{
-    Node nodeinfo   = Node { id, Node::Type::COMPONENT };
-    uint32_t nodeid = nodeinfo.numeric();
-    ImNodes::BeginNode(nodeid);
-    _sync_position(node->base(), nodeid, has_changes);
-    ImNodes::BeginNodeTitleBar();
-    ImGui::Text(_("Component Node %u"), id);
-    ImNodes::EndNodeTitleBar();
-
-    for (size_t i = 0; i < node->inputs.size(); i++) {
-        if (i == node->inputs.size() / 2) {
-            for (size_t j = 0; j < node->outputs.size(); j++) {
-                ImNodes::BeginOutputAttribute(encode_pair(nodeinfo, j, true),
-                    to_shape(!node->outputs[j].empty(), false));
-                ImGui::SetCursorPosX(ImGui::GetCursorPosX()
-                    + ImGui::CalcTextSize("         ").x);
-                ImGui::Text("%zu", j + 1);
-                ImNodes::EndOutputAttribute();
-            }
-        }
-        ImNodes::BeginInputAttribute(encode_pair(nodeinfo, i, false),
-            to_shape(node->is_connected(), true));
-        ImGui::Text("%zu", i + 1);
-        ImNodes::EndInputAttribute();
-    }
-
-    ImNodes::EndNode();
-}
-
-void NodeEditor(NRef<Scene> scene)
+void NodeEditor(Ref<Scene> scene, bool is_changed)
 {
     std::string title = std::string { _("Editor") } + "###Editor";
     if (ImGui::Begin(title.c_str(), nullptr,
@@ -194,28 +50,27 @@ void NodeEditor(NRef<Scene> scene)
         ImNodes::BeginNodeEditor();
         if (scene != nullptr) {
             const LcsTheme& style = get_active_style();
-            bool has_changes      = tabs::is_changed();
             if (scene->component_context.has_value()) {
-                _show_node(&scene->component_context.value(), 0, has_changes);
+                _show_node(scene->component_context.value(), 0, is_changed);
             }
             for (size_t i = 0; i < scene->_inputs.size(); i++) {
                 if (!scene->_inputs[i].is_null()) {
-                    _show_node(&scene->_inputs[i], i, has_changes);
+                    _show_node(scene->_inputs[i], i, is_changed);
                 }
             }
             for (size_t i = 0; i < scene->_outputs.size(); i++) {
                 if (!scene->_outputs[i].is_null()) {
-                    _show_node(&scene->_outputs[i], i, has_changes);
+                    _show_node(scene->_outputs[i], i, is_changed);
                 }
             }
             for (size_t i = 0; i < scene->_gates.size(); i++) {
                 if (!scene->_gates[i].is_null()) {
-                    _show_node(&scene->_gates[i], i, has_changes);
+                    _show_node(scene->_gates[i], i, is_changed);
                 }
             }
             for (size_t i = 0; i < scene->_components.size(); i++) {
                 if (!scene->_components[i].is_null()) {
-                    _show_node(&scene->_components[i], i, has_changes);
+                    _show_node(scene->_components[i], i, is_changed);
                 }
             }
             for (auto& r : scene->_relations) {
@@ -252,13 +107,14 @@ void NodeEditor(NRef<Scene> scene)
             if (ImNodes::IsNodeHovered(&nodeid_encoded)) {
                 Node nodeid { static_cast<uint16_t>(0xFFFF & nodeid_encoded),
                     (Node::Type)(nodeid_encoded >> 16) };
-                if (NRef<BaseNode> n = scene->get_base(nodeid); n != nullptr
+                if (auto n = scene->get_base(nodeid); n != nullptr
                     && BeginTooltip(ICON_LC_CODESANDBOX, _("Node %s@%d"),
                         to_str<Node::Type>(nodeid.type), nodeid.index)) {
                     AnonTable(
                         "Node", 0,
                         TablePair(Field(_("Position")),
-                            ImGui::Text("(%d, %d)", n->point.x, n->point.y));
+                            ImGui::Text(
+                                "(%d, %d)", n->point().x, n->point().y));
                         TableKey(Field(_("Value")));
                         if (nodeid.type != Node::Type::COMPONENT) {
                             ToggleButton(n->get());
@@ -318,20 +174,15 @@ void NodeEditor(NRef<Scene> scene)
                 sockid from_sock = 0, to_sock = 0;
                 Node from = decode_pair(start_pin_id, &from_sock);
                 Node to   = decode_pair(end_pin_id, &to_sock);
-                if (!scene->connect(to, to_sock, from, from_sock)) {
-                    tabs::notify();
-                }
+                scene->connect(to, to_sock, from, from_sock);
             };
-            if (ImGui::IsMouseReleased(ImGuiMouseButton_Right)
-                && ImNodes::NumSelectedNodes() > 0) {
-                size_t node_s = ImNodes::NumSelectedNodes();
-                size_t link_s = ImNodes::NumSelectedLinks();
-                if (node_s && link_s) {
-                    L_INFO("Context for Nodes && Links");
-                } else if (node_s) {
-                    L_INFO("Context for Nodes");
-                } else if (link_s) {
-                    L_INFO("Context for Links");
+            if (ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+                int id;
+                if (ImNodes::IsLinkHovered((int*)&id)) {
+                    scene->disconnect(id);
+                } else if (ImNodes::IsNodeHovered((int*)&id)) {
+                    Node n  = decode_pair(id);
+                    Error _ = scene->remove_node(n);
                 }
             }
         } else {
@@ -339,6 +190,145 @@ void NodeEditor(NRef<Scene> scene)
         }
     }
     ImGui::End();
+}
+void _show_node(ComponentContext& node, uint16_t, bool)
+{
+    uint32_t compin  = Node { 0, Node::COMPONENT_INPUT }.numeric();
+    uint32_t compout = Node { 0, Node::COMPONENT_OUTPUT }.numeric();
+
+    ImNodes::BeginNode(compin);
+    ImNodes::BeginNodeTitleBar();
+    ImGui::Text(_("Component Input"));
+    ImNodes::EndNodeTitleBar();
+    for (size_t i = 0; i < node.inputs.size(); i++) {
+        ImNodes::BeginOutputAttribute(encode_pair(node.get_input(i), 0, true),
+            to_shape(node.inputs[i].size() > 0, true));
+        ImGui::Text("%zu", i + 1);
+        ImNodes::EndInputAttribute();
+    }
+    ImNodes::EndNode();
+
+    ImNodes::BeginNode(compout);
+    ImNodes::BeginNodeTitleBar();
+    ImGui::Text(_("Component Output"));
+    ImNodes::EndNodeTitleBar();
+    for (size_t i = 0; i < node.outputs.size(); i++) {
+        ImNodes::BeginInputAttribute(encode_pair(node.get_output(i), 0, false),
+            to_shape(node.outputs[i] != 0, true));
+        ImGui::Text("%zu", i + 1);
+        ImNodes::EndInputAttribute();
+    }
+    ImNodes::EndNode();
+}
+
+void _show_node(Input& node, uint16_t id, bool is_changed)
+{
+    Node nodeinfo   = Node { id, Node::Type::INPUT };
+    uint32_t nodeid = nodeinfo.numeric();
+    ImNodes::BeginNode(nodeid);
+    _sync_position(node, nodeid, is_changed);
+    ImNodes::BeginNodeTitleBar();
+    ImGui::Text("%s %u", node.is_timer() ? _("Timer") : _("Input"), id);
+    ImNodes::EndNodeTitleBar();
+
+    ImNodes::BeginOutputAttribute(encode_pair(nodeinfo, 0, true),
+        to_shape(node.output.size() > 0, false));
+    if (node.is_timer()) {
+        ImGui::PushItemWidth(60);
+        float freq_value = static_cast<float>(node.freq()) / 10.f;
+        if (ImGui::SliderFloat("Hz", &freq_value, 0.1f, 5.0f, "%.1f")) {
+            if (freq_value != node.freq()) {
+                node.set_freq(freq_value * 10);
+            }
+        }
+        ImGui::PopItemWidth();
+    } else {
+        State old = node.get();
+        if (State t = ToggleButton(old, true); t != old) {
+            node.toggle();
+        }
+    }
+    ImGui::SameLine();
+    ImGui::Text("1");
+    ImNodes::EndOutputAttribute();
+
+    ImNodes::EndNode();
+}
+
+void _show_node(Output& node, uint16_t id, bool is_changed)
+{
+    Node nodeinfo   = Node { id, Node::Type::OUTPUT };
+    uint32_t nodeid = nodeinfo.numeric();
+    ImNodes::BeginNode(nodeid);
+    _sync_position(node, nodeid, is_changed);
+    ImNodes::BeginNodeTitleBar();
+    ImGui::Text(_("Output %u"), id);
+    ImNodes::EndNodeTitleBar();
+
+    ImNodes::BeginInputAttribute(
+        encode_pair(nodeinfo, 0, false), to_shape(node.is_connected(), false));
+    ImGui::Text("1");
+    ImNodes::EndInputAttribute();
+
+    ImNodes::EndNode();
+}
+
+void _show_node(Gate& node, uint16_t id, bool is_changed)
+{
+    Node nodeinfo   = Node { id, Node::Type::GATE };
+    uint32_t nodeid = nodeinfo.numeric();
+    ImNodes::BeginNode(nodeid);
+    _sync_position(node, nodeid, is_changed);
+    ImNodes::BeginNodeTitleBar();
+    ImGui::Text(_("%s Gate %u"), to_str<Gate::Type>(node.type()), id);
+    ImNodes::EndNodeTitleBar();
+
+    for (size_t i = 0; i < node.inputs.size(); i++) {
+        if (i == node.inputs.size() / 2) {
+            ImNodes::BeginOutputAttribute(encode_pair(nodeinfo, 0, true),
+                to_shape(node.output.size() > 0, false));
+            ImGui::SetCursorPosX(
+                ImGui::GetCursorPosX() + ImGui::CalcTextSize("         ").x);
+            ImGui::Text("1");
+            ImNodes::EndOutputAttribute();
+        }
+        ImNodes::BeginInputAttribute(encode_pair(nodeinfo, i, false),
+            to_shape(node.is_connected(), true));
+        ImGui::Text("%zu", i + 1);
+        ImNodes::EndInputAttribute();
+    }
+
+    ImNodes::EndNode();
+}
+
+void _show_node(Component& node, uint16_t id, bool is_changed)
+{
+    Node nodeinfo   = Node { id, Node::Type::COMPONENT };
+    uint32_t nodeid = nodeinfo.numeric();
+    ImNodes::BeginNode(nodeid);
+    _sync_position(node, nodeid, is_changed);
+    ImNodes::BeginNodeTitleBar();
+    ImGui::Text(_("Component Node %u"), id);
+    ImNodes::EndNodeTitleBar();
+
+    for (size_t i = 0; i < node.inputs.size(); i++) {
+        if (i == node.inputs.size() / 2) {
+            for (size_t j = 0; j < node.outputs.size(); j++) {
+                ImNodes::BeginOutputAttribute(encode_pair(nodeinfo, j, true),
+                    to_shape(!node.outputs[j].empty(), false));
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX()
+                    + ImGui::CalcTextSize("         ").x);
+                ImGui::Text("%zu", j + 1);
+                ImNodes::EndOutputAttribute();
+            }
+        }
+        ImNodes::BeginInputAttribute(encode_pair(nodeinfo, i, false),
+            to_shape(node.is_connected(), true));
+        ImGui::Text("%zu", i + 1);
+        ImNodes::EndInputAttribute();
+    }
+
+    ImNodes::EndNode();
 }
 
 } // namespace lcs::ui::layout

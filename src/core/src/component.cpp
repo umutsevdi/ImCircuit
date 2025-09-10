@@ -22,6 +22,10 @@ ComponentContext::ComponentContext(
 
 void ComponentContext::setup(sockid input_s, sockid output_s)
 {
+    sockid oldinput_s  = inputs.size();
+    sockid oldoutput_s = inputs.size();
+    _parent->undo.push(
+        [this, oldinput_s, oldoutput_s]() { setup(oldinput_s, oldoutput_s); });
     if (inputs.size() > input_s) {
         for (size_t i = input_s; i < inputs.size(); i++) {
             for (relid& id : inputs[i]) {

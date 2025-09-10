@@ -38,7 +38,7 @@
 #include "core.h"
 inline bool scene_cmp(lcs::Scene& s1, lcs::Scene& s2)
 {
-    if (s1.name != s2.name || s1.description != s2.description
+    if (s1.name() != s2.name() || s1.description() != s2.description()
         || s1.version != s2.version || s1._inputs.size() != s2._inputs.size()
         || s1._outputs.size() != s2._outputs.size()
         || s1._gates.size() != s2._gates.size()

@@ -76,6 +76,7 @@ bool Gate::increment()
     if (_type == Type::NOT) {
         return false;
     }
+    _parent->undo.push([this]() { this->decrement(); });
     inputs.push_back(0);
     on_signal();
     return true;
@@ -89,6 +90,7 @@ bool Gate::decrement()
     if (inputs[inputs.size() - 1] != 0) {
         _parent->disconnect(inputs[inputs.size() - 1]);
     }
+    _parent->undo.push([this]() { this->increment(); });
     inputs.pop_back();
     on_signal();
     return true;

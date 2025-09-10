@@ -31,7 +31,7 @@ enum FontFlags {
 ImFont* get_font(int attributes);
 float get_font_size(int attributes);
 
-void SceneType(NRef<Scene>);
+void SceneType(Ref<Scene>);
 
 int hash_pair(Node node, sockid sock, bool is_out);
 
@@ -67,7 +67,7 @@ const ImageHandle* get_texture(const std::string& key);
 
 void Toast(const char* icon, const char* title, const char* message,
     bool is_error = false);
-bool PositionSelector(Point& point, const char* prefix);
+Point PositionSelector(Point point, const char* prefix);
 State ToggleButton(State, bool clickable = false);
 void NodeTypeTitle(Node n);
 void NodeTypeTitle(Node n, sockid sock);

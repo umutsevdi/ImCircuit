@@ -60,6 +60,13 @@ Node decode_pair(int code, sockid* sock, bool* is_out)
         static_cast<Node::Type>((code >> 16) & 0x0F) };
 }
 
+void BaseNode::move(Point p)
+{
+    Point oldp = _point;
+    _parent->undo.push([this, oldp]() { this->move(oldp); });
+    _point = p;
+}
+
 /******************************************************************************
                                 InputNode
 *****************************************************************************/
@@ -72,6 +79,7 @@ void Input::set(bool v)
 
 void Input::toggle()
 {
+    _parent->undo.push([this]() { this->toggle(); });
     _value = !_value;
     on_signal();
 }
@@ -95,6 +103,15 @@ void Input::clean(void)
             _parent->disconnect(r);
         }
     }
+}
+void Input::set_freq(uint8_t freq)
+{
+    if (freq == 0) {
+        return;
+    }
+    uint8_t oldfreq = _freq;
+    _parent->undo.push([this, oldfreq]() { set_freq(oldfreq); });
+    _freq = freq;
 }
 
 /******************************************************************************

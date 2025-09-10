@@ -29,6 +29,7 @@ option(LCS_ENABLE_DOXYGEN "Generate Doxygen documentation" YES)
 option(LCS_BUILD_TESTS "Build and run tests" YES)
 option(LCS_GUI "Build with user interface" YES)
 option(LCS_PACKAGE "Package the executable" YES)
+option(NFD_PORTAL "Use xdg-dektop-portal on Linux builds" YES)
 
 set(CMAKE_C_STANDARD 11)
 if (MSVC)

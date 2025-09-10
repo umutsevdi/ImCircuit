@@ -32,16 +32,16 @@ TEST_CASE("parse-scene-with-different-input-types")
 {
     Scene s { "different-input-types" };
 
-    Node g_and                   = s.add_node<Gate>(Gate::Type::AND);
-    Node i1                      = s.add_node<Input>();
-    Node i2                      = s.add_node<Input>();
-    Node o                       = s.add_node<Output>();
-    s.get_node<Input>(i1)->_freq = 3;
+    Node g_and = s.add_node<Gate>(Gate::Type::AND);
+    Node i1    = s.add_node<Input>();
+    Node i2    = s.add_node<Input>();
+    Node o     = s.add_node<Output>();
+    s.get_node<Input>(i1)->set_freq(3);
 
     s.connect(g_and, 0, i2);
     s.connect(g_and, 1, i1);
     s.connect(o, 0, g_and);
-    s.get_base(i1)->point = { 1, 3 };
+    s.get_base(i1)->move({ 1, 3 });
 
     std::vector<uint8_t> v;
     REQUIRE_EQ(s.write_to(v), Error::OK);

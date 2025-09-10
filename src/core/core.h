@@ -16,6 +16,7 @@
 #include <filesystem>
 #include <map>
 #include <optional>
+#include <stack>
 #include "common.h"
 
 namespace lcs {
@@ -54,9 +55,7 @@ struct Node {
 
     Node(uint16_t _id = UINT16_MAX, Node::Type _type = GATE)
         : index { _id }
-        , type { _type }
-    {
-    }
+        , type { _type } { };
 
     Node(Node&&)                 = default;
     Node(const Node&)            = default;
@@ -105,16 +104,16 @@ struct Point {
 
     int16_t x;
     int16_t y;
+
+    bool operator==(const Point& p) const { return p.x == x && p.y == y; }
+    bool operator!=(const Point& p) const { return p.x != x || p.y != y; }
 };
 
 class BaseNode {
 public:
     BaseNode(Scene* scene, Point _p = {})
-        : point { _p }
-        , _parent { scene }
-    {
-    }
-
+        : _parent { scene }
+        , _point { _p } { };
     BaseNode(const BaseNode&)            = default;
     BaseNode(BaseNode&&)                 = default;
     BaseNode& operator=(BaseNode&&)      = default;
@@ -122,10 +121,20 @@ public:
     virtual ~BaseNode()                  = default;
 
     inline BaseNode* base(void) { return dynamic_cast<BaseNode*>(this); };
-    inline void reload(Scene* s) { _parent = s; }
+    inline const BaseNode* base(void) const
+    {
+        return dynamic_cast<const BaseNode*>(this);
+    };
+    inline void reload(Scene* s)
+    {
+        if (_parent != nullptr) {
+            _parent = s;
+        }
+    }
     inline bool is_null() const { return _parent == nullptr; }
     inline void set_null() { _parent = nullptr; }
-
+    inline Point point(void) const { return _point; }
+    void move(Point p);
     /** Returns whether all nodes are connected */
     bool virtual is_connected(void) const = 0;
     /** Get the current status */
@@ -135,10 +144,9 @@ public:
     /** Disconnects from all connected nodes and invalidates its Node id. */
     virtual void clean(void) = 0;
 
-    Point point;
-
 protected:
     Scene* _parent;
+    Point _point;
 };
 
 /**
@@ -156,17 +164,12 @@ struct Rel {
         , to_node { _to_node }
         , from_sock { _from_sock }
         , to_sock { _to_sock }
-        , value { DISABLED }
-    {
-    }
-
+        , value { DISABLED } { };
     Rel()
         : id { 0 }
         , from_sock { 0 }
         , to_sock { 0 }
-        , value { DISABLED }
-    {
-    }
+        , value { DISABLED } { };
 
     ~Rel() = default;
 
@@ -184,7 +187,7 @@ struct Rel {
 class Gate final : public BaseNode {
 public:
     enum Type : uint8_t { NOT, AND, OR, XOR, NAND, NOR, XNOR };
-    explicit Gate(Scene*, Type type = Type::AND, sockid max_in = 2);
+    Gate(Scene*, Type type = Type::AND, sockid max_in = 2);
     Gate(const Gate&)            = default;
     Gate(Gate&&)                 = default;
     Gate& operator=(Gate&&)      = default;
@@ -217,7 +220,7 @@ private:
 
 class Component final : public BaseNode {
 public:
-    explicit Component(Scene*);
+    Component(Scene*);
     Component(const Component&)            = default;
     Component(Component&&)                 = default;
     Component& operator=(Component&&)      = default;
@@ -276,6 +279,8 @@ public:
 
     std::vector<relid> output;
 
+    uint8_t freq() const { return _freq; }
+
     /** _freq is a non-zero value for timers.
      * On an active scene Scene::run_timers is 10 times per
      * second.
@@ -283,20 +288,21 @@ public:
      * * _freq = 1   once every 10 seconds.
      * * _freq = 10  once per second.
      * * _freq = 20  twice per second.
+     *
+     * @param freq to update
      */
-    uint8_t _freq;
+    void set_freq(uint8_t freq);
 
 private:
+    uint8_t _freq;
     bool _value = false;
 };
 
 /** An output node that displays the result */
 class Output final : public BaseNode {
 public:
-    explicit Output(Scene* _scene)
-        : BaseNode { _scene }
-    {
-    }
+    Output(Scene* _scene)
+        : BaseNode { _scene } { };
 
     Output(const Output&)            = default;
     Output(Output&&)                 = default;
@@ -410,6 +416,12 @@ public:
     /** Explicit copy function. */
     void clone(const Scene&);
 
+    const std::array<char, 128>& name(void) const;
+    const std::array<char, 512>& description(void) const;
+    const std::array<char, 60>& author(void) const;
+    Error set_name(const std::string& name);
+    Error set_author(const std::string& author);
+    Error set_description(const std::string& description);
     /**
      * Run a frame for the scene.
      * @param delta time elapsed since last frame, in seconds.
@@ -448,6 +460,7 @@ public:
         }
         L_INFO(
             "Added %s@%d to the scene.", to_str<Node::Type>(id.type), id.index);
+        undo.push([this, id]() { Error _ = remove_node(id); });
         return id;
     }
 
@@ -464,12 +477,13 @@ public:
      * @param id non-zero node id
      * @returns T* | nullptr
      */
-    template <typename T> NRef<T> get_node(Node id)
+    template <typename T> inline Ref<T> get_node(Node id)
     {
         std::vector<T>& vec = vector<T>();
         lcs_assert(id.type == as_node_type<T>());
-        return id.index < vec.size() || vec[id.index].is_null() ? &vec[id.index]
-                                                                : nullptr;
+        return id.index < vec.size() && !vec[id.index].is_null()
+            ? &vec[id.index]
+            : nullptr;
     }
 
     /**
@@ -479,7 +493,8 @@ public:
      * @param id non-zero node id
      * @returns BaseNode* || nullptr
      */
-    NRef<BaseNode> get_base(Node id);
+    Ref<BaseNode> get_base(Node id);
+    Ref<const BaseNode> get_base(Node id) const;
 
     /**
      * Obtain a relationship between nodes by its id.
@@ -487,7 +502,8 @@ public:
      * @param id non-zero rel id
      * @returns Relation | nullptr
      */
-    NRef<Rel> get_rel(relid id);
+    Ref<Rel> get_rel(relid id);
+    Ref<const Rel> get_rel(relid idx) const;
 
     /**
      * Attempts to connect two nodes from their given sockets. Id of such
@@ -545,21 +561,6 @@ public:
      * @param value to set
      */
     void signal(relid id, State value);
-
-    /** Get a reference to the desired Node::Type vector. */
-    template <class T> constexpr std::vector<T>& vector()
-    {
-        if constexpr (std::is_same<T, Gate>()) {
-            return _gates;
-        } else if constexpr (std::is_same<T, Component>()) {
-            return _components;
-        } else if constexpr (std::is_same<T, Input>()) {
-            return _inputs;
-        } else if constexpr (std::is_same<T, Output>()) {
-            return _outputs;
-        }
-    }
-
     /**
      * Serializes given scene.
      * @param buffer to write into
@@ -577,10 +578,35 @@ public:
     /** Returns a dependency string. */
     std::string to_dependency(void) const;
 
-    std::array<char, 128> name {};
-    std::array<char, 512> description {};
-    /** GitHub user names are limited to 40 characters. */
-    std::array<char, 60> author {}; //
+    LCS_ERROR add_dependency(const std::string& name);
+    void add_dependency(Scene&& scene);
+
+    void remove_dependency(size_t idx);
+
+    inline uint64_t run_dependency(size_t idx, uint64_t input)
+    {
+        return _dependencies[idx].component_context->run(input, frame_s);
+    }
+
+    inline const std::vector<Scene>& dependencies(void) const
+    {
+        return _dependencies;
+    }
+
+    /** Get a reference to the desired Node::Type vector. */
+    template <class T> constexpr std::vector<T>& vector()
+    {
+        if constexpr (std::is_same<T, Gate>()) {
+            return _gates;
+        } else if constexpr (std::is_same<T, Component>()) {
+            return _components;
+        } else if constexpr (std::is_same<T, Input>()) {
+            return _inputs;
+        } else if constexpr (std::is_same<T, Output>()) {
+            return _outputs;
+        }
+    }
+
     int version;
     std::optional<ComponentContext> component_context;
 
@@ -596,35 +622,15 @@ public:
     relid _last_rel;
     Scene* _parent = nullptr;
 
-    void add_dependency(Scene&& scene)
-    {
-        _dependencies.emplace_back(std::move(scene));
-        _dependencies.back()._parent = this;
-    }
-
-    void remove_dependency(size_t idx)
-    {
-        size_t i = 0;
-        while (i < _components.size()) {
-            if (_components[i].dep_idx == idx) {
-                remove_node(i);
-            } else {
-                i++;
-            }
-        }
-    }
-
-    inline uint64_t run_dependency(size_t idx, uint64_t input)
-    {
-        return _dependencies[idx].component_context->run(input, frame_s);
-    }
-
-    inline const std::vector<Scene>& dependencies(void) const
-    {
-        return _dependencies;
-    }
+    std::stack<std::function<void(void)>> redo;
+    std::stack<std::function<void(void)>> undo;
 
 private:
+    std::array<char, 128> _name {};
+    std::array<char, 512> _description {};
+    /** GitHub user names are limited to 40 characters. */
+    std::array<char, 60> _author {};
+
     std::vector<Scene> _dependencies;
     /** The helper method for move constructor and move assignment */
     void _move_from(Scene&&);
@@ -680,16 +686,11 @@ namespace tabs {
         const std::filesystem::path& new_path, size_t idx = SIZE_MAX);
 
     /**
-     * Alerts the changes in a scene.
-     * @param idx to update
-     */
-    void notify(size_t idx = SIZE_MAX);
-    /**
      * Selects a scene as current.
      * @param idx to select
      * @returns reference to scene
      */
-    NRef<Scene> active(size_t idx = SIZE_MAX);
+    Ref<Scene> active(size_t idx = SIZE_MAX);
 
     bool is_saved(size_t idx = SIZE_MAX);
 
@@ -717,26 +718,6 @@ namespace tabs {
      * @returns whether there are changes within the scene
      */
     bool is_changed(void);
-
-    /**
-     * Safely disconnects a node relationship.
-     * @param id relid to disconnect
-     * @returns Error on failure:
-     *
-     * - Error::INVALID_RELID
-     * - Error::REL_NOT_FOUND
-     * - Error::NOT_CONNECTED
-     */
-    LCS_ERROR disconnect(relid id);
-    LCS_ERROR connect(
-        Node to_node, sockid to_sock, Node from_node, sockid from_sock = 0);
-    void run(float delta);
-    template <class T, class... Args> Node add_node(Args&&... args);
-    LCS_ERROR remove_node(Node id);
-    LCS_ERROR move(Node id, Point p);
-
-    LCS_ERROR add_dependency(const std::string& dependency);
-    void remove_dependency(size_t idx);
 } // namespace tabs
 
 /**

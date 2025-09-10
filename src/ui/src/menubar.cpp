@@ -240,11 +240,11 @@ static void _popup_new(void)
             }
             TablePair(
                 if (ImGui::Button("Create")) {
-                    NRef<Scene> scene = tabs::active(
+                    Ref<Scene> scene = tabs::active(
                         tabs::create(name, author, description, 1));
                     if (!is_scene) {
                         scene->component_context.emplace(
-                            &scene, input_size, output_size);
+                            &*scene, input_size, output_size);
                     }
                     _show_new = false;
                 },
@@ -292,11 +292,12 @@ static void _popup_close(void)
     }
 }
 
-static std::string license_info;
+static std::vector<uint8_t> license_info {};
 static void _popup_about(void)
 {
-    if (license_info == "") {
+    if (license_info.empty()) {
         fs::read(fs::APPDATA / "LICENSE", license_info);
+        license_info.push_back(0);
     }
     static const char* site = "https://umutsevdi.com";
     static const char* gh   = "https://github.com/umutsevdi";
@@ -334,7 +335,7 @@ static void _popup_about(void)
         ImGui::TextUnformatted(APPOS "." APPBUILD "." APPVERSION);
         ImGui::BeginChild(
             "License", ImVec2(line_size.x, 450), ImGuiChildFlags_FrameStyle);
-        ImGui::InputTextMultiline("##LicenseText", license_info.data(),
+        ImGui::InputTextMultiline("##LicenseText", (char*)license_info.data(),
             license_info.size(), ImGui::GetContentRegionAvail(),
             ImGuiInputTextFlags_ReadOnly);
         ImGui::EndChild();
@@ -355,11 +356,12 @@ static void _popup_about(void)
     }
 }
 
-static std::string changelog_info;
+static std::vector<uint8_t> changelog_info {};
 static void _changelog_popup(void)
 {
-    if (changelog_info == "") {
+    if (changelog_info.empty()) {
         fs::read(fs::APPDATA / "CHANGELOG.txt", changelog_info);
+        changelog_info.push_back(0);
     }
     if (line_size.x == 0) {
         line_size
@@ -373,9 +375,9 @@ static void _changelog_popup(void)
     ImGui::OpenPopup(title.c_str());
     if (ImGui::BeginPopupModal(title.c_str(), &_show_changelog,
             ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
-        ImGui::BeginChild("Changelog", ImVec2(line_size.x, 450),
+        ImGui::BeginChild("Changelog", ImVec2(ImGui::GetItemRectMax().x, 450),
             ImGuiChildFlags_FrameStyle | ImGuiChildFlags_AutoResizeX);
-        ImGui::InputTextMultiline("##LicenseText", changelog_info.data(),
+        ImGui::InputTextMultiline("##LicenseText", (char*)changelog_info.data(),
             changelog_info.size(), ImGui::GetContentRegionAvail(),
             ImGuiInputTextFlags_ReadOnly);
         ImGui::EndChild();
@@ -517,9 +519,9 @@ void _popup_pref(void)
         TableKey(Field(_("Startup Window")));
         Point p = { static_cast<int16_t>(cfg.startup_win_x),
             static_cast<int16_t>(cfg.startup_win_y) };
-        if (PositionSelector(p, "##StartupWindow")) {
-            cfg.startup_win_x = p.x;
-            cfg.startup_win_y = p.y;
+        if (Point newp = PositionSelector(p, "##StartupWindow"); newp != p) {
+            cfg.startup_win_x = newp.x;
+            cfg.startup_win_y = newp.y;
             cfg.is_applied    = false;
         };
         ImGui::EndDisabled();

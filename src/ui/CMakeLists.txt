@@ -1,7 +1,6 @@
 # ┌───────────┐
 # │ Build NFD │
 # └───────────┘
-set(NFD_PORTAL ON)
 FetchContent_Declare(
     nfd
     GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git

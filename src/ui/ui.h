@@ -32,14 +32,15 @@ void set_style(ImGuiIO& io, bool init = false);
 
 namespace layout {
     void MenuBar(void);
-    void Palette(NRef<Scene>);
-    void Inspector(NRef<Scene>);
-    void NodeEditor(NRef<Scene> scene);
-    int _input_text_callback(ImGuiInputTextCallbackData*);
-    void Profile(const std::string& name);
-    void SceneInfo(NRef<Scene>);
+    void Palette(Ref<Scene>);
+    void Inspector(Ref<Scene>);
+    void NodeEditor(Ref<Scene> scene, bool switched);
+    int _input_text_callback(ImGuiInputTextCallbackData*, bool switched);
+    void Profile(std::string& name, bool switched);
+    void SceneInfo(Ref<Scene>, bool switched);
     void Console(void);
-    void DebugWindow(NRef<Scene>);
+    void DebugWindow(Ref<Scene>);
+    void PropertyEditor(Ref<Scene>);
 } // namespace layout
 
 namespace popup {

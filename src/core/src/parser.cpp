@@ -35,7 +35,7 @@ enum Instr : uint8_t {
     /** Sets the scene as a component. Fmt: UINT32 input_s, UINT32 output_s  */
     SET_COMP = 0xE,
     /** Add a node to the scene. Fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y,
-       UINT8 is_timer, (FLOAT32 freq|UINT8 value) */
+       UINT8 is_timer, (UINT8 freq|UINT8 value) */
     ADD_INPUT = 0xF,
     /** Add a node to the scene. Fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y  */
     ADD_OUT = 0x10,
@@ -74,24 +74,24 @@ static uint32_t _pop_uint(const uint8_t** cursor, const uint8_t* endptr)
 
 static void _encode_meta(const Scene& s, std::vector<uint8_t>& buffer)
 {
-    size_t name_s   = strnlen(s.name.data(), s.name.size());
-    size_t desc_s   = strnlen(s.description.data(), s.description.size());
-    size_t author_s = strnlen(s.author.data(), s.author.size());
+    size_t name_s   = strnlen(s.name().data(), s.name().size());
+    size_t desc_s   = strnlen(s.description().data(), s.description().size());
+    size_t author_s = strnlen(s.author().data(), s.author().size());
     if (name_s > 0) {
         buffer.push_back(Instr::SET_NAME);
-        buffer.insert(buffer.end(), s.name.data(), s.name.data() + name_s);
+        buffer.insert(buffer.end(), s.name().data(), s.name().data() + name_s);
         buffer.push_back(Instr::END);
     }
     if (desc_s > 0) {
         buffer.push_back(Instr::SET_DESC);
-        buffer.insert(
-            buffer.end(), s.description.data(), s.description.data() + desc_s);
+        buffer.insert(buffer.end(), s.description().data(),
+            s.description().data() + desc_s);
         buffer.push_back(Instr::END);
     }
     if (author_s > 0) {
         buffer.push_back(Instr::SET_AUTHOR);
         buffer.insert(
-            buffer.end(), s.author.data(), s.author.data() + author_s);
+            buffer.end(), s.author().data(), s.author().data() + author_s);
         buffer.push_back(Instr::END);
     }
     buffer.push_back(Instr::SET_VERSION);
@@ -134,16 +134,15 @@ static inline void _encode_node(std::vector<uint8_t>& buffer, const T& it)
     } else {
         buffer.push_back(Instr::NODE_VALUE);
         uint32_t pos[2] = {};
-        memcpy(pos, &it.point.x, sizeof(uint32_t));
-        memcpy(&pos[1], &it.point.y, sizeof(uint32_t));
+        Point p         = it.point();
+        memcpy(pos, &p.x, sizeof(uint32_t));
+        memcpy(&pos[1], &p.y, sizeof(uint32_t));
         _push_uint(buffer, pos[0]);
         _push_uint(buffer, pos[1]);
         if constexpr (std::is_same<T, Input>()) {
             if (it.is_timer()) {
                 buffer.push_back(1u);
-                uint32_t s;
-                memcpy(&s, &it._freq, sizeof(float));
-                _push_uint(buffer, s);
+                buffer.push_back(it.freq());
             } else {
                 buffer.push_back(0u);
                 buffer.push_back(it.get() == State::TRUE ? 1u : 0u);
@@ -193,8 +192,8 @@ LCS_ERROR Scene::write_to(std::vector<uint8_t>& buffer) const
     return Error::OK;
 }
 
-LCS_ERROR static inline _strdecode(
-    const uint8_t** buf_r, const uint8_t* endptr, char* buf_w, size_t buf_w_s)
+LCS_ERROR static inline _strdecode(const uint8_t** buf_r, const uint8_t* endptr,
+    const char* buf_w, size_t buf_w_s)
 {
     const uint8_t* cursor = *buf_r;
     size_t rem            = endptr - cursor;
@@ -235,7 +234,7 @@ LCS_ERROR static inline _decode_node(const uint8_t** bgnptr,
     expect_at_least(cursor, endptr, uint8_t);
     if (*cursor == Instr::END) {
         null_list.push_back(s.add_node<T>());
-        *bgnptr = cursor;
+        *bgnptr = cursor + 1;
         return Error::OK;
     } else if (*cursor != Instr::NODE_VALUE) {
         return ERROR(Error::INVALID_NODE);
@@ -257,15 +256,14 @@ LCS_ERROR static inline _decode_node(const uint8_t** bgnptr,
         cursor++;
         if (is_timer) {
             uint8_t freq = *cursor;
-            cursor++;
-            n = s.add_node<Input>(freq);
+            n            = s.add_node<Input>(freq);
         } else {
             expect_at_least(cursor, endptr, uint8_t);
             State value = *cursor ? State::TRUE : State::FALSE;
-            cursor++;
-            n = s.add_node<Input>();
+            n           = s.add_node<Input>();
             s.get_node<Input>(n)->set(value);
         }
+        cursor++;
     }
     if constexpr (std::is_same<T, Component>()) {
         n               = s.add_node<Component>();
@@ -281,9 +279,9 @@ LCS_ERROR static inline _decode_node(const uint8_t** bgnptr,
     if constexpr (std::is_same<T, Output>()) {
         n = s.add_node<Output>();
     }
-    s.get_node<T>(n)->point.x = static_cast<int16_t>(pos_x);
-    s.get_node<T>(n)->point.y = static_cast<int16_t>(pos_y);
-    *bgnptr                   = cursor;
+    s.get_node<T>(n)->move(
+        { static_cast<int16_t>(pos_x), static_cast<int16_t>(pos_y) });
+    *bgnptr = cursor;
     return Error::OK;
 }
 
@@ -297,16 +295,16 @@ LCS_ERROR static inline _decode_branch(const uint8_t** bgnptr,
     switch (instr) {
     case Instr ::SET_NAME:
         L_DEBUG("%s", "Instr::SET_NAME");
-        err = _strdecode(&cursor, endptr, s.name.data(), s.name.size());
+        err = _strdecode(&cursor, endptr, s.name().data(), s.name().size());
         break;
     case Instr ::SET_DESC:
         L_DEBUG("%s", "Instr::SET_DESC");
         err = _strdecode(
-            &cursor, endptr, s.description.data(), s.description.size());
+            &cursor, endptr, s.description().data(), s.description().size());
         break;
     case Instr ::SET_AUTHOR:
         L_DEBUG("%s", "Instr::SET_AUTHOR");
-        err = _strdecode(&cursor, endptr, s.author.data(), s.author.size());
+        err = _strdecode(&cursor, endptr, s.author().data(), s.author().size());
         break;
     case Instr ::SET_VERSION:
         L_DEBUG("%s", "Instr::SET_VERSION");
@@ -385,6 +383,7 @@ LCS_ERROR Scene::read_from(const std::vector<uint8_t>& buffer)
     }
     for (auto& n : null_list) {
         get_base(n)->set_null();
+        L_INFO("Removed %s@%d from the scene.", to_str(n.type), n.index);
     }
     return Error::OK;
 }

@@ -1,7 +1,6 @@
 #include <imgui.h>
 #include <imnodes.h>
 #include "core.h"
-#include "ui.h"
 
 namespace lcs::ui::layout {
 
@@ -10,7 +9,7 @@ static void _inputs(const std::vector<Input>&);
 static void _outputs(const std::vector<Output>&);
 static void _components(const std::vector<Component>&);
 
-void DebugWindow(NRef<Scene> scene)
+void DebugWindow(Ref< Scene> scene)
 {
     std::string title
         = std::string { _("Memory Debugger") } + "###MemoryDebugger";
@@ -25,10 +24,10 @@ void DebugWindow(NRef<Scene> scene)
             ImGui::BeginChild("##Left", wsize);
             if (ImGui::CollapsingHeader(
                     _("Meta"), ImGuiTreeNodeFlags_DefaultOpen)) {
-                ImGui::BulletText(_("Name: %s"), scene->name.data());
+                ImGui::BulletText(_("Name: %s"), scene->name().data());
                 ImGui::BulletText(
-                    _("Description: %s"), scene->description.data());
-                ImGui::BulletText(_("Author: %s"), scene->author.data());
+                    _("Description: %s"), scene->description().data());
+                ImGui::BulletText(_("Author: %s"), scene->author().data());
                 ImGui::BulletText(_("Version: %d"), scene->version);
             }
             if (ImGui::CollapsingHeader(
@@ -114,7 +113,7 @@ static void _inputs(const std::vector<Input>& v)
             ImGui::BulletText("Type: %s", v[i].is_timer() ? "TIMER" : "INPUT");
             ImGui::BulletText("Value: %s", to_str<State>(v[i].get()));
             if (v[i].is_timer()) {
-                ImGui::BulletText("Freq: %f", v[i]._freq / 10.f);
+                ImGui::BulletText("Freq: %f", v[i].freq() / 10.f);
             }
             ImGui::TreePop();
         }

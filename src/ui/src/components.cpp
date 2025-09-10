@@ -5,7 +5,7 @@
 
 namespace lcs::ui {
 
-bool PositionSelector(Point& point, const char* prefix)
+Point PositionSelector(Point point, const char* prefix)
 {
     const static ImVec2 __selector_size = ImGui::CalcTextSize("-000000000000");
 
@@ -22,11 +22,8 @@ bool PositionSelector(Point& point, const char* prefix)
     ImGui::SameLine();
     bool change_y
         = ImGui::InputInt((s_prefix + "Y").c_str(), &y, 1.0f, 10.0f, 0);
-    point.x = x;
-    point.y = y;
-
     ImGui::PopItemWidth();
-    return change_x || change_y;
+    return { static_cast<int16_t>(x), static_cast<int16_t>(y) };
 }
 
 State ToggleButton(State state, bool clickable)
@@ -75,13 +72,12 @@ State ToggleButton(State state, bool clickable)
     return state;
 }
 
-void ToggleButton(NRef<Input> node)
+void ToggleButton(Ref<Input> node)
 {
     State s_old = node->get();
 
     if (s_old != ToggleButton(node->get(), true)) {
         node->toggle();
-        tabs::notify();
     }
 }
 

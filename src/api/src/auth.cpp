@@ -328,7 +328,7 @@ AuthenticationFlow& get_flow(void) { return _flow; }
 
 const Account& get_account(void) { return _auth.account; }
 
-Error upload_scene(NRef<const Scene> scene, std::string resp)
+Error upload_scene(Ref<const Scene> scene, std::string resp)
 {
     return net::post_request(ui::get_config().api_proxy + "/api/scene", resp,
         scene->to_json().toStyledString(), _auth.access_token);

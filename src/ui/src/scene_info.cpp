@@ -1,10 +1,13 @@
 #include <IconsLucide.h>
 #include "components.h"
 #include "configuration.h"
+#include "imgui.h"
 #include "ui.h"
 
 namespace lcs::ui ::layout {
-void SceneInfo(NRef<Scene> scene)
+static std::array<char, 128> _name {};
+static std::array<char, 512> _description {};
+void SceneInfo(Ref<Scene> scene, bool switched)
 {
     if (!user_data.scene_info) {
         return;
@@ -17,28 +20,29 @@ void SceneInfo(NRef<Scene> scene)
             "scene's details. Use this menu to handle dependencies and share\n"
             "your scene with others.");
         ImGui::BeginDisabled(scene == nullptr);
+        if (scene != nullptr && switched) {
+            _name        = scene->name();
+            _description = scene->description();
+        }
         Section(_("Scene"));
         Field(_("Scene Name"));
         if (scene != nullptr
-            && ImGui::InputText("##SceneNameInputText", scene->name.data(),
-                scene->name.max_size(), ImGuiInputTextFlags_CharsNoBlank)) {
-            tabs::notify();
+            && ImGui::InputText("##SceneNameInputText", _name.data(),
+                _name.max_size(), ImGuiInputTextFlags_CharsNoBlank)) {
+            scene->set_name(_name.data());
         };
-
+        Field(_("Author"));
+        if (scene != nullptr) {
+            ImGui::TextUnformatted(scene->author().data());
+            Field(_("Version"));
+            ImGui::Text("%d", scene->version);
+        }
         Field(_("Description"));
         if (scene != nullptr
             && ImGui::InputTextMultiline("##SceneDescInputText",
-                scene->description.data(), scene->description.max_size(),
-                ImVec2(ImGui::GetWindowWidth(),
-                    ImGui::CalcTextSize("\n\n\n").y))) {
-            tabs::notify();
-        };
-
-        Field(_("Version"));
-        if (scene != nullptr
-            && ImGui::InputInt("##SceneVersion", &scene->version)) {
-            scene->version = std::max(scene->version, 0);
-            tabs::notify();
+                _description.data(), _description.max_size(),
+                ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
+            scene->set_name(_description.data());
         };
         EndSection();
 
@@ -54,7 +58,6 @@ void SceneInfo(NRef<Scene> scene)
             if (input_size != scene->component_context->inputs.size()
                 || output_size != scene->component_context->outputs.size()) {
                 scene->component_context->setup(input_size, output_size);
-                tabs::notify();
             }
             EndSection();
         }
@@ -83,9 +86,9 @@ void SceneInfo(NRef<Scene> scene)
                     ImGui::Selectable(("##" + std::to_string(i)).c_str(),
                         &selected, ImGuiSelectableFlags_SpanAllColumns);
                     ImGui::SameLine();
-                    ImGui::TextUnformatted(dep.name.data());
+                    ImGui::TextUnformatted(dep.name().data());
                     ImGui ::TableSetColumnIndex(1);
-                    ImGui::TextUnformatted(dep.author.data());
+                    ImGui::TextUnformatted(dep.author().data());
                     ImGui ::TableSetColumnIndex(2);
                     ImGui::Text("%d", dep.version);
                     ImGui ::TableSetColumnIndex(3);

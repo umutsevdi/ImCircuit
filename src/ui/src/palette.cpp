@@ -7,7 +7,7 @@
 namespace lcs::ui::layout {
 static bool is_dragging = false;
 static Node dragged_node;
-void Palette(NRef<Scene> scene)
+void Palette(Ref<Scene> scene)
 {
     if (!user_data.palette) {
         return;

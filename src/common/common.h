@@ -74,23 +74,23 @@ template <typename T> const char* to_str(T);
  * get_node<lcs::GateNode>(id)->signal();
  * get_node<lcs::InputNode>(id)->toggle();
  */
-template <typename T> class NRef {
+template <typename T> class Ref {
 public:
-    NRef(T* v)
+    Ref(T* v)
         : _v(v) { };
-    NRef(NRef&&)                 = default;
-    NRef(const NRef&)            = delete;
-    NRef& operator=(NRef&&)      = delete;
-    NRef& operator=(const NRef&) = delete;
-    ~NRef() { }
+    Ref(Ref&&)                 = default;
+    Ref& operator=(Ref&&)      = default;
+    Ref(const Ref&)            = default;
+    Ref& operator=(const Ref&) = default;
+    ~Ref()                     = default;
 
     inline bool operator==(void* t) const { return _v == t; };
     inline bool operator!=(void* t) const { return _v != t; };
     inline T* operator->() { return _v; }
     inline const T* operator->() const { return _v; }
-    inline T* operator&() { return _v; }
     inline T& operator*() { return *_v; }
     inline const T& operator*() const { return *_v; }
+    inline explicit operator bool() const noexcept { return _v != nullptr; }
 
 private:
     T* _v;

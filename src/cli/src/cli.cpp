@@ -135,7 +135,7 @@ namespace cli {
             if (scene == nullptr) {
                 line = replxx.input("(empty) # ");
             } else {
-                line = replxx.input("(" + std::string { scene->name.data() }
+                line = replxx.input("(" + std::string { scene->name().data() }
                     + (tabs::is_saved() ? ") # " : "*) # "));
             }
             if (line.empty()) {
@@ -148,10 +148,10 @@ namespace cli {
             for (Command& cmd : root) {
                 std::string arg;
                 if (cmd.is_matching(line, arg)) {
-                    Error err = cmd.cmd(&scene, arg);
+                    Error err = cmd.cmd(scene, arg);
                     if (err == Error::OK) {
                         replxx.history_add(line);
-                    } else if (Error::INVALID_ARGUMENT) {
+                    } else if (err == Error::INVALID_ARGUMENT) {
                         L_ERROR("Expected argument type of %s, found %s",
                             to_str<Type>(cmd.type), arg.c_str());
                     }

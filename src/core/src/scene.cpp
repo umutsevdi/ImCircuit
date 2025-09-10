@@ -18,10 +18,9 @@ Scene::Scene(const std::string& _name, const std::string& _author,
         },
         _last_rel { 0 }
 {
-    std::strncpy(name.data(), _name.c_str(), name.size() - 1);
-    std::strncpy(author.data(), _author.c_str(), author.size() - 1);
-    std::strncpy(
-        description.data(), _description.c_str(), description.size() - 1);
+    set_name(_name);
+    set_author(_author);
+    set_description(_description);
 }
 
 Scene::Scene(ComponentContext ctx, const std::string& _name,
@@ -35,10 +34,9 @@ Scene::Scene(ComponentContext ctx, const std::string& _name,
         },
         _last_rel { 0 }
 {
-    std::strncpy(name.data(), _name.c_str(), name.size() - 1);
-    std::strncpy(author.data(), _author.c_str(), author.size() - 1);
-    std::strncpy(
-        description.data(), _description.c_str(), description.size() - 1);
+    set_name(_name);
+    set_author(_author);
+    set_description(_description);
 }
 
 Scene::Scene(Scene&& other)
@@ -58,9 +56,9 @@ Scene& Scene::operator=(Scene&& other)
 
 void Scene::clone(const Scene& other)
 {
-    memcpy(name.data(), other.name.data(), name.size());
-    memcpy(description.data(), other.description.data(), description.size());
-    memcpy(author.data(), other.author.data(), author.size());
+    memcpy(_name.data(), other._name.data(), _name.size());
+    memcpy(_description.data(), other._description.data(), _description.size());
+    memcpy(_author.data(), other._author.data(), _author.size());
     version = other.version;
     for (const Scene& dep : other.dependencies()) {
         Scene s {};
@@ -96,11 +94,60 @@ void Scene::clone(const Scene& other)
     }
 }
 
+const std::array<char, 128>& Scene::name(void) const { return _name; }
+const std::array<char, 60>& Scene::author(void) const { return _author; }
+const std::array<char, 512>& Scene::description(void) const
+{
+    return _description;
+}
+Error Scene::set_name(const std::string& name)
+{
+    if (name.size() < _name.size()) {
+        std::string old { _name.data() };
+        undo.push([this, old]() {
+            std::strncpy(_name.data(), old.c_str(),
+                std::min(_name.size() - 1, old.size()));
+        });
+        std::strncpy(_name.data(), name.c_str(),
+            std::min(_name.size() - 1, name.size()));
+        return Error::OK;
+    }
+    return ERROR(Error::INVALID_STRING);
+}
+Error Scene::set_author(const std::string& author)
+{
+    if (author.size() < _author.size()) {
+        std::string old { _author.data() };
+        undo.push([this, old]() {
+            std::strncpy(_author.data(), old.c_str(),
+                std::min(_author.size() - 1, old.size()));
+        });
+        std::strncpy(_author.data(), author.c_str(),
+            std::min(_author.size() - 1, author.size()));
+        return Error::OK;
+    }
+    return ERROR(Error::INVALID_STRING);
+}
+Error Scene::set_description(const std::string& description)
+{
+    if (description.size() < _description.size()) {
+        std::string old { _description.data() };
+        undo.push([this, old]() {
+            std::strncpy(_description.data(), old.c_str(),
+                std::min(_description.size() - 1, old.size()));
+        });
+        std::strncpy(_description.data(), description.c_str(),
+            std::min(_description.size() - 1, _description.size()));
+        return Error::OK;
+    }
+    return ERROR(Error::INVALID_STRING);
+}
+
 void Scene::_move_from(Scene&& other)
 {
-    name              = std::move(other.name);
-    description       = std::move(other.description);
-    author            = std::move(other.author);
+    _name             = std::move(other._name);
+    _description      = std::move(other._description);
+    _author           = std::move(other._author);
     version           = other.version;
     _dependencies     = std::move(other._dependencies);
     frame_s           = other.frame_s;
@@ -137,37 +184,9 @@ void Scene::_move_from(Scene&& other)
 
 Error Scene::remove_node(Node id)
 {
-    BaseNode* node = nullptr;
-    switch (id.type) {
-    case Node::Type::GATE: {
-        if (_gates.size() < id.index) {
-            return ERROR(Error::NODE_NOT_FOUND);
-        }
-        node = &_gates[id.index];
-        break;
-    }
-    case Node::Type::COMPONENT: {
-        if (_components.size() < id.index) {
-            return ERROR(Error::NODE_NOT_FOUND);
-        }
-        node = &_components[id.index];
-        break;
-    }
-    case Node::Type::INPUT: {
-        if (_inputs.size() < id.index) {
-            return ERROR(Error::NODE_NOT_FOUND);
-        }
-        node = &_inputs[id.index];
-        break;
-    }
-    case Node::Type::OUTPUT: {
-        if (_outputs.size() < id.index) {
-            return ERROR(Error::NODE_NOT_FOUND);
-        }
-        node = &_outputs[id.index];
-        break;
-    }
-    default: break;
+    auto node = get_base(id);
+    if (node == nullptr) {
+        return ERROR(Error::NODE_NOT_FOUND);
     }
     node->clean();
     node->set_null();
@@ -175,13 +194,23 @@ Error Scene::remove_node(Node id)
         _last_node[id.type].index = id.index;
     }
     L_DEBUG("%s@%d was invalidated. Last node for %s was updated to %d",
-        to_str<Node::Type>(id.type), id.index, _last_node[id.type].index);
+        to_str<Node::Type>(id.type), id.index, to_str<Node::Type>(id.type),
+        _last_node[id.type].index);
     L_INFO(
         "Removed %s@%d from the scene.", to_str<Node::Type>(id.type), id.index);
     return Error::OK;
 }
 
-NRef<Rel> Scene::get_rel(relid idx)
+Ref<const Rel> Scene::get_rel(relid idx) const
+{
+    if (idx == 0 || idx > _last_rel) {
+        return nullptr;
+    }
+    auto n = _relations.find(idx);
+    return n != _relations.end() ? &n->second : nullptr;
+}
+
+Ref<Rel> Scene::get_rel(relid idx)
 {
     if (idx == 0 || idx > _last_rel) {
         return nullptr;
@@ -193,6 +222,11 @@ NRef<Rel> Scene::get_rel(relid idx)
 Error Scene::connect_with_id(
     relid id, Node to_node, sockid to_sock, Node from_node, sockid from_sock)
 {
+    if (id == 0) {
+        _last_rel++;
+        id = _last_rel;
+    }
+
     if (from_node.type == Node::Type::OUTPUT
         || from_node.type == Node::Type::COMPONENT_OUTPUT) {
         return ERROR(Error::INVALID_FROM_TYPE);
@@ -207,30 +241,35 @@ Error Scene::connect_with_id(
         return ERROR(Error::NOT_A_COMPONENT);
     }
 
-    bool is_connected = false;
     switch (to_node.type) {
     case Node::Type::GATE: {
-        if (auto gate = get_node<Gate>(to_node);
-            gate != nullptr && gate->inputs[to_sock] == 0) {
-            gate->inputs[to_sock] = id;
-            is_connected          = true;
+        auto gate = get_node<Gate>(to_node);
+        if (gate == nullptr) {
+            return ERROR(Error::INVALID_TO_TYPE);
+        } else if (gate->inputs[to_sock] != 0) {
+            return ERROR(Error::ALREADY_CONNECTED);
         }
+        gate->inputs[to_sock] = id;
         break;
     }
     case Node::Type::COMPONENT: {
-        if (auto comp = get_node<Component>(to_node);
-            comp != nullptr && comp->inputs[to_sock] == 0) {
-            comp->inputs[to_sock] = id;
-            is_connected          = true;
+        auto comp = get_node<Component>(to_node);
+        if (comp == nullptr) {
+            return ERROR(Error::INVALID_TO_TYPE);
+        } else if (comp->inputs[to_sock] != 0) {
+            return ERROR(Error::ALREADY_CONNECTED);
         }
+        comp->inputs[to_sock] = id;
         break;
     }
     case Node::Type::OUTPUT: {
-        if (auto out = get_node<Output>(to_node);
-            out != nullptr && out->input == 0) {
-            out->input   = id;
-            is_connected = true;
+        auto out = get_node<Output>(to_node);
+        if (out == nullptr) {
+            return ERROR(Error::INVALID_TO_TYPE);
+        } else if (out->input != 0) {
+            return ERROR(Error::ALREADY_CONNECTED);
         }
+        out->input = id;
         break;
     }
     case Node::Type::COMPONENT_OUTPUT: {
@@ -239,33 +278,38 @@ Error Scene::connect_with_id(
             if (to_id != 0) {
                 return ERROR(Error::ALREADY_CONNECTED);
             }
-            to_id        = id;
-            is_connected = true;
+            to_id = id;
         }
         break;
     }
     default: return ERROR(Error::INVALID_TO_TYPE);
     }
-    if (!is_connected) {
-        return ERROR(Error::ALREADY_CONNECTED);
-    }
-    _relations.emplace(id, Rel { id, from_node, to_node, from_sock, to_sock });
-
     switch (from_node.type) {
-    case Node::Type::GATE:
-        get_node<Gate>(from_node)->output.push_back(id);
-        get_node<Gate>(from_node)->on_signal();
+    case Node::Type::GATE: {
+        auto from = get_node<Gate>(from_node);
+        if (from == nullptr) {
+            return ERROR(Error::INVALID_FROM_TYPE);
+        }
+        from->output.push_back(id);
         break;
-    case Node::Type::COMPONENT:
-        get_node<Component>(from_node)->outputs[from_sock].push_back(id);
-        get_node<Component>(from_node)->on_signal();
+    }
+    case Node::Type::COMPONENT: {
+        auto from = get_node<Component>(from_node);
+        if (from == nullptr) {
+            return ERROR(Error::INVALID_FROM_TYPE);
+        }
+        from->outputs[from_sock].push_back(id);
         break;
-    case Node::Type::INPUT:
-        get_node<Input>(from_node)->output.push_back(id);
-        get_node<Input>(from_node)->on_signal();
+    }
+    case Node::Type::INPUT: {
+        auto from = get_node<Input>(from_node);
+        if (from == nullptr) {
+            return ERROR(Error::INVALID_FROM_TYPE);
+        }
+        from->output.push_back(id);
         break;
-    case Node::Type::COMPONENT_INPUT: /* Component input is not handled
-                                     here. */
+    }
+    case Node::Type::COMPONENT_INPUT: /* Component input is not handled here. */
         lcs_assert(component_context.has_value());
         if (component_context->inputs.size() > from_node.index - 1) {
             std::vector<relid>& from_list
@@ -277,21 +321,28 @@ Error Scene::connect_with_id(
             }
             from_list.push_back(id);
         }
-        component_context->run(0, 0);
         break;
     default: return ERROR(Error::INVALID_TO_TYPE);
     }
-    L_INFO("Connected %s@%d to %s@%d.", to_str<Node::Type>(from_node.type),
-        from_node.index, to_str<Node::Type>(to_node.type), to_node.index);
+    _relations.emplace(id, Rel { id, from_node, to_node, from_sock, to_sock });
+    if (from_node.type != Node::COMPONENT_INPUT) {
+        get_base(from_node)->on_signal();
+    } else {
+        component_context->run(0, 0);
+    }
+    L_INFO("Created connection between %s@%d and %s@%d with the id %d.",
+        to_str<Node::Type>(from_node.type), from_node.index,
+        to_str<Node::Type>(to_node.type), to_node.index, id);
+    undo.push([this, id]() { disconnect(id); });
     return OK;
 }
 
 relid Scene::connect(
     Node to_node, sockid to_sock, Node from_node, sockid from_sock)
 {
-    _last_rel++;
-    relid id = _last_rel;
-    return connect_with_id(id, to_node, to_sock, from_node, from_sock) ? 0 : id;
+    return connect_with_id(0, to_node, to_sock, from_node, from_sock)
+        ? 0
+        : _last_rel;
 }
 
 Error Scene::disconnect(relid id)
@@ -307,8 +358,12 @@ Error Scene::disconnect(relid id)
 
     switch (r->second.from_node.type) {
     case Node::Type::GATE: {
-        auto& v = get_node<Gate>(r->second.from_node)->output;
-        v.erase(std::remove_if(v.begin(), v.end(), remove_fn));
+        auto node = get_node<Gate>(r->second.from_node);
+        if (node->is_null()) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
+        node->output.erase(std::remove_if(
+            node->output.begin(), node->output.end(), remove_fn));
         break;
     }
     case Node::Type::COMPONENT: {
@@ -318,8 +373,12 @@ Error Scene::disconnect(relid id)
         break;
     }
     case Node::Type::INPUT: {
-        auto& v = get_node<Input>(r->second.from_node)->output;
-        v.erase(std::remove_if(v.begin(), v.end(), remove_fn));
+        auto node = get_node<Input>(r->second.from_node);
+        if (node->is_null()) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
+        node->output.erase(std::remove_if(
+            node->output.begin(), node->output.end(), remove_fn));
         break;
     }
     case Node::Type::COMPONENT_INPUT: {
@@ -338,20 +397,27 @@ Error Scene::disconnect(relid id)
     switch (r->second.to_node.type) {
     case Node::Type::GATE: {
         auto g = get_node<Gate>(r->second.to_node);
-
+        if (g->is_null()) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
         g->inputs[r->second.to_sock] = 0;
         g->on_signal();
         break;
     }
     case Node::Type::COMPONENT: {
         auto c = get_node<Component>(r->second.to_node);
-
+        if (c->is_null()) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
         c->inputs[r->second.to_sock] = 0;
         c->on_signal();
         break;
     }
     case Node::Type::OUTPUT: {
-        auto o   = get_node<Output>(r->second.to_node);
+        auto o = get_node<Output>(r->second.to_node);
+        if (o->is_null()) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
         o->input = 0;
         o->on_signal();
         break;
@@ -371,6 +437,10 @@ Error Scene::disconnect(relid id)
     L_INFO("Disconnected %s@%d from %s%d.",
         to_str<Node::Type>(r->second.from_node.type), r->second.from_node.index,
         to_str<Node::Type>(r->second.to_node.type), r->second.to_node.index);
+    undo.push([this, r](void) {
+        Error _ = this->connect_with_id(r->first, r->second.to_node,
+            r->second.to_sock, r->second.from_node, r->second.from_sock);
+    });
     _relations.erase(id);
     return OK;
 }
@@ -383,7 +453,7 @@ void Scene::signal(relid id, State value)
     if (r->value != value || r->value == DISABLED) {
         r->value = value;
         L_DEBUG("%s:rel@%-2d %s@%d:%d sent %s to %s@%d:%d",
-            _parent != nullptr ? name.data() : "root", id,
+            _parent != nullptr ? name().data() : "root", id,
             to_str<Node::Type>(r->from_node.type), r->from_node.index,
             r->from_sock, to_str<State>(r->value),
             to_str<Node::Type>(r->to_node.type), r->to_node.index, r->to_sock);
@@ -397,19 +467,7 @@ void Scene::signal(relid id, State value)
     }
 }
 
-std::ostream& operator<<(std::ostream& os, const Scene& s)
-{
-    std::string d_str {};
-    os << "scene" << (s.component_context.has_value() ? "[C]" : "[S]") << "("
-       << strlimit(s.to_dependency(), 15) << ")";
-    if (s.component_context.has_value()) {
-        os << "[" << s.component_context->inputs.size() << ", "
-           << s.component_context->outputs.size() << "]" << "\t";
-    }
-    return os;
-}
-
-NRef<BaseNode> Scene::get_base(Node id)
+Ref<BaseNode> Scene::get_base(Node id)
 {
     switch (id.type) {
     case Node::Type::GATE: return get_node<Gate>(id)->base();
@@ -424,13 +482,13 @@ NRef<BaseNode> Scene::get_base(Node id)
 std::string Scene::to_dependency() const
 {
     std::stringstream dep_str {};
-    std::string_view str_author { author.data() };
+    std::string_view str_author { author().data() };
     if (str_author.empty()) {
         dep_str << "local/";
     } else {
         dep_str << str_author << '/';
     }
-    dep_str << std::string_view { name.data() } << '/'
+    dep_str << std::string_view { name().data() } << '/'
             << std::to_string(version);
     return dep_str.str();
 }
@@ -443,12 +501,33 @@ void Scene::run(float delta)
     if (frame != frame_pre) {
         for (auto& in : _inputs) {
             if (!in.is_null() && in.is_timer()) {
-                if (frame % in._freq == 0) {
+                if (frame % in.freq() == 0) {
                     in.set(frame / 10 % 2 == 0);
                 }
             }
         }
     }
+}
+
+Error Scene::add_dependency(const std::string& name) { return Error::OK; }
+void Scene::add_dependency(Scene&& scene)
+{
+    _dependencies.emplace_back(std::move(scene));
+    _dependencies.back()._parent = this;
+    undo.push([this]() { _dependencies.pop_back(); });
+}
+
+void Scene::remove_dependency(size_t idx)
+{
+    size_t i = 0;
+    while (i < _components.size()) {
+        if (_components[i].dep_idx == idx) {
+            remove_node(i);
+        } else {
+            i++;
+        }
+    }
+    _dependencies.erase(_dependencies.begin() + idx);
 }
 
 } // namespace lcs

@@ -38,13 +38,13 @@ enum Error {
     INVALID_RELID,
     /** Given relationship does not exist within that scene. */
     REL_NOT_FOUND,
-    /** Outputs can not be used as a from type. */
+    /** Provided source does not fulfill its requirements. */
     INVALID_FROM_TYPE,
+    /** Provided target does not fulfill its requirements. */
+    INVALID_TO_TYPE,
     /** Only components can have NodeType::COMPONENT_INPUT and
        NodeType::COMPONENT_OUTPUT. */
     NOT_A_COMPONENT,
-    /** Inputs can not be used as a to type. */
-    INVALID_TO_TYPE,
     /** Attempted to bind a already connected input socket. */
     ALREADY_CONNECTED,
     /** Component socket is not connected. */
@@ -120,9 +120,11 @@ constexpr const char* errmsg(Error e)
     case INVALID_NODEID: return "Object has invalid ID.";
     case INVALID_RELID: return "Object has invalid relationship ID.";
     case REL_NOT_FOUND: return "The relationship was not found.";
-    case INVALID_FROM_TYPE: return "Outputs can not be used as a from type.";
+    case INVALID_FROM_TYPE:
+        return "Provided source does not fulfill its requirements.";
+    case INVALID_TO_TYPE:
+        return "Provided target does not fulfill its requirements.";
     case NOT_A_COMPONENT: return "Only components can have CIN or COUT.";
-    case INVALID_TO_TYPE: return "Inputs can not be used as a to type.";
     case ALREADY_CONNECTED: return "Input socket is already connected.";
     case NOT_CONNECTED: return "Component socket is not connected. ";
     case COMPONENT_NOT_FOUND: return "Component was not found.";
