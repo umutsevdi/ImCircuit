@@ -181,8 +181,8 @@ void NodeEditor(Ref<Scene> scene, bool is_changed)
                 if (ImNodes::IsLinkHovered((int*)&id)) {
                     scene->disconnect(id);
                 } else if (ImNodes::IsNodeHovered((int*)&id)) {
-                    Node n  = decode_pair(id);
-                    Error _ = scene->remove_node(n);
+                    Node n = decode_pair(id);
+                    scene->remove_node(n);
                 }
             }
         } else {

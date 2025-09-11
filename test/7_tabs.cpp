@@ -75,7 +75,7 @@ TEST_CASE("Get result from saved scene")
     Node dead_node = scene->add_node<Output>();
     Node gate      = scene->add_node<Gate>(Gate::Type::OR);
     Node output    = scene->add_node<Output>();
-    Error _        = scene->remove_node(dead_node);
+    scene->remove_node(dead_node);
     scene->connect(gate, 0, input);
     scene->connect(gate, 1, input2);
     scene->connect(output, 0, gate);

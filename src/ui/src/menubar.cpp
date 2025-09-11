@@ -65,6 +65,7 @@ void MenuBar(void)
             ImGui::Checkbox(_("Inspector"), &user_data.inspector);
             ImGui::Checkbox(_("Console"), &user_data.console);
             ImGui::Checkbox(_("Scene Info"), &user_data.scene_info);
+            ImGui::Checkbox(_("Property Editor"), &user_data.tree);
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu(_("Help"))) {
@@ -323,12 +324,12 @@ static void _popup_about(void)
         ImGui::Text(_("Developer: "));
         ImGui::SameLine();
         if (ImGui::TextLink("Umut Sevdi")) {
-            open_browser(site);
+            net::open_browser(site);
         }
         ImGui::Text(_("Source code is available at "));
         ImGui::SameLine();
         if (ImGui::TextLink("GitHub.")) {
-            open_browser(prj);
+            net::open_browser(prj);
         }
         ImGui::Text(_("Version: "));
         ImGui::SameLine();
@@ -342,15 +343,15 @@ static void _popup_about(void)
         ImGui::TextUnformatted(_("Contact"));
         ImGui::SameLine();
         if (IconButton(ICON_LC_MAIL, _("Email"))) {
-            open_browser(mail);
+            net::open_browser(mail);
         }
         ImGui::SameLine();
         if (IconButton(ICON_LC_LINK, _("Website"))) {
-            open_browser(site);
+            net::open_browser(site);
         }
         ImGui::SameLine();
         if (IconButton(ICON_LC_GITHUB, "GitHub")) {
-            open_browser(gh);
+            net::open_browser(gh);
         }
         ImGui::EndPopup();
     }

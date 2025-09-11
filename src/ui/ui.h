@@ -48,7 +48,7 @@ namespace popup {
 } // namespace popup
 
 namespace dialog {
-    LCS_ERROR open_file(void);
-    LCS_ERROR save_file_as(void);
+    Error open_file(void);
+    Error save_file_as(void);
 } // namespace dialog
 } // namespace lcs::ui

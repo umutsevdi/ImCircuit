@@ -46,23 +46,12 @@ const LcsTheme& get_theme(const std::string& s);
 const LcsTheme& get_active_style(void);
 const std::vector<const char*>& get_available_styles(bool is_dark);
 
-inline ImVec4 NodeType_to_color(Node::Type type)
-{
-    const LcsTheme& style = get_active_style();
-    switch (type) {
-    case Node::Type::GATE: return style.red;
-    case Node::Type::INPUT: return style.green;
-    case Node::Type::OUTPUT: return style.yellow;
-    case Node::Type::COMPONENT: return style.magenta;
-    default: return style.cyan;
-    }
-}
-
 struct UserData {
     bool palette;
     bool inspector;
     bool scene_info;
     bool console;
+    bool tree;
     std::array<char, 128> login;
 };
 extern UserData user_data;

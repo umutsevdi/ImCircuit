@@ -24,7 +24,7 @@ const char* to_str<ui::Configuration::ThemePreference>(
 namespace ui {
     static Error _set_locale(const std::string& locale);
 
-    UserData user_data { true, true, true, true, {} };
+    UserData user_data { true, true, true, true, true, {} };
     static Configuration _config;
 
     static Configuration::ThemePreference str_to_ThemePreference(
@@ -197,10 +197,11 @@ namespace ui {
         UserData* lo    = (UserData*)entry;
         uint32_t layout = 0;
         if (sscanf(line, "layout=0x%X", &layout) == 1) {
-            user_data.palette    = layout & 0b0001;
-            user_data.inspector  = layout & 0b0010;
-            user_data.scene_info = layout & 0b0100;
-            user_data.console    = layout & 0b1000;
+            user_data.palette    = layout & 0b00001;
+            user_data.inspector  = layout & 0b00010;
+            user_data.scene_info = layout & 0b00100;
+            user_data.console    = layout & 0b01000;
+            user_data.tree       = layout & 0b10000;
         }
         if (sscanf(line, "login=\"%127[^\"]\"", lo->login.data()) == 1) { }
     }
@@ -209,8 +210,17 @@ namespace ui {
         ImGuiContext*, ImGuiSettingsHandler*, ImGuiTextBuffer* buf)
     {
         buf->appendf("[%s][%s]\n", APPNAME, "default");
-        uint32_t layout = user_data.palette | (user_data.inspector << 1)
-            | (user_data.scene_info << 2) | (user_data.console << 3);
+        uint32_t layout =
+
+            (user_data.palette) |
+
+            (user_data.inspector << 1) |
+
+            (user_data.scene_info << 2) |
+
+            (user_data.console << 3) |
+
+            (user_data.tree << 4);
         buf->appendf("layout=0x%X\n", layout);
         buf->appendf("login=\"%s\"\n\n", user_data.login.begin());
     }

@@ -1,13 +1,5 @@
 #include "common.h"
 
-std::string strlimit(const std::string& input, size_t limit)
-{
-    size_t len = input.length();
-    if (len > limit) {
-        return "..." + input.substr(len - limit + 3, limit);
-    }
-    return input;
-}
 std::vector<std::string> split(std::string& s, const std::string& delimiter)
 {
     std::vector<std::string> tokens;
@@ -103,4 +95,3 @@ std::string base64_decode(const std::string& input)
 
     return output;
 }
-

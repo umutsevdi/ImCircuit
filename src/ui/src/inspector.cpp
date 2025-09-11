@@ -58,7 +58,7 @@ void Inspector(Ref<Scene> scene)
                             Node node = decode_pair(nodeids[i]);
                             L_DEBUG("Delete %s@%d",
                                 to_str<Node::Type>(node.type), node.index);
-                            Error _ = scene->remove_node(node);
+                            scene->remove_node(node);
                         }
                     }
                 }
@@ -118,7 +118,7 @@ static void _inspector_tab(Ref<Scene> scene, Node node)
         ImGui::SameLine();
         if (IconButton(ICON_LC_TRASH, _("Delete Node"))) {
             ImNodes::ClearNodeSelection();
-            Error _ = scene->remove_node(node);
+            scene->remove_node(node);
             return;
         }
     }

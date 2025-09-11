@@ -10,53 +10,72 @@
         }                                                                      \
     }
 
+/** Converts the unsigned integer hostlong from host byte order to network
+ * byte order.
+ * @param host number to convert
+ * * Conforming to POSIX.1-2001.
+ */
+static inline uint32_t _htonl(uint32_t host)
+{
+    uint32_t test = 1;
+    if (*(uint8_t*)&test == 1) {
+        uint32_t network = 0;
+        network |= ((host >> 24) & 0xFF);
+        network |= ((host >> 8) & 0xFF00);
+        network |= ((host << 8) & 0xFF0000);
+        network |= ((host << 24) & 0xFF000000);
+        return network;
+    }
+    return host;
+}
+
+/**  Converts the unsigned integer netlong from network byte order to host byte
+ * order.
+ * @param network number to convert
+ * * Conforming to POSIX.1-2001.
+ */
+static inline uint32_t _ntohl(uint32_t network) { return _htonl(network); }
+
 namespace lcs {
 /**
- * Instr define the instructions to rebuild the given scene. Every instruction
- * has a command and a ending character. Instructions are non readable ASCII
- * characters.
- *
+ * Instructions are set of commands to rebuild the given scene. Instructions are
+ * non readable ASCII characters.
  */
-enum Instr : uint8_t {
+enum Instruction : uint8_t {
+    /** Used in end of the strings and empty node objects. */
     END = 0x0,
-    DEFINE_SCENE,
     /** Path to a package. */
     INCLUDE = 0x9,
-    /** Read no more than min(128, buffer_s) characters stopping at NULL byte.
-     */
+    /** Read up to 128 characters stopping at NULL byte. */
     SET_NAME = 0xA,
-    /** Read no more than min(512, buffer_s) characters stopping at NULL byte.
-     */
+    /** Read up to 512 characters stopping at NULL byte. */
     SET_DESC = 0xB,
-    /** Read no more than min(60, buffer_s) characters stopping at NULL byte. */
+    /** Read up to 60 characters stopping at NULL byte. */
     SET_AUTHOR = 0xC,
-    /** Read version. Fmt: UINT32 version */
+    /** Read version. fmt: UINT32 version */
     SET_VERSION = 0xD,
-    /** Sets the scene as a component. Fmt: UINT32 input_s, UINT32 output_s  */
+    /** Sets the scene as a component. fmt: UINT32 input_s, UINT32 output_s  */
     SET_COMP = 0xE,
-    /** Add a node to the scene. Fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y,
-       UINT8 is_timer, (UINT8 freq|UINT8 value) */
+    /** Add an input. fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y, UINT8
+       is_timer, (UINT8 freq|value) */
     ADD_INPUT = 0xF,
-    /** Add a node to the scene. Fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y  */
+    /** Add an output. fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y  */
     ADD_OUT = 0x10,
-    /** Add a node to the scene. Fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y,
-       UINT32 size, UINT32 type  */
+    /** Add a gate. fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y, UINT8 size,
+       UINT8 type  */
     ADD_GATE = 0x11,
-    /** Add a node to the scene. Fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y,
-     * UINT8 dep_id
-     */
+    /** Add a component. fmt: UINT8 null, UINT32 pos.x, UINT32 pos.y, UINT8
+       dep_id */
     ADD_COMP = 0x12,
-    /** Connect sockets of two nodes. Fmt: UINT32 from(packed), UINT32
-       to(packed) */
+    /** Connect two nodes. fmt: UINT32 from(packed), UINT32 to(packed) */
     CONNECT = 0x13,
-
-    /** ADD_T is about to insert a valid Node. */
+    /** ADD_<T> is about to insert a valid Node. */
     NODE_VALUE = 0x14,
 };
 
 static void _push_uint(std::vector<uint8_t>& vec, uint32_t value)
 {
-    value = htonl(value);
+    value = _htonl(value);
     vec.push_back(value);
     vec.push_back(value >> 8);
     vec.push_back(value >> 16);
@@ -69,7 +88,7 @@ static uint32_t _pop_uint(const uint8_t** cursor, const uint8_t* endptr)
     uint32_t result = 0;
     memcpy(&result, *cursor, sizeof(uint32_t));
     *cursor += sizeof(uint32_t);
-    return ntohl(result);
+    return _ntohl(result);
 }
 
 static void _encode_meta(const Scene& s, std::vector<uint8_t>& buffer)
@@ -78,38 +97,38 @@ static void _encode_meta(const Scene& s, std::vector<uint8_t>& buffer)
     size_t desc_s   = strnlen(s.description().data(), s.description().size());
     size_t author_s = strnlen(s.author().data(), s.author().size());
     if (name_s > 0) {
-        buffer.push_back(Instr::SET_NAME);
+        buffer.push_back(SET_NAME);
         buffer.insert(buffer.end(), s.name().data(), s.name().data() + name_s);
-        buffer.push_back(Instr::END);
+        buffer.push_back(END);
     }
     if (desc_s > 0) {
-        buffer.push_back(Instr::SET_DESC);
+        buffer.push_back(SET_DESC);
         buffer.insert(buffer.end(), s.description().data(),
             s.description().data() + desc_s);
-        buffer.push_back(Instr::END);
+        buffer.push_back(END);
     }
     if (author_s > 0) {
-        buffer.push_back(Instr::SET_AUTHOR);
+        buffer.push_back(SET_AUTHOR);
         buffer.insert(
             buffer.end(), s.author().data(), s.author().data() + author_s);
-        buffer.push_back(Instr::END);
+        buffer.push_back(END);
     }
-    buffer.push_back(Instr::SET_VERSION);
+    buffer.push_back(SET_VERSION);
     _push_uint(buffer, s.version);
     if (s.component_context.has_value()) {
-        buffer.push_back(Instr::SET_COMP);
+        buffer.push_back(SET_COMP);
         _push_uint(buffer, s.component_context->inputs.size());
         _push_uint(buffer, s.component_context->outputs.size());
     }
     for (const auto& dep : s.dependencies()) {
         std::string name = dep.to_dependency();
-        buffer.push_back(Instr::INCLUDE);
+        buffer.push_back(INCLUDE);
         buffer.insert(buffer.end(), name.data(), name.data() + name.length());
-        buffer.push_back(Instr::END);
+        buffer.push_back(END);
     }
 }
 
-template <typename T> static constexpr Instr _get_instr(void)
+template <typename T> static constexpr Instruction _get_instr(void)
 {
     if constexpr (std::is_same<T, Gate>()) {
         return ADD_GATE;
@@ -130,13 +149,11 @@ static inline void _encode_node(std::vector<uint8_t>& buffer, const T& it)
 {
     buffer.push_back(_get_instr<T>());
     if (it.is_null()) {
-        buffer.push_back(Instr::END);
+        buffer.push_back(END);
     } else {
-        buffer.push_back(Instr::NODE_VALUE);
-        uint32_t pos[2] = {};
-        Point p         = it.point();
-        memcpy(pos, &p.x, sizeof(uint32_t));
-        memcpy(&pos[1], &p.y, sizeof(uint32_t));
+        buffer.push_back(NODE_VALUE);
+        uint32_t pos[2] = { static_cast<uint32_t>(it.point().x),
+            static_cast<uint32_t>(it.point().y) };
         _push_uint(buffer, pos[0]);
         _push_uint(buffer, pos[1]);
         if constexpr (std::is_same<T, Input>()) {
@@ -175,13 +192,13 @@ static void _encode_nodes(const Scene& s, std::vector<uint8_t>& buffer)
 static void _encode_rel(const Scene& s, std::vector<uint8_t>& buffer)
 {
     for (const auto& [id, rel] : s._relations) {
-        buffer.push_back(Instr::CONNECT);
+        buffer.push_back(CONNECT);
         _push_uint(buffer, encode_pair(rel.from_node, rel.from_sock, true));
         _push_uint(buffer, encode_pair(rel.to_node, rel.to_sock, false));
     }
 }
 
-LCS_ERROR Scene::write_to(std::vector<uint8_t>& buffer) const
+Error Scene::write_to(std::vector<uint8_t>& buffer) const
 {
     buffer.clear();
     buffer.reserve(sizeof(*this));
@@ -232,11 +249,11 @@ LCS_ERROR static inline _decode_node(const uint8_t** bgnptr,
 {
     const uint8_t* cursor = *bgnptr;
     expect_at_least(cursor, endptr, uint8_t);
-    if (*cursor == Instr::END) {
+    if (*cursor == END) {
         null_list.push_back(s.add_node<T>());
         *bgnptr = cursor + 1;
         return Error::OK;
-    } else if (*cursor != Instr::NODE_VALUE) {
+    } else if (*cursor != NODE_VALUE) {
         return ERROR(Error::INVALID_NODE);
     }
     cursor++;
@@ -290,27 +307,27 @@ LCS_ERROR static inline _decode_branch(const uint8_t** bgnptr,
 {
     Error err             = Error::OK;
     const uint8_t* cursor = *bgnptr;
-    Instr instr           = (Instr)*cursor;
+    Instruction instr     = (Instruction)*cursor;
     cursor++;
     switch (instr) {
-    case Instr ::SET_NAME:
+    case SET_NAME:
         L_DEBUG("%s", "Instr::SET_NAME");
         err = _strdecode(&cursor, endptr, s.name().data(), s.name().size());
         break;
-    case Instr ::SET_DESC:
+    case SET_DESC:
         L_DEBUG("%s", "Instr::SET_DESC");
         err = _strdecode(
             &cursor, endptr, s.description().data(), s.description().size());
         break;
-    case Instr ::SET_AUTHOR:
+    case SET_AUTHOR:
         L_DEBUG("%s", "Instr::SET_AUTHOR");
         err = _strdecode(&cursor, endptr, s.author().data(), s.author().size());
         break;
-    case Instr ::SET_VERSION:
+    case SET_VERSION:
         L_DEBUG("%s", "Instr::SET_VERSION");
         s.version = _pop_uint(&cursor, endptr);
         break;
-    case Instr ::SET_COMP: {
+    case SET_COMP: {
         L_DEBUG("%s", "Instr::SET_COMP");
         uint32_t input_s  = _pop_uint(&cursor, endptr);
         uint32_t output_s = _pop_uint(&cursor, endptr);
@@ -318,27 +335,27 @@ LCS_ERROR static inline _decode_branch(const uint8_t** bgnptr,
         s.component_context->setup(input_s, output_s);
         break;
     }
-    case Instr::INCLUDE:
+    case INCLUDE:
         L_DEBUG("Instr::INCLUDE");
         err = _decode_dep(&cursor, endptr, s);
         break;
-    case Instr::ADD_INPUT:
+    case ADD_INPUT:
         L_DEBUG("Instr::ADD_INPUT");
         err = _decode_node<Input>(&cursor, endptr, s, null_list);
         break;
-    case Instr::ADD_OUT:
+    case ADD_OUT:
         L_DEBUG("Instr::ADD_OUTPUT");
         err = _decode_node<Output>(&cursor, endptr, s, null_list);
         break;
-    case Instr::ADD_GATE:
+    case ADD_GATE:
         L_DEBUG("Instr::ADD_GATE");
         err = _decode_node<Gate>(&cursor, endptr, s, null_list);
         break;
-    case Instr::ADD_COMP:
+    case ADD_COMP:
         L_DEBUG("Instr::ADD_COMP");
         err = _decode_node<Component>(&cursor, endptr, s, null_list);
         break;
-    case Instr::CONNECT: {
+    case CONNECT: {
         L_DEBUG("Instr::CONNECT");
         uint32_t from_u = _pop_uint(&cursor, endptr);
         uint32_t to_u   = _pop_uint(&cursor, endptr);

@@ -120,12 +120,17 @@ static void _show_rel(Ref<Scene> scene, relid id)
 
 void PropertyEditor(Ref<Scene> scene)
 {
+    if (!user_data.tree) {
+        return;
+    }
     std::string title
         = std::string { _("Property Editor") } + "###PropertyEditor";
-    if (ImGui::Begin(title.c_str(), nullptr,
+    if (ImGui::Begin(title.c_str(), &user_data.tree,
             ImGuiWindowFlags_NoFocusOnAppearing
                 | ImGuiWindowFlags_NoNavFocus)) {
-        ImGui::BeginChild("##frame", ImVec2(), ImGuiChildFlags_Borders);
+        IconText(ICON_LC_SEARCH, FONT_NORMAL, "");
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
         if (ImGui::InputText("##Filter", Filter.InputBuf,
                 IM_ARRAYSIZE(Filter.InputBuf),
                 ImGuiInputTextFlags_EscapeClearsAll
@@ -140,6 +145,7 @@ void PropertyEditor(Ref<Scene> scene)
                   "commas; a leading ‘‑’ excludes a node."));
             ImGui::EndTooltip();
         }
+        ImGui::BeginChild("##frame", ImVec2(), ImGuiChildFlags_Borders);
         if (ImGui::BeginTable("##bg", 1, ImGuiTableFlags_RowBg)) {
             if (scene != nullptr) {
                 for (uint16_t i = 0; i < scene->_gates.size(); i++) {

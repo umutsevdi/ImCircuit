@@ -80,17 +80,17 @@ inline void ShowIcon(const char* icon)
 }
 
 template <typename... Args>
-bool IconButton(const char* icon, float size, Args... args)
+bool IconButton(const char* icon, const char* fmt, Args... args)
 {
     ImGui::BeginGroup();
-    bool has_text           = strnlen(get_first<const char*>(args...), 5);
+    bool has_text           = strnlen(fmt, 5);
     static char buffer[256] = "##";
     ImVec2 text_s           = { 0, 0 };
     if (has_text) {
-        snprintf(buffer + 2, 254, args...);
+        snprintf(buffer + 2, 254, fmt, args...);
         text_s = ImGui::CalcTextSize(buffer + 2);
     }
-    ImGui::PushFont(get_font(ICON), size);
+    ImGui::PushFont(get_font(ICON), 0.f);
     ImVec2 icon_s = ImGui::CalcTextSize(icon);
     ImVec2 btn_s  = ImVec2(text_s.x + icon_s.x
              + (has_text ? 1.5f : 1.f) * ImGui::GetStyle().ItemSpacing.x,
@@ -113,22 +113,17 @@ bool IconButton(const char* icon, float size, Args... args)
     return pressed;
 }
 
-template <typename... Args> bool IconButton(const char* icon, Args... args)
-{
-    return IconButton(icon, 0.f, args...);
-}
-
 template <typename... Args>
-void IconText(const char* icon, float size, Args... args)
+void IconText(const char* icon, float size, const char* fmt, Args... args)
 {
     ImGui::BeginGroup();
-    bool has_text = strnlen(get_first<const char*>(args...), 5);
+    bool has_text = strnlen(fmt, 5);
     ImGui::PushFont(get_font(ICON), size);
     ImGui::Text("%s", icon);
     ImGui::PopFont();
     if (has_text) {
         ImGui::SameLine();
-        ImGui::Text(args...);
+        ImGui::Text(fmt, args...);
     }
     ImGui::EndGroup();
 }
@@ -139,18 +134,6 @@ template <typename... Args> inline void Section(Args... args)
     static char buffer[1024] = "##";
     snprintf(buffer + 2, 1022, args...);
     ImGui::PushFont(get_font(REGULAR), FONT_LARGE);
-    ImGui::TextUnformatted(buffer + 2);
-    ImGui::PopFont();
-    ImGui::BeginChild(buffer, ImVec2(0, 0),
-        ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_Borders);
-}
-
-template <typename... Args> inline void SubSection(Args... args)
-{
-    ImGui::BeginGroup();
-    static char buffer[1024] = "##";
-    snprintf(buffer + 2, 1022, args...);
-    ImGui::PushFont(get_font(FontFlags::BOLD), 0.f);
     ImGui::TextUnformatted(buffer + 2);
     ImGui::PopFont();
     ImGui::BeginChild(buffer, ImVec2(0, 0),

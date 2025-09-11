@@ -9,7 +9,7 @@ static void _inputs(const std::vector<Input>&);
 static void _outputs(const std::vector<Output>&);
 static void _components(const std::vector<Component>&);
 
-void DebugWindow(Ref< Scene> scene)
+void DebugWindow(Ref<Scene> scene)
 {
     std::string title
         = std::string { _("Memory Debugger") } + "###MemoryDebugger";
@@ -39,7 +39,7 @@ void DebugWindow(Ref< Scene> scene)
             if (ImGui::CollapsingHeader(
                     _("Raw"), ImGuiTreeNodeFlags_DefaultOpen)) {
                 std::vector<uint8_t> raw;
-                Error _ = scene->write_to(raw);
+                scene->write_to(raw);
                 if (!raw.empty()) {
                     std::array<char, 10 * 3 + 1> buf {};
                     for (size_t i = 0; i < raw.size() / 10; i++) {

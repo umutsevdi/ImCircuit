@@ -509,7 +509,11 @@ void Scene::run(float delta)
     }
 }
 
-Error Scene::add_dependency(const std::string& name) { return Error::OK; }
+Error Scene::add_dependency(const std::string& name)
+{
+    // TODO Implement
+    return Error::OK;
+}
 void Scene::add_dependency(Scene&& scene)
 {
     _dependencies.emplace_back(std::move(scene));

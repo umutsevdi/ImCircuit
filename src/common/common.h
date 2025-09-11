@@ -19,6 +19,8 @@
 #include <libintl.h>
 #include <string>
 #include <vector>
+
+/* Gets rid of Windows API definitions. */
 #ifdef ERROR
 #undef ERROR
 #endif
@@ -29,6 +31,7 @@
 #undef FALSE
 #endif
 
+/* Application constants */
 #define APPVERSION "0.0.2"
 #define APPPKG "com.lcs.app"
 #define APPNAME "Logic Circuit Simulator"
@@ -245,10 +248,6 @@ namespace fs {
     const char** localnames(void);
     size_t localsize(void);
 
-    /** Runs an assertion, displays an error message on failure. Intended
-     * for macros. */
-    int __expect(std::function<bool(void)> expr, const char* function,
-        const char* file, int line, const char* str_expr) noexcept;
     /**
      * Push a log message to the stack. Intended to be used by the macros
      * such as L_INFO, L_WARN, L_ERROR, L_DEBUG.
@@ -349,49 +348,15 @@ namespace net {
      */
     bool pull_response(uint64_t id, HttpResponse& session);
 
+    /**
+     * Opens the provided URL on the operating system's preferred browser.
+     * @param url to open
+     */
+    void open_browser(const std::string& url);
 } // namespace net
-
-/**
- * Opens the provided URL on the operating system's preferred browser.
- * @param url to open
- */
-void open_browser(const std::string& url);
-
 } // namespace lcs
 
-template <typename T, typename... Args> T get_first(T first, Args...)
-{
-    return first;
-}
-
-std::string strlimit(const std::string& input, size_t limit);
 std::vector<std::string> split(std::string& s, const std::string& delimiter);
 std::vector<std::string> split(std::string& s, const char delimiter);
 std::string base64_encode(const std::string& input);
 std::string base64_decode(const std::string& input);
-
-/** Converts the unsigned integer hostlong from host byte order to network
- * byte order.
- * @param host number to convert
- * * Conforming to POSIX.1-2001.
- */
-inline uint32_t htonl(uint32_t host)
-{
-    uint32_t test = 1;
-    if (*(uint8_t*)&test == 1) {
-        uint32_t network = 0;
-        network |= ((host >> 24) & 0xFF);
-        network |= ((host >> 8) & 0xFF00);
-        network |= ((host << 8) & 0xFF0000);
-        network |= ((host << 24) & 0xFF000000);
-        return network;
-    }
-    return host;
-}
-
-/**  Converts the unsigned integer netlong from network byte order to host byte
- * order.
- * @param network number to convert
- * * Conforming to POSIX.1-2001.
- */
-inline uint32_t ntohl(uint32_t network) { return htonl(network); }

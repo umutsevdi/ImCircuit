@@ -7,21 +7,17 @@ namespace lcs::ui {
 
 Point PositionSelector(Point point, const char* prefix)
 {
-    const static ImVec2 __selector_size = ImGui::CalcTextSize("-000000000000");
+    const static ImVec2 _SELECTOR_SIZE = ImGui::CalcTextSize("-000000000000");
 
     std::string s_prefix = "##";
     s_prefix += prefix;
     ImGui::AlignTextToFramePadding();
     ImGui::Text("x");
     ImGui::SameLine();
-    ImGui::PushItemWidth(__selector_size.x);
+    ImGui::PushItemWidth(_SELECTOR_SIZE.x);
     int x = point.x, y = point.y;
-    bool change_x
-        = ImGui::InputInt((s_prefix + "X").c_str(), &x, 1.0f, 10.0f, 0);
     ImGui::Text("y");
     ImGui::SameLine();
-    bool change_y
-        = ImGui::InputInt((s_prefix + "Y").c_str(), &y, 1.0f, 10.0f, 0);
     ImGui::PopItemWidth();
     return { static_cast<int16_t>(x), static_cast<int16_t>(y) };
 }
@@ -84,7 +80,6 @@ void ToggleButton(Ref<Input> node)
 void NodeTypeTitle(Node n)
 {
     static char buffer[256];
-    ImGui::PushStyleColor(ImGuiCol_TextLink, NodeType_to_color(n.type));
     snprintf(buffer, 256, "%s@%u", to_str<Node::Type>(n.type), n.index);
     if (ImGui::TextLink(buffer)) {
         ImNodes::ClearNodeSelection();
@@ -96,7 +91,6 @@ void NodeTypeTitle(Node n)
         default: ImNodes::SelectNode(n.numeric()); break;
         }
     };
-    ImGui::PopStyleColor();
 }
 
 void NodeTypeTitle(Node n, sockid)

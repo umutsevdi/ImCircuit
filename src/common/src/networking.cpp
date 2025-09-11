@@ -254,9 +254,7 @@ bool pull_response(uint64_t id, HttpResponse& resp)
     return false;
 }
 
-} // namespace lcs::net
-
-void lcs::open_browser(const std::string& url)
+void open_browser(const std::string& url)
 {
 #ifdef _WIN32
     std::string command = "start " + url;
@@ -265,5 +263,9 @@ void lcs::open_browser(const std::string& url)
 #else
     std::string command = "xdg-open " + url; // For Linux
 #endif
-    system(command.c_str());
+    if (system(command.c_str()) != 0) {
+        L_WARN("Error occurred while executing %s", command.c_str());
+    }
 }
+
+} // namespace lcs::net

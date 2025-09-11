@@ -3,19 +3,19 @@
 
 namespace lcs::tabs {
 
-class Tab : public Scene {
-public:
-    Tab(bool _is_saved, std::filesystem::path _path, Scene _scene)
-        : Scene { std::move(_scene) }
-        , is_saved { _is_saved }
-        , path { _path } { };
-
-    bool is_saved;
-    std::filesystem::path path;
-};
 static std::vector<Tab> TABS;
 static size_t selected     = SIZE_MAX;
 static size_t old_selected = SIZE_MAX;
+
+size_t create(const std::string& name, const std::string& author,
+    const std::string& description, int version)
+{
+    TABS.emplace_back(Scene { name, author, description, version });
+    old_selected = selected;
+    selected     = TABS.size() - 1;
+    L_INFO("Scene \"%s\"(%zu) is opened.", name.c_str(), selected);
+    return selected;
+}
 
 LCS_ERROR open(const std::filesystem::path& path)
 {
@@ -32,14 +32,14 @@ LCS_ERROR open(const std::filesystem::path& path)
     if (!fs::read(path, data)) {
         return ERROR(Error::NOT_FOUND);
     }
-    Tab inode { true, path, Scene {} };
-    if (Error err = inode.read_from(data); err) {
+    Tab inode { Scene {}, true, path };
+    if (Error err = inode.scene.read_from(data); err) {
         return err;
     }
     TABS.push_back(std::move(inode));
     old_selected = selected;
     selected     = TABS.size() - 1;
-    L_INFO("Scene \"%s\" is opened.", TABS[selected].name().data());
+    L_INFO("Scene \"%s\" is opened.", TABS[selected].scene.name().data());
     return OK;
 }
 
@@ -88,7 +88,7 @@ LCS_ERROR save(size_t idx)
         return OK;
     }
     std::vector<uint8_t> scene_bin;
-    Error err = inode.write_to(scene_bin);
+    Error err = inode.scene.write_to(scene_bin);
     if (err) {
         return err;
     }
@@ -139,18 +139,11 @@ Ref<Scene> active(size_t idx)
         old_selected = selected;
         selected     = idx;
     }
-    return &TABS[selected];
+    return &TABS[selected].scene;
 }
 
-size_t create(const std::string& name, const std::string& author,
-    const std::string& description, int version)
-{
-    TABS.emplace_back(false, "", Scene { name, author, description, version });
-    old_selected = selected;
-    selected     = TABS.size() - 1;
-    L_INFO("Scene \"%s\"(%zu) is opened.", name.c_str(), selected);
-    return selected;
-}
+//??
+std::vector<Tab>::iterator iterator(void) { return TABS.begin(); }
 
 void for_each(std::function<bool(std::string_view name,
         const std::filesystem::path& path, bool is_saved, bool is_active)>
@@ -158,7 +151,7 @@ void for_each(std::function<bool(std::string_view name,
 {
     size_t updated_scene = selected;
     for (size_t i = 0; i < TABS.size(); i++) {
-        if (run(std::string_view { TABS[i].name().data() }, TABS[i].path,
+        if (run(std::string_view { TABS[i].scene.name().data() }, TABS[i].path,
                 TABS[i].is_saved, i == selected)) {
             updated_scene = i;
         };

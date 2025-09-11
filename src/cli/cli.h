@@ -29,7 +29,6 @@ enum Type : uint8_t {
     NODE_INT_NODE_INT
 };
 class Command {
-
 public:
     Command(const std::string& _name, const std::string& _desc,
         std::function<Error(Ref<Scene>, const std::string& arg)> _cmd,

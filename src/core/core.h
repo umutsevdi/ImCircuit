@@ -460,7 +460,7 @@ public:
         }
         L_INFO(
             "Added %s@%d to the scene.", to_str<Node::Type>(id.type), id.index);
-        undo.push([this, id]() { Error _ = remove_node(id); });
+        undo.push([this, id]() { remove_node(id); });
         return id;
     }
 
@@ -469,7 +469,7 @@ public:
      *
      * @param id node to remove
      */
-    LCS_ERROR remove_node(Node id);
+    Error remove_node(Node id);
 
     /**
      * Obtain a temporary node reference from the scene.
@@ -566,7 +566,7 @@ public:
      * @param buffer to write into
      * @returns Error on failure
      */
-    LCS_ERROR write_to(std::vector<uint8_t>& buffer) const;
+    Error write_to(std::vector<uint8_t>& buffer) const;
 
     /**
      * Deserializes given scene.
@@ -637,6 +637,20 @@ private:
 };
 
 namespace tabs {
+
+    class Tab {
+    public:
+        Tab(Scene _scene, bool _is_saved = false,
+            std::filesystem::path _path = "")
+            : is_saved { _is_saved }
+            , path { _path }
+            , scene { std::move(_scene) } { };
+
+        bool is_saved;
+        std::filesystem::path path;
+        Scene scene;
+    };
+
     /**
      * Creates an empty scene with given name
      * @param name Scene name
