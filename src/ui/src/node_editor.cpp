@@ -39,9 +39,22 @@ static inline ImNodesPinShape_ to_shape(bool value, bool is_input)
     return value ? ImNodesPinShape_QuadFilled : ImNodesPinShape_Quad;
 }
 
+static inline bool _is_mouse_in(void)
+{
+    ImVec2 mouse = ImGui::GetMousePos();
+    ImVec2 wmin  = ImGui::GetWindowPos();
+    ImVec2 wmax { wmin.x + ImGui::GetWindowSize().x,
+        wmin.y + ImGui::GetWindowSize().y };
+    return mouse.x > wmin.x && mouse.y > wmin.y && mouse.x < wmax.x
+        && mouse.y < wmax.y;
+}
+
 void NodeEditor(Ref<Scene> scene, bool is_changed)
 {
-    std::string title = std::string { _("Editor") } + "###Editor";
+    static int id         = 0;
+    static bool is_node   = false;
+    static bool is_active = false;
+    std::string title     = std::string { _("Editor") } + "###Editor";
     if (ImGui::Begin(title.c_str(), nullptr,
             ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoFocusOnAppearing
                 | ImGuiWindowFlags_NoNavFocus)) {
@@ -176,15 +189,43 @@ void NodeEditor(Ref<Scene> scene, bool is_changed)
                 Node to   = decode_pair(end_pin_id, &to_sock);
                 scene->connect(to, to_sock, from, from_sock);
             };
-            if (ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
-                int id;
+
+            if (_is_mouse_in()
+                && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
                 if (ImNodes::IsLinkHovered((int*)&id)) {
-                    scene->disconnect(id);
+                    is_node   = false;
+                    is_active = true;
+                    ImGui::OpenPopup("##NodeContextOptions");
                 } else if (ImNodes::IsNodeHovered((int*)&id)) {
-                    Node n = decode_pair(id);
-                    scene->remove_node(n);
+                    is_node   = true;
+                    is_active = true;
+                    ImGui::OpenPopup("##NodeContextOptions");
+                } else {
+                    is_active = false;
                 }
             }
+            if (is_active
+                && ImGui::BeginPopup("##NodeContextOptions",
+                    ImGuiWindowFlags_AlwaysAutoResize)) {
+                ImGui::PushStyleColor(ImGuiCol_Button, ImGuiCol_PopupBg);
+                if (is_node) {
+                    if (IconButton(ICON_LC_TRASH, _("Delete Node"))) {
+                        scene->remove_node(decode_pair(id));
+                        ImGui::CloseCurrentPopup();
+                    }
+                } else {
+                    if (IconButton(ICON_LC_CIRCLE_SLASH_2, _("Disconnect"))) {
+                        scene->disconnect(id);
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+                if (IconButton(ICON_LC_COPY_MINUS, _("Cut"))) { }
+                if (IconButton(ICON_LC_COPY, _("Copy"))) { }
+                if (IconButton(ICON_LC_CLIPBOARD_PASTE, _("Paste"))) { }
+                ImGui::PopStyleColor();
+                ImGui::EndPopup();
+            }
+            // TODO Add palette as right click menu
         } else {
             ImNodes::EndNodeEditor();
         }
