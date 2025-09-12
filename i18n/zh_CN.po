@@ -1,19 +1,19 @@
-# Chinese translations for LogicCircuitSimulator package.
+# Chinese translations for ImCircuit package.
 # Copyright (C) 2025 Umut Sevdi
-# This file is distributed under the same license as the LogicCircuitSimulator package.
+# This file is distributed under the same license as the ImCircuit package.
 # Automatically generated, 2025.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: LogicCircuitSimulator 1.0.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-10 20:52+0300\n"
+"Project-Id-Version: ImCircuit 0.2.0\n"
+"Report-Msgid-Bugs-To: ask@umutsevdi.com\n"
+"POT-Creation-Date: 2025-09-12 17:06+0300\n"
 "PO-Revision-Date: 2025-08-27 17:02+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/ui/src/menubar.cpp:34
@@ -60,7 +60,7 @@ msgid "Palette"
 msgstr ""
 
 #: src/ui/src/menubar.cpp:65 src/ui/src/inspector.cpp:28
-#: src/ui/src/inspector.cpp:30 src/ui/src/inspector.cpp:115
+#: src/ui/src/inspector.cpp:30 src/ui/src/inspector.cpp:91
 msgid "Inspector"
 msgstr ""
 
@@ -73,99 +73,103 @@ msgstr ""
 msgid "Scene Info"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:70
+#: src/ui/src/menubar.cpp:68 src/ui/src/property_editor.cpp:127
+msgid "Property Editor"
+msgstr ""
+
+#: src/ui/src/menubar.cpp:71
 msgid "Help"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:71 src/ui/src/menubar.cpp:374
+#: src/ui/src/menubar.cpp:72 src/ui/src/menubar.cpp:374
 msgid "Changelog"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:74 src/ui/src/menubar.cpp:316
+#: src/ui/src/menubar.cpp:75 src/ui/src/menubar.cpp:316
 msgid "About"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:153
+#: src/ui/src/menubar.cpp:154
 msgid "Scene Tabs"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:165
+#: src/ui/src/menubar.cpp:166
 msgid "Untitled Scene"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:197
+#: src/ui/src/menubar.cpp:198
 msgid "New Scene"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:208 src/ui/src/scene_info.cpp:28
+#: src/ui/src/menubar.cpp:209 src/ui/src/scene_info.cpp:28
 msgid "Scene Name"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:212 src/ui/src/scene_info.cpp:34
+#: src/ui/src/menubar.cpp:213 src/ui/src/scene_info.cpp:34
 #: src/ui/src/scene_info.cpp:70
 msgid "Author"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:216 src/ui/src/scene_info.cpp:40
+#: src/ui/src/menubar.cpp:217 src/ui/src/scene_info.cpp:40
 msgid "Description"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:221 src/ui/src/inspector.cpp:109
+#: src/ui/src/menubar.cpp:222 src/ui/src/inspector.cpp:85
 msgid "Type"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:226 src/ui/src/scene_info.cpp:27
+#: src/ui/src/menubar.cpp:227 src/ui/src/scene_info.cpp:27
 msgid "Scene"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:232 src/core/src/engine.cpp:9
+#: src/ui/src/menubar.cpp:233 src/core/src/engine.cpp:9
 msgid "Component"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:236 src/ui/src/scene_info.cpp:51
+#: src/ui/src/menubar.cpp:237 src/ui/src/scene_info.cpp:51
 msgid "Input Size"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:238 src/ui/src/scene_info.cpp:55
+#: src/ui/src/menubar.cpp:239 src/ui/src/scene_info.cpp:55
 msgid "Output Size"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:251
+#: src/ui/src/menubar.cpp:252
 msgid "Cancel"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:273
+#: src/ui/src/menubar.cpp:274
 msgid "Close Scene"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:277
+#: src/ui/src/menubar.cpp:278
 msgid ""
 "You have unsaved changes. Would you like to save your changes before closing?"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:279
+#: src/ui/src/menubar.cpp:280
 msgid "Save & Close"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:286
+#: src/ui/src/menubar.cpp:287
 msgid "Exit Without Saving"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:321
+#: src/ui/src/menubar.cpp:320
 msgid ""
-"Logic Circuit Simulator is a free and open-source cross-platform desktop\n"
+"ImCircuit is a free and open-source cross-platform desktop\n"
 "application to simulate logic circuits."
 msgstr ""
 
-#: src/ui/src/menubar.cpp:323
+#: src/ui/src/menubar.cpp:322
 msgid "Developer: "
 msgstr ""
 
-#: src/ui/src/menubar.cpp:328
+#: src/ui/src/menubar.cpp:327
 msgid "Source code is available at "
 msgstr ""
 
-#: src/ui/src/menubar.cpp:333
+#: src/ui/src/menubar.cpp:332
 msgid "Version: "
 msgstr ""
 
@@ -373,81 +377,81 @@ msgid ""
 "attributes of the currently selected logic gate node."
 msgstr ""
 
-#: src/ui/src/inspector.cpp:51
+#: src/ui/src/inspector.cpp:52
 #, c-format
 msgid "%d items selected."
 msgstr ""
 
-#: src/ui/src/inspector.cpp:54
+#: src/ui/src/inspector.cpp:55
 msgid "Delete All"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:79
-msgid "Select Node"
-msgstr ""
-
-#: src/ui/src/inspector.cpp:92
-msgid "Delete Node"
-msgstr ""
-
-#: src/ui/src/inspector.cpp:107
+#: src/ui/src/inspector.cpp:83
 msgid "Id"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:113 src/ui/src/node_editor.cpp:115
+#: src/ui/src/inspector.cpp:89 src/ui/src/node_editor.cpp:129
 msgid "Position"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:138 src/ui/src/inspector.cpp:155
-#: src/ui/src/inspector.cpp:168 src/ui/src/inspector.cpp:194
-#: src/ui/src/inspector.cpp:226 src/ui/src/inspector.cpp:239
-#: src/ui/src/inspector.cpp:256 src/ui/src/inspector.cpp:284
-#: src/ui/src/inspector.cpp:319 src/ui/src/node_editor.cpp:101
-#: src/ui/src/node_editor.cpp:118 src/ui/src/node_editor.cpp:156
+#: src/ui/src/inspector.cpp:105
+msgid "Select Node"
+msgstr ""
+
+#: src/ui/src/inspector.cpp:118 src/ui/src/node_editor.cpp:213
+msgid "Delete Node"
+msgstr ""
+
+#: src/ui/src/inspector.cpp:133 src/ui/src/inspector.cpp:149
+#: src/ui/src/inspector.cpp:160 src/ui/src/inspector.cpp:186
+#: src/ui/src/inspector.cpp:218 src/ui/src/inspector.cpp:231
+#: src/ui/src/inspector.cpp:248 src/ui/src/inspector.cpp:276
+#: src/ui/src/inspector.cpp:312 src/ui/src/node_editor.cpp:114
+#: src/ui/src/node_editor.cpp:132 src/ui/src/node_editor.cpp:170
 msgid "Value"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:139
+#: src/ui/src/inspector.cpp:134
 msgid "Frequency"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:160 src/ui/src/inspector.cpp:218
-#: src/ui/src/inspector.cpp:248 src/ui/src/inspector.cpp:274
+#: src/ui/src/inspector.cpp:152 src/ui/src/inspector.cpp:210
+#: src/ui/src/inspector.cpp:240 src/ui/src/inspector.cpp:266
 #: src/ui/src/dbg_viewer.cpp:75
 msgid "Outputs"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:163 src/ui/src/inspector.cpp:221
-#: src/ui/src/inspector.cpp:251 src/ui/src/inspector.cpp:278
-#: src/ui/src/inspector.cpp:311
+#: src/ui/src/inspector.cpp:155 src/ui/src/inspector.cpp:213
+#: src/ui/src/inspector.cpp:243 src/ui/src/inspector.cpp:270
+#: src/ui/src/inspector.cpp:304
 msgid "Socket"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:166 src/ui/src/inspector.cpp:224
-#: src/ui/src/inspector.cpp:281 src/ui/src/inspector.cpp:314
-#: src/ui/src/inspector.cpp:356
+#: src/ui/src/inspector.cpp:158 src/ui/src/inspector.cpp:216
+#: src/ui/src/inspector.cpp:273 src/ui/src/inspector.cpp:307
+#: src/ui/src/inspector.cpp:349
 msgid "Connection"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:185 src/ui/src/inspector.cpp:216
-#: src/ui/src/inspector.cpp:247 src/ui/src/inspector.cpp:301
-#: src/ui/src/property_editor.cpp:67 src/ui/src/dbg_viewer.cpp:69
+#: src/ui/src/inspector.cpp:177 src/ui/src/inspector.cpp:208
+#: src/ui/src/inspector.cpp:239 src/ui/src/inspector.cpp:294
+#: src/ui/src/property_editor.cpp:69 src/ui/src/dbg_viewer.cpp:69
 msgid "Inputs"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:195
+#: src/ui/src/inspector.cpp:187
 msgid "Gate Type"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:198
+#: src/ui/src/inspector.cpp:190
 msgid "Socket Count"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:359
+#: src/ui/src/inspector.cpp:352 src/ui/src/node_editor.cpp:218
 msgid "Disconnect"
 msgstr ""
 
-#: src/ui/src/inspector.cpp:392
+#: src/ui/src/inspector.cpp:385
 msgid "Disconnect relation"
 msgstr ""
 
@@ -462,19 +466,19 @@ msgstr ""
 msgid "Gates"
 msgstr ""
 
-#: src/ui/src/palette.cpp:31 src/ui/src/property_editor.cpp:45
-#: src/ui/src/property_editor.cpp:52 src/ui/src/node_editor.cpp:151
-#: src/ui/src/node_editor.cpp:231 src/core/src/engine.cpp:10
+#: src/ui/src/palette.cpp:31 src/ui/src/property_editor.cpp:47
+#: src/ui/src/property_editor.cpp:54 src/ui/src/node_editor.cpp:165
+#: src/ui/src/node_editor.cpp:273 src/core/src/engine.cpp:10
 msgid "Input"
 msgstr ""
 
-#: src/ui/src/palette.cpp:35 src/ui/src/property_editor.cpp:21
-#: src/ui/src/property_editor.cpp:23 src/ui/src/property_editor.cpp:78
-#: src/ui/src/node_editor.cpp:151 src/core/src/engine.cpp:11
+#: src/ui/src/palette.cpp:35 src/ui/src/property_editor.cpp:23
+#: src/ui/src/property_editor.cpp:25 src/ui/src/property_editor.cpp:80
+#: src/ui/src/node_editor.cpp:165 src/core/src/engine.cpp:11
 msgid "Output"
 msgstr ""
 
-#: src/ui/src/palette.cpp:40 src/ui/src/node_editor.cpp:231
+#: src/ui/src/palette.cpp:40 src/ui/src/node_editor.cpp:273
 msgid "Timer"
 msgstr ""
 
@@ -506,36 +510,38 @@ msgstr ""
 msgid "XNOR Gate"
 msgstr ""
 
-#: src/ui/src/property_editor.cpp:19 src/ui/src/property_editor.cpp:42
-#: src/ui/src/property_editor.cpp:105
+#: src/ui/src/property_editor.cpp:21 src/ui/src/property_editor.cpp:44
+#: src/ui/src/property_editor.cpp:107
 #, c-format
 msgid "Value: %s"
 msgstr ""
 
-#: src/ui/src/property_editor.cpp:66
+#: src/ui/src/property_editor.cpp:68
 #, c-format
 msgid "Type: %s"
 msgstr ""
 
-#: src/ui/src/property_editor.cpp:106 src/ui/src/node_editor.cpp:97
+#: src/ui/src/property_editor.cpp:108 src/ui/src/node_editor.cpp:110
 msgid "From"
 msgstr ""
 
-#: src/ui/src/property_editor.cpp:108 src/ui/src/property_editor.cpp:113
+#: src/ui/src/property_editor.cpp:110 src/ui/src/property_editor.cpp:115
 #, c-format
 msgid "Socket %d"
 msgstr ""
 
-#: src/ui/src/property_editor.cpp:111 src/ui/src/node_editor.cpp:99
+#: src/ui/src/property_editor.cpp:113 src/ui/src/node_editor.cpp:112
 msgid "To"
 msgstr ""
 
-#: src/ui/src/property_editor.cpp:122
-msgid "Property Editor"
+#: src/ui/src/property_editor.cpp:141
+msgid "Search Box"
 msgstr ""
 
-#: src/ui/src/property_editor.cpp:128
-msgid "Search nodes within the scene. To exclude prefix with '-'"
+#: src/ui/src/property_editor.cpp:143
+msgid ""
+"Search among nodes. You can filter multiple nodes separated by\n"
+"commas; a leading ‑ excludes a node."
 msgstr ""
 
 #: src/ui/src/dbg_viewer.cpp:15
@@ -611,61 +617,73 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:44 src/ui/src/node_editor.cpp:48
+#: src/ui/src/node_editor.cpp:57 src/ui/src/node_editor.cpp:61
 msgid "Editor"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:49
+#: src/ui/src/node_editor.cpp:62
 msgid "A Panel to edit nodes in the selected scene."
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:95
+#: src/ui/src/node_editor.cpp:108
 #, c-format
 msgid "Relation %d"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:111
+#: src/ui/src/node_editor.cpp:125
 #, c-format
 msgid "Node %s@%d"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:133
+#: src/ui/src/node_editor.cpp:147
 msgid "Please connect all pins."
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:150
+#: src/ui/src/node_editor.cpp:164
 #, c-format
 msgid "%s Socket %u"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:154
+#: src/ui/src/node_editor.cpp:168
 msgid "Owner"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:201 src/core/src/engine.cpp:12
+#: src/ui/src/node_editor.cpp:223
+msgid "Cut"
+msgstr ""
+
+#: src/ui/src/node_editor.cpp:224
+msgid "Copy"
+msgstr ""
+
+#: src/ui/src/node_editor.cpp:225
+msgid "Paste"
+msgstr ""
+
+#: src/ui/src/node_editor.cpp:243 src/core/src/engine.cpp:12
 msgid "Component Input"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:213 src/core/src/engine.cpp:13
+#: src/ui/src/node_editor.cpp:255 src/core/src/engine.cpp:13
 msgid "Component Output"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:265
+#: src/ui/src/node_editor.cpp:304
 #, c-format
 msgid "Output %u"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:283
+#: src/ui/src/node_editor.cpp:322
 #, c-format
 msgid "%s Gate %u"
 msgstr ""
 
-#: src/ui/src/node_editor.cpp:311
+#: src/ui/src/node_editor.cpp:350
 #, c-format
 msgid "Component Node %u"
 msgstr ""
 
-#: src/ui/components.h:220
+#: src/ui/components.h:203
 #, c-format
 msgid "Shortcut: %s"
 msgstr ""

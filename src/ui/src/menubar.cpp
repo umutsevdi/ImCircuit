@@ -302,10 +302,9 @@ static void _popup_about(void)
     }
     static const char* site = "https://umutsevdi.com";
     static const char* gh   = "https://github.com/umutsevdi";
-    static const char* prj
-        = "https://github.com/umutsevdi/logic-circuit-simulator-2";
+    static const char* prj  = "https://github.com/umutsevdi/imcircuit";
     static const char* mail
-        = "mailto:ask@umutsevdi.com?subject=\'About Logic Circuit Simulator\'";
+        = "mailto:ask@umutsevdi.com?subject=\'About ImCircuit\'";
     if (!_show_about) {
         return;
     }
@@ -318,9 +317,8 @@ static void _popup_about(void)
     ImGui::OpenPopup(title.c_str());
     if (ImGui::BeginPopupModal(title.c_str(), &_show_about,
             ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
-        ImGui::Text(_(
-            "Logic Circuit Simulator is a free and open-source cross-platform "
-            "desktop\napplication to simulate logic circuits."));
+        ImGui::Text(_("ImCircuit is a free and open-source cross-platform "
+                      "desktop\napplication to simulate logic circuits."));
         ImGui::Text(_("Developer: "));
         ImGui::SameLine();
         if (ImGui::TextLink("Umut Sevdi")) {
@@ -333,7 +331,8 @@ static void _popup_about(void)
         }
         ImGui::Text(_("Version: "));
         ImGui::SameLine();
-        ImGui::TextUnformatted(APPOS "." APPBUILD "." APPVERSION);
+        ImGui::TextUnformatted(
+            APPPKG "." APPVERSION "." APPOS "." APPBUILD "\r\n");
         ImGui::BeginChild(
             "License", ImVec2(line_size.x, 450), ImGuiChildFlags_FrameStyle);
         ImGui::InputTextMultiline("##LicenseText", (char*)license_info.data(),
@@ -376,8 +375,8 @@ static void _changelog_popup(void)
     ImGui::OpenPopup(title.c_str());
     if (ImGui::BeginPopupModal(title.c_str(), &_show_changelog,
             ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
-        ImGui::BeginChild("Changelog", ImVec2(ImGui::GetItemRectMax().x, 450),
-            ImGuiChildFlags_FrameStyle | ImGuiChildFlags_AutoResizeX);
+        ImGui::BeginChild(
+            "License", ImVec2(line_size.x, 450), ImGuiChildFlags_FrameStyle);
         ImGui::InputTextMultiline("##LicenseText", (char*)changelog_info.data(),
             changelog_info.size(), ImGui::GetContentRegionAvail(),
             ImGuiInputTextFlags_ReadOnly);

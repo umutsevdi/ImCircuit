@@ -11,8 +11,9 @@
 # GNU GENERAL PUBLIC LICENSE
 # Copyright (C) 2025 Umut Sevdi
 # ------------------------------------------------------------------------------
-APPNAME_BIN="LogicCircuitSimulator"
+APPNAME_BIN="ImCircuit"
 AUTHOR="Umut Sevdi"
+AUTHOR_MAIL="ask@umutsevdi.com"
 LOCALES=(
     "de_DE" "en_US" "es_ES" "fr_FR"
     "ja_JP" "ru_RU" "tr_TR" "zh_CN"
@@ -27,9 +28,11 @@ xgettext \
     --language=C++ \
     --keyword=_ \
     --keyword=N_ \
+    --from-code=UTF-8 \
+    --msgid-bugs-address="${AUTHOR_MAIL}" \
     --add-comments="TRANSLATORS:$AUTHOR" \
     --package-name=$APPNAME_BIN \
-    --package-version="1.0.0" \
+    --package-version="0.2.0" \
     --output=i18n/${APPNAME_BIN}.pot \
     $(find src/ -name '*.cpp' -o -name '*.h')
 
@@ -54,7 +57,7 @@ rm i18n/po.h
 echo -e "/** Generated at `date`\r\n" \
         " * Copyright (C) 2025 Umut Sevdi\r\n" \
         " * This file is distributed under the same license as\r\n" \
-        " * the LogicCircuitSimulator package.\r\n" \
+        " * the ${APPNAME_BIN} package.\r\n" \
         " */\r\n" \
         "#ifndef __LCS_POGEN__\r\n" \
         "#define __LCS_POGEN__\r\n" \

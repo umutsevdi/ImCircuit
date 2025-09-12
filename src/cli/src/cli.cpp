@@ -37,7 +37,7 @@ namespace cli {
                 print_help();
                 exit(0);
             } else if (arg == "-v" || arg == "--version") {
-                printf(APPOS "." APPBUILD "." APPVERSION "\r\n");
+                printf(APPPKG "." APPVERSION "." APPOS "." APPBUILD "\r\n");
                 exit(0);
             } else if (arg == "-V" || arg == "--verbose") {
                 fs::is_verbose = true;
@@ -63,8 +63,8 @@ namespace cli {
         printf("Usage:\r\n"
                "  " APPNAME_BIN " [OPTIONS] [FILE ...]\r\n"
                "\r\n"
-               "  A free and open-source cross-platform Logic Circuit "
-               "Simulator.\r\n"
+               "  A free and open-source cross-platform logic circuit "
+               "simulator.\r\n"
                "\r\n"
                "Options:\r\n"
                "  -i, --interactive     Enters interactive mode.\r\n"
@@ -73,7 +73,7 @@ namespace cli {
                "  -h, --help            Prints this section.\r\n"
                "\r\n"
                "Report bugs in the bug tracker at\r\n"
-               "<https://github.com/umutsevdi/logic-circuit-simulator-2/"
+               "<https://github.com/umutsevdi/imcircuit/"
                "issues>\r\n"
                "or by email to <ask@umutsevdi.com>.\r\n");
     }

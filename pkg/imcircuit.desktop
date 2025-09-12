@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=ImCircuit
+GenericName=ImCircuit
+Comment=A free and open-source cross-platform logic circuit simulator.
+Categories=Science;
+Exec=imcircuit %U
+Terminal=false
+Type=Application
+Icon=/usr/share/ImCircuit/icon.png
+Actions=New;
+Keywords=logic;circuit;diagram;model;logic-circuit
+MimeType=x-scheme-handler/lcs;

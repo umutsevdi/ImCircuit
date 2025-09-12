@@ -1,4 +1,4 @@
-name: LCS CI For Gitea
+name: ImCircuit CI For Gitea
 
 on:
   push:
@@ -22,13 +22,13 @@ jobs:
           sudo apt-get install -y libsecret-1-dev
       - name: Build
         run:  |
-          cmake -S . -B build/ -DCMAKE_BUILD_TYPE=Release -G Ninja -DLCS_GUI=False
-          ninja -C build/ release/LogicCircuitSimulator.tst
+          cmake -S . -B build/ -DCMAKE_BUILD_TYPE=Release -G Ninja -DIMC_GUI=False
+          ninja -C build/ release/ImCircuit.tst
       - name: Run Tests
-        run:  build/release/LogicCircuitSimulator.tst
+        run:  build/release/ImCircuit.tst
       - name: Upload artifact
         run: |
           cd build
-          mv docs lcs2
-          zip -r "docs.zip" lcs2
-          curl -X POST -F "file=@docs.zip" "http://home.internal:9696/docs/lcs2"
+          mv docs imcircuit
+          zip -r "docs.zip" imcircuit
+          curl -X POST -F "file=@docs.zip" "http://home.internal:9696/docs/imcircuit"

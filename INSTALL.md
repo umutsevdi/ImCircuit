@@ -8,7 +8,7 @@
 
 1. Clone the repository.
 ```sh
-git clone https://github.com/umutsevdi/logic-circuit-simulator-2.git
+git clone https://github.com/umutsevdi/imcircuit.git
 cd  logic-circuit-simulator-2
 mkdir build
 ```
@@ -23,9 +23,9 @@ Windows build requires CMake,
     vckpg.exe install
 ```
 3. Compile project using Visual Studio.
-4. Copy `build\package\win32\Logic Circuit Simulator\` to `%LOCALAPPDATA%\Programs\`.
+4. Copy `build\package\win32\ImCircuit\` to `%LOCALAPPDATA%\Programs\`.
 5. Copy files generated at `build\release` to
-`%LOCALAPPDATA%\Programs\Logic Circuit Simulator\bin\`
+`%LOCALAPPDATA%\Programs\ImCircuit\bin\`
 
 > [!NOTE]
 > To enforce software rendering install(For Virtual Machines)

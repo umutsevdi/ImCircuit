@@ -1,17 +1,28 @@
 
-Logic Circuit Simulator
+ImCircuit
 AUTHOR:           Umut Sevdi <mail@umutsevdi.com>
-SOURCE CODE:      https://github.com/umutsevdi/logic-circuit-simulator-2
-RELEASES:         https://github.com/umutsevdi/logic-circuit-simulator-2/releases
-ISSUES & SUPPORT: https://github.com/umutsevdi/logic-circuit-simulator-2/issues
-CODE DOCS:        https://docs.umutsevdi.com/lcs2/
+WEBSITE:          https://www.imcircuit.com
+SOURCE CODE:      https://github.com/umutsevdi/imcircuit
+RELEASES:         https://github.com/umutsevdi/imcircuit/releases
+ISSUES & SUPPORT: https://github.com/umutsevdi/imcircuit/issues
+CODE DOCS:        https://docs.umutsevdi.com/imcircuit/
 
 CHANGELOG
 
 -------------------------------------------------------------------------------
+0.1.0 - Fri, Sep 12 2025
+-------------------------------------------------------------------------------
+[https://github.com/owner/name/releases/tag/v0.1.0]
+
+Changes:
+    - Project rename.
+    - Added property tree.
+    - Added right-click menu options.
+    - Added tooltips.
+
+-------------------------------------------------------------------------------
 0.0.2 - Fri, Sep 05 2025
 -------------------------------------------------------------------------------
-[https://github.com/owner/name/releases/tag/v0.0.2]
 
 Changes:
     - Added support for different languages.

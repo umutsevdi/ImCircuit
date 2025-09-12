@@ -141,8 +141,7 @@ void PropertyEditor(Ref<Scene> scene)
             BeginTooltip(ICON_LC_SEARCH, _("Search Box"));
             ImGui::TextUnformatted(
                 _("Search among nodes. You can filter multiple nodes separated "
-                  "by\n"
-                  "commas; a leading ‘‑’ excludes a node."));
+                  "by\ncommas; a leading ‑ excludes a node."));
             ImGui::EndTooltip();
         }
         ImGui::BeginChild("##frame", ImVec2(), ImGuiChildFlags_Borders);

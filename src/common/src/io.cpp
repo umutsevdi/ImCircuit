@@ -22,7 +22,7 @@ namespace fs {
     static inline void _set_dirs(const std::filesystem::path& home)
     {
 #ifdef _WIN32
-        APPDATA = std::filesystem::path { home } / Programs / APPNAME_LONG;
+        APPDATA = std::filesystem::path { home } / Programs / APPNAME;
         LOCALE  = APPDATA / "locale";
         CACHE   = home / APPNAME_BIN / "Cache";
         CONFIG  = home / APPNAME_BIN / "Config";

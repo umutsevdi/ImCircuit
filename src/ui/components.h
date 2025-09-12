@@ -68,7 +68,7 @@ const ImageHandle* get_texture(const std::string& key);
 void Toast(const char* icon, const char* title, const char* message,
     bool is_error = false);
 Point PositionSelector(Point point, const char* prefix);
-State ToggleButton(State, bool clickable = false);
+void ToggleButton(Input& node);
 void NodeTypeTitle(Node n);
 void NodeTypeTitle(Node n, sockid sock);
 

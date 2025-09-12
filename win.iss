@@ -10,14 +10,14 @@
 ; ------------------------------------------------------------------------------
 
 ; Change the following variable to path to the source code.
-#define Source "C:\Users\user\source\repos\logic-circuit-simulator-2"
+#define Source "C:\Users\user\source\repos\imcircuit"
 
-#define LcsName "Logic Circuit Simulator"
-#define LcsDescription "Free and Open Source Logic Circuit Simulator."
+#define LcsName "ImCircuit"
+#define LcsDescription "Free and Open Source ImCircuit."
 #define LcsVersion "0.0.2"
 #define LcsPublisher "Umut Sevdi"
 #define LcsURL "https://umutsevdi.com/"
-#define LcsExeName "LogicCircuitSimulator.exe"
+#define LcsExeName "ImCircuit.exe"
 #define LcsAssocName LcsName + " File"
 #define LcsAssocExt ".lcs"
 #define LcsAssocKey StringChange(LcsAssocName, " ", "") + LcsAssocExt
@@ -44,9 +44,9 @@ DisableProgramGroupPage=yes
 LicenseFile={#Source}\LICENSE
 PrivilegesRequired=lowest
 OutputDir={#Source}\build
-OutputBaseFilename=Logic Circuit Simulator Installer
-SetupIconFile={#Source}\build\package\win32\Logic Circuit Simulator\bin\LogicCircuitSimulator.ico
-UninstallDisplayIcon={#Source}\build\package\win32\Logic Circuit Simulator\bin\LogicCircuitSimulator.ico
+OutputBaseFilename=ImCircuit Installer
+SetupIconFile={#Source}\build\package\win32\ImCircuit\imcircuit.ico
+UninstallDisplayIcon={#Source}\build\package\win32\ImCircuit\imcircuit.ico
 UninstallDisplayName={#LcsName}
 SolidCompression=yes
 WizardStyle=modern
@@ -64,7 +64,7 @@ Source: "{#Source}\build\release\iconv-2.dll"; DestDir: "{app}\bin"; Flags: igno
 Source: "{#Source}\build\release\intl-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#Source}\build\release\libcurl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#Source}\build\release\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#Source}\build\package\win32\Logic Circuit Simulator\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#Source}\build\package\win32\ImCircuit\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\{#LcsName}"; Filename: "{app}\bin\{#LcsExeName}"

@@ -111,7 +111,8 @@ void NodeEditor(Ref<Scene> scene, bool is_changed)
                             NodeTypeTitle(r->from_node, r->from_sock));
                         TablePair(Field(_("To")),
                             NodeTypeTitle(r->to_node, r->to_sock));
-                        TablePair(Field(_("Value")), ToggleButton(r->value)););
+                        TablePair(Field(_("Value")),
+                            ImGui::Text("%s", to_str(r->value))););
                     EndTooltip();
                 }
             }
@@ -130,13 +131,13 @@ void NodeEditor(Ref<Scene> scene, bool is_changed)
                                 "(%d, %d)", n->point().x, n->point().y));
                         TableKey(Field(_("Value")));
                         if (nodeid.type != Node::Type::COMPONENT) {
-                            ToggleButton(n->get());
+                            ImGui::Text("%s", to_str(n->get()));
                         } else {
                             auto comp = scene->get_node<Component>(nodeid);
                             ImGui::Text("(");
                             ImGui::SameLine();
                             for (size_t i = 0; i < comp->outputs.size(); i++) {
-                                ToggleButton(comp->get(i));
+                                ImGui::Text("%s", to_str(comp->get(i)));
                                 ImGui::SameLine();
                             }
                             ImGui::Text(")");
@@ -161,7 +162,7 @@ void NodeEditor(Ref<Scene> scene, bool is_changed)
                     ? nodeid.index
                     : sock;
                 if (BeginTooltip(ICON_LC_HEXAGON, _("%s Socket %u"),
-                        is_out ? _("Output") : _("Input"), sock)) {
+                        is_out ? _("Output") : _("Input"), sock + 1)) {
                     AnonTable(
                         "Node", 0,
                         TablePair(Field(_("Owner")), NodeTypeTitle(nodeid));
@@ -170,12 +171,12 @@ void NodeEditor(Ref<Scene> scene, bool is_changed)
                             if (nodeid.type == Node::Type::COMPONENT_INPUT
                                 || nodeid.type
                                     == Node::Type::COMPONENT_OUTPUT) {
-                                ToggleButton(
-                                    scene->component_context->get_value(
-                                        nodeid));
+                                ImGui::Text("%s",
+                                    to_str(scene->component_context->get_value(
+                                        nodeid)));
                             } else {
-                                ToggleButton(
-                                    scene->get_base(nodeid)->get(sock));
+                                ImGui::Text("%s",
+                                    to_str(scene->get_base(nodeid)->get(sock)));
                             }
                         });
                     EndTooltip();
@@ -284,10 +285,7 @@ void _show_node(Input& node, uint16_t id, bool is_changed)
         }
         ImGui::PopItemWidth();
     } else {
-        State old = node.get();
-        if (State t = ToggleButton(old, true); t != old) {
-            node.toggle();
-        }
+        ToggleButton(node);
     }
     ImGui::SameLine();
     ImGui::Text("1");

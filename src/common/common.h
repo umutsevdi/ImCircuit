@@ -32,10 +32,10 @@
 #endif
 
 /* Application constants */
-#define APPVERSION "0.0.2"
-#define APPPKG "com.lcs.app"
-#define APPNAME "Logic Circuit Simulator"
-#define APPNAME_BIN "LogicCircuitSimulator"
+#define APPVERSION "0.1.0"
+#define APPPKG "com.imcircuit"
+#define APPNAME "ImCircuit"
+#define APPNAME_BIN "ImCircuit"
 #ifdef _WIN32
 #define APPOS "win"
 #elif __APPLE__
@@ -58,7 +58,7 @@
 #ifndef NDEBUG
 #define API_ENDPOINT "http://localhost:8000"
 #else
-#define API_ENDPOINT "https://lcs2.com"
+#define API_ENDPOINT "https://imcircuit.com"
 #endif
 #endif
 #include "errors.h"

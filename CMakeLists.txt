@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
-set(PROJECT_LONG  "Logic Circuit Simulator")
-project(LogicCircuitSimulator C CXX)
+set(PROJECT_LONG  "ImCircuit")
+project(ImCircuit C CXX)
 if (WIN32)
     message(${CMAKE_SOURCE_DIR})
     # If Win32 use vcpkg to get dependencies.
@@ -25,10 +25,10 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 # OPTIONS
-option(LCS_ENABLE_DOXYGEN "Generate Doxygen documentation" YES)
-option(LCS_BUILD_TESTS "Build and run tests" YES)
-option(LCS_GUI "Build with user interface" YES)
-option(LCS_PACKAGE "Package the executable" YES)
+option(IMC_ENABLE_DOXYGEN "Generate Doxygen documentation" YES)
+option(IMC_BUILD_TESTS "Build and run tests" YES)
+option(IMC_GUI "Build with user interface" YES)
+option(IMC_PACKAGE "Package the executable" YES)
 option(NFD_PORTAL "Use xdg-dektop-portal on Linux builds" YES)
 
 set(CMAKE_C_STANDARD 11)
@@ -42,10 +42,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 message(STATUS "Started CMake for ${PROJECT_NAME} v${PROJECT_VERSION}...\n")
-message("Build Tests: ${LCS_BUILD_TESTS}")
-message("Doxygen: ${LCS_ENABLE_DOXYGEN}")
-message("GUI: ${LCS_GUI}")
-message("Package: ${LCS_PACKAGE}")
+message("Build Tests: ${IMC_BUILD_TESTS}")
+message("Doxygen: ${IMC_ENABLE_DOXYGEN}")
+message("GUI: ${IMC_GUI}")
+message("Package: ${IMC_PACKAGE}")
 message("Build Type: ${CMAKE_BUILD_TYPE}")
 
 if(MSVC)
@@ -89,7 +89,7 @@ add_subdirectory(src/cli)
 include_directories(src/api)
 add_subdirectory(src/api)
 
-if(LCS_GUI)
+if(IMC_GUI)
     include_directories(src/ui)
     add_subdirectory(src/ui)
     if (WIN32)
@@ -97,7 +97,7 @@ if(LCS_GUI)
     else()
 		file(GLOB SOURCES src/main.cpp)
     endif()
-    add_executable(LogicCircuitSimulator ${SOURCES})
+    add_executable(ImCircuit ${SOURCES})
 
 	# This ensures the application is treated as a Windows GUI application
 	if((CMAKE_BUILD_TYPE STREQUAL "Release") AND WIN32)
@@ -105,7 +105,7 @@ if(LCS_GUI)
 			WIN32_EXECUTABLE TRUE
 		)
 	endif()
-    target_link_libraries(LogicCircuitSimulator PRIVATE
+    target_link_libraries(ImCircuit PRIVATE
         api
         common
         core
@@ -113,15 +113,15 @@ if(LCS_GUI)
         keychain
         cli
         ui)
-    target_compile_definitions(LogicCircuitSimulator
+    target_compile_definitions(ImCircuit
         PRIVATE
-        LCS_GUI=1
+        IMC_GUI=1
     )
 else()
     # Build with cli only
     file(GLOB SOURCES src/main.cpp)
-    add_executable(LogicCircuitSimulator ${SOURCES})
-    target_link_libraries(LogicCircuitSimulator PRIVATE
+    add_executable(ImCircuit ${SOURCES})
+    target_link_libraries(ImCircuit PRIVATE
         api
         common
         core
@@ -130,39 +130,39 @@ else()
         cli
     )
 endif()
-if(LCS_BUILD_TESTS)
+if(IMC_BUILD_TESTS)
     FetchContent_Declare(doctest
         GIT_REPOSITORY https://github.com/doctest/doctest.git
         GIT_TAG v2.4.12
     )
     FetchContent_MakeAvailable(doctest)
     file(GLOB TESTS src/main.cpp test/*.cpp)
-    add_executable(LogicCircuitSimulator.tst ${TESTS})
-    target_link_libraries(LogicCircuitSimulator.tst PRIVATE
+    add_executable(ImCircuit.tst ${TESTS})
+    target_link_libraries(ImCircuit.tst PRIVATE
         common
         core
         doctest::doctest
         jsoncpp_static)
 
-    target_include_directories(LogicCircuitSimulator.tst PRIVATE
+    target_include_directories(ImCircuit.tst PRIVATE
         ${doctest_SOURCE_DIR}/doctest
     )
 
-    target_compile_definitions(LogicCircuitSimulator.tst
+    target_compile_definitions(ImCircuit.tst
         PRIVATE
-        LCS_TEST=1
+        IMC_TEST=1
     )
 
     add_custom_target(run_tests
-        COMMAND LogicCircuitSimulator.tst
-        DEPENDS LogicCircuitSimulator.tst
+        COMMAND ImCircuit.tst
+        DEPENDS ImCircuit.tst
         COMMENT "Running tests after build"
     )
-    if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_GUI)
+    if(CMAKE_BUILD_TYPE STREQUAL "Release" AND IMC_GUI)
         add_dependencies(${PROJECT_NAME} run_tests)
     endif()
 endif()
-if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_ENABLE_DOXYGEN)
+if(CMAKE_BUILD_TYPE STREQUAL "Release" AND IMC_ENABLE_DOXYGEN)
     find_package(Doxygen QUIET)
     if(DOXYGEN_FOUND)
         FetchContent_Declare(doxygen-awesome-css
@@ -182,7 +182,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_ENABLE_DOXYGEN)
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             COMMENT "Generating API documentation with Doxygen"
             VERBATIM)
-        if(LCS_GUI)
+        if(IMC_GUI)
             add_dependencies(${PROJECT_NAME} doc)
         else()
             add_dependencies(${PROJECT_NAME}.tst doc)
@@ -202,8 +202,8 @@ add_custom_command(TARGET bundle POST_BUILD
                 "${PKGDIR}/win32/${PROJECT_LONG}/locale")
 add_custom_command(TARGET bundle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_SOURCE_DIR}/pkg/LogicCircuitSimulator.ico
-                "${PKGDIR}/win32/${PROJECT_LONG}/bin/LogicCircuitSimulator.ico")
+                ${CMAKE_SOURCE_DIR}/pkg/imcircuit.ico
+                "${PKGDIR}/win32/${PROJECT_LONG}/imcircuit.ico")
 add_custom_command(TARGET bundle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_SOURCE_DIR}/CHANGELOG.txt
@@ -219,18 +219,18 @@ add_custom_command(TARGET bundle POST_BUILD
         "${PKGDIR}/usr/share/${PROJECT_NAME}")
 add_custom_command(TARGET bundle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_SOURCE_DIR}/pkg/logic-circuit-simulator.desktop
-                "${PKGDIR}/usr/share/applications/logic-circuit-simulator.desktop")
+                ${CMAKE_SOURCE_DIR}/pkg/imcircuit.desktop
+                "${PKGDIR}/usr/share/applications/imcircuit.desktop")
 add_custom_command(TARGET bundle POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_SOURCE_DIR}/CHANGELOG.txt "${PKGDIR}/usr/share/${PROJECT_NAME}")
 add_dependencies(${PROJECT_NAME} bundle)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_PACKAGE)
+if(CMAKE_BUILD_TYPE STREQUAL "Release" AND IMC_PACKAGE)
 	if(NOT WIN32)
 		set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
-		set(CPACK_PACKAGE_VERSION "0.0.2")
-		set(CPACK_PACKAGE_DESCRIPTION "A free and open-source cross-platform Logic Circuit Simulator.")
+		set(CPACK_PACKAGE_VERSION "0.2.0")
+		set(CPACK_PACKAGE_DESCRIPTION "A free and open-source cross-platform logic circuit simulator.")
 		set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${CPACK_PACKAGE_DESCRIPTION})
 		set(CPACK_PACKAGE_VENDOR "Umut Sevdi")
 		set(CPACK_PACKAGE_MAINTAINER "Umut Sevdi <mail@umutsevdi.com>")
@@ -244,7 +244,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_PACKAGE)
 		set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Umut Sevdi <mail@umutsevdi.com>")
 		set(CPACK_DEBIAN_PACKAGE_DEPENDS "libcurl4, libsecret-1-0, libglfw3")
 
-		install(FILES "build/release/LogicCircuitSimulator"
+		install(FILES "build/release/ImCircuit"
 				DESTINATION "/usr/bin/"
 				PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
 										GROUP_EXECUTE GROUP_READ
@@ -258,7 +258,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND LCS_PACKAGE)
 		)
 
 		install(FILES "LICENSE"
-			DESTINATION "/usr/share/LogicCircuitSimulator"
+			DESTINATION "/usr/share/ImCircuit"
 		)
 		include(CPack)
 	endif()

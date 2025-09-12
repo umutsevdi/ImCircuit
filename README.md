@@ -1,4 +1,4 @@
-# Logic Circuit Simulator 2
+# ImCircuit
 
 A free and open-source cross-platform Logic Circuit Simulator rewritten in C++. 
 

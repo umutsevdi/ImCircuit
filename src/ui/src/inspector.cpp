@@ -71,14 +71,13 @@ void Inspector(Ref<Scene> scene)
 // FIXME Delete node failure
 static void _inspector_tab(Ref<Scene> scene, Node node)
 {
-    const static ImVec2 __table_l_size = ImGui::CalcTextSize("SOCKET COUNT");
-    ImGui::BeginChild("##InspectorFrame", ImVec2(0, 0),
-        ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_Borders);
+    const static float KEY_WIDTH = ImGui::CalcTextSize("SOCKET COUNT").x;
+    ImGui::BeginChild(
+        "##InspectorFrame", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY);
     if (ImGui::BeginTable(
             "##InspectorTable", 2, ImGuiTableFlags_BordersInnerV)) {
         ImGui::TableSetupColumn(
-            "##Key", ImGuiTableColumnFlags_WidthFixed, __table_l_size.x);
-
+            "##Key", ImGuiTableColumnFlags_WidthFixed, KEY_WIDTH);
         ImGui::NextColumn();
         ImGui::TableSetupColumn("##Value", ImGuiTableColumnFlags_WidthStretch);
         TablePair(Field(_("Id")), ImGui::Text("%u", node.index));
@@ -131,7 +130,7 @@ static void _inspector_input(Ref<Scene> scene, Node node)
     static float values[SIZE] = { 0 };
     static int frame_count    = 0;
     if (_node->is_timer()) {
-        TablePair(Field(_("Value")), ToggleButton(_node->get()));
+        TablePair(Field(_("Value")), ImGui::Text("%s", to_str(_node->get())));
         TableKey(Field(_("Frequency")));
         float freq_value = static_cast<float>(_node->freq()) / 10.f;
         if (ImGui::SliderFloat("Hz", &freq_value, 0.1f, 5.0f, "%.1f")) {
@@ -147,10 +146,7 @@ static void _inspector_input(Ref<Scene> scene, Node node)
         values[SIZE - 1] = _node->get() == State::TRUE;
         ImGui::PlotLines("##Frequency", values, SIZE, 0, nullptr, 0.0f, 1.0f);
     } else {
-        TablePair(
-            Field(_("Value")), State old = _node->get();
-            if (State t = ToggleButton(old, true);
-                t != old) { _node->toggle(); });
+        TablePair(Field(_("Value")), ToggleButton(*_node));
     }
 
     TableKey(Field(_("Outputs")));
@@ -166,7 +162,7 @@ static void _inspector_input(Ref<Scene> scene, Node node)
         TableKey(Field("1"));
         _output_table(scene, _node->output);
         ImGui::TableSetColumnIndex(2);
-        ToggleButton(_node->get());
+        ImGui::Text("%s", to_str(_node->get()));
         ImGui::EndTable();
     }
     ImGui::EndTable();
@@ -175,7 +171,7 @@ static void _inspector_input(Ref<Scene> scene, Node node)
 static void _inspector_output(Ref<Scene> scene, Node node)
 {
     auto _node = scene->get_node<Output>(node);
-    TablePair(Field("Value"), ToggleButton(_node->get()));
+    TablePair(Field("Value"), ImGui::Text("%s", to_str(_node->get())));
     std::vector<relid> in;
     in.push_back(_node->input);
     TablePair(Field(_("Inputs")), _input_table(scene, in));
@@ -187,7 +183,7 @@ static void _inspector_gate(Ref<Scene> scene, Node node)
     const static ImVec2 __selector_size = ImGui::CalcTextSize("-000000000000");
 
     auto _node = scene->get_node<Gate>(node);
-    TablePair(Field(_("Value")), ToggleButton(_node->get()));
+    TablePair(Field(_("Value")), ImGui::Text("%s", to_str(_node->get())));
     TablePair(Field(_("Gate Type")),
         ImGui::Text("%s", to_str<Gate::Type>(_node->type())));
     ImGui::BeginDisabled(_node->type() == Gate::Type::NOT);
@@ -223,7 +219,7 @@ static void _inspector_gate(Ref<Scene> scene, Node node)
         ImGui::TableHeadersRow();
         TablePair(Field("1"), _output_table(scene, _node->output));
         ImGui::TableSetColumnIndex(2);
-        ToggleButton(_node->get());
+        ImGui::Text("%s", to_str(_node->get()));
         ImGui::EndTable();
     }
     ImGui::EndTable();
@@ -236,7 +232,7 @@ static void _inspector_component(Ref<Scene> scene, Node node)
     ImGui::Text("(");
     ImGui::SameLine();
     for (size_t i = 0; i < _node->outputs.size(); i++) {
-        ToggleButton(_node->get(i));
+        ImGui::Text("%s", to_str(_node->get(i)));
         ImGui::SameLine();
     }
     ImGui::Text(")");
@@ -255,7 +251,7 @@ static void _inspector_component(Ref<Scene> scene, Node node)
         for (auto& out : _node->outputs) {
             TablePair(Field("%d", out.first), _output_table(scene, out.second));
             ImGui::TableSetColumnIndex(2);
-            ToggleButton(_node->get(out.first));
+            ImGui::Text("%s", to_str(_node->get(out.first)));
         }
 
         ImGui::EndTable();
@@ -285,10 +281,11 @@ static void _inspector_component_context(Ref<Scene> scene, Node node)
                 ImGui::TableSetColumnIndex(2);
                 State value = ctx.get_value(ctx.get_input(i));
                 ImGui::PushID((std::to_string(i) + "btn").c_str());
-                if (State new_value = ToggleButton(value, true);
-                    value != new_value) {
-                    ctx.set_value(ctx.get_input(i), new_value);
-                }
+                // TODO
+                // if (State new_value = ToggleButton(value, true);
+                //     value != new_value) {
+                //     ctx.set_value(ctx.get_input(i), new_value);
+                // }
                 ImGui::PopID();
             }
             ImGui::EndTable();
@@ -333,7 +330,7 @@ static void _input_table(Ref<Scene> scene, const std::vector<relid>& inputs)
             ImGui::PopID();
             ImGui::EndDisabled();
             ImGui::TableSetColumnIndex(3);
-            ToggleButton(value);
+            ImGui::Text("%s", to_str(value));
             ImGui::PopFont();
         }
         if (ImGui::TableGetHoveredColumn() == 2) {

@@ -3,13 +3,13 @@
 #include "common.h"
 using namespace lcs;
 
-#if LCS_TEST
+#if IMC_TEST
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <doctest.h>
 int main(int argc, char* argv[])
 {
-    fs::init(LCS_TEST);
-    net::init(LCS_TEST);
+    fs::init(IMC_TEST);
+    net::init(IMC_TEST);
     std::atexit([]() {
         fs::close();
         net::close();
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
     return context.run();
 }
 #else
-#ifdef LCS_GUI
+#ifdef IMC_GUI
 namespace lcs::ui {
 extern int run(void);
 }
@@ -36,7 +36,7 @@ static int _start(int argc, char* argv[])
         net::close();
     });
     if (code == START_UI) {
-#ifdef LCS_GUI
+#ifdef IMC_GUI
         return ui::run();
 #else
         code = ERROR(Error::GUI_NOT_SUPPORTED);
@@ -47,7 +47,7 @@ static int _start(int argc, char* argv[])
     }
     return code;
 }
-#if defined(_WIN32) && defined(LCS_GUI) == 1 && NDEBUG
+#if defined(_WIN32) && defined(IMC_GUI) == 1 && NDEBUG
 #include <windows.h>
 int WINAPI WinMain(
     HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
