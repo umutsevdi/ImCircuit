@@ -7,7 +7,7 @@
     if (scene == nullptr)                                                      \
         return ERROR(Error::NO_SCENE);
 
-namespace lcs::cli {
+namespace ic::cli {
 
 Command::Command(const std::string& _name, const std::string& _desc,
     std::function<Error(Ref<Scene>, const std::string& arg)> _cmd, Type _value,
@@ -662,4 +662,4 @@ std::array<Command, 34> root {
     { "toggle", "Toggle selected node.", _toggle, NODE },
 };
 
-} // namespace lcs::cli
+} // namespace ic::cli

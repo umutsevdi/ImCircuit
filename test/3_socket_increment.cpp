@@ -1,7 +1,7 @@
 #include <doctest.h>
 #include "core.h"
 
-using namespace lcs;
+using namespace ic;
 TEST_CASE("increment-socket-size")
 {
     Scene s;

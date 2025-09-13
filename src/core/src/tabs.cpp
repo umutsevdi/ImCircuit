@@ -1,7 +1,7 @@
 #include <cstdint>
 #include "core.h"
 
-namespace lcs::tabs {
+namespace ic::tabs {
 
 static std::vector<Tab> TABS;
 static size_t selected     = SIZE_MAX;
@@ -73,7 +73,7 @@ bool is_saved(size_t idx)
     if (idx == SIZE_MAX) {
         idx = selected;
     }
-    lcs_assert(idx < TABS.size());
+    ic_assert(idx < TABS.size());
     return TABS[idx].is_saved;
 }
 
@@ -82,7 +82,7 @@ LCS_ERROR save(size_t idx)
     if (idx == SIZE_MAX) {
         idx = selected;
     }
-    lcs_assert(idx < TABS.size());
+    ic_assert(idx < TABS.size());
     Tab& inode = TABS[idx];
     if (inode.is_saved) {
         return OK;
@@ -109,7 +109,7 @@ LCS_ERROR save_as(const std::filesystem::path& new_path, size_t idx)
     if (idx == SIZE_MAX) {
         idx = selected;
     }
-    lcs_assert(idx < TABS.size());
+    ic_assert(idx < TABS.size());
     Tab& inode = TABS[idx];
     if (inode.path == new_path) {
         return OK;
@@ -175,4 +175,4 @@ bool is_changed(void)
     return false;
 }
 
-} // namespace lcs::tabs
+} // namespace ic::tabs

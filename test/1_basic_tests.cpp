@@ -2,7 +2,7 @@
 #include "common.h"
 #include "core.h"
 
-using namespace lcs;
+using namespace ic;
 
 TEST_CASE("set-input")
 {
@@ -10,8 +10,8 @@ TEST_CASE("set-input")
     Node v = s.add_node<Input>();
     Node o = s.add_node<Output>();
     REQUIRE(s.connect(o, 0, v));
-    lcs_assert(s.get_node<Output>(o) != nullptr);
-    lcs_assert(s.get_node<Input>(v) != nullptr);
+    ic_assert(s.get_node<Output>(o) != nullptr);
+    ic_assert(s.get_node<Input>(v) != nullptr);
 
     REQUIRE_EQ(s.get_node<Output>(o)->get(), State::FALSE);
     s.get_node<Input>(v)->set(true);

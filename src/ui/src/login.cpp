@@ -5,7 +5,7 @@
 // #include <imnodes.h>
 // #include <nfd.h>
 
-namespace lcs::ui::popup {
+namespace ic::ui::popup {
 
 void LoginWindow(bool& df_show)
 {
@@ -97,4 +97,4 @@ ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDocking
     }
     */
 }
-} // namespace lcs::ui::popup
+} // namespace ic::ui::popup

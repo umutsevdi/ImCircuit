@@ -1,7 +1,7 @@
 #include <csignal>
 #include "cli.h"
 #include "common.h"
-using namespace lcs;
+using namespace ic;
 
 #if IMC_TEST
 #define DOCTEST_CONFIG_IMPLEMENT
@@ -15,13 +15,13 @@ int main(int argc, char* argv[])
         net::close();
     });
     doctest::Context context;
-    context.setOption("--reporters", "lcs");
+    context.setOption("--reporters", "ic");
     context.applyCommandLine(argc, argv);
     return context.run();
 }
 #else
 #ifdef IMC_GUI
-namespace lcs::ui {
+namespace ic::ui {
 extern int run(void);
 }
 #endif

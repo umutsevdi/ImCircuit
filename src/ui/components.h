@@ -1,20 +1,20 @@
 #pragma once
 /*******************************************************************************
  * \file
- * File: include/ui/components.h
+ * File: components.h
  * Created: 06/19/25
  * Author: Umut Sevdi
- * Description:
+ * Description: Commonly used UI components
  *
- * Project: umutsevdi/logic-circuit-simulator-2
+ * Project: umutsevdi/imcircuit
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 
 #include <imgui.h>
-#include "configuration.h"
 #include "core.h"
+#include "ui.h"
 
-namespace lcs::ui {
+namespace ic::ui {
 
 constexpr float FONT_SMALL  = 12.f;
 constexpr float FONT_NORMAL = 16.f;
@@ -212,4 +212,4 @@ inline void EndTooltip(const char* shortcut = nullptr)
         EndTooltip(SHORTCUT);                                                  \
     }
 
-} // namespace lcs::ui
+} // namespace ic::ui

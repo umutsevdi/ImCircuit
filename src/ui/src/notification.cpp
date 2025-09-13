@@ -2,7 +2,7 @@
 #include "components.h"
 #include "ui.h"
 
-namespace lcs::ui {
+namespace ic::ui {
 static size_t last_time            = 0;
 static constexpr int MAX_DURATION  = 5 * 1000;
 static constexpr int ANIM_DURATION = 0.2 * 1000;
@@ -37,7 +37,7 @@ void Toast(
     L_DEBUG("Push notification %s", title, message);
 }
 
-void RenderNotifications(void)
+void show_notifications(void)
 {
     size_t now = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::steady_clock::now().time_since_epoch())
@@ -128,4 +128,4 @@ static bool _show_toast(
     return true;
 }
 
-} // namespace lcs::ui
+} // namespace ic::ui

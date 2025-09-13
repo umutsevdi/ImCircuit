@@ -4,7 +4,7 @@
 #include "core.h"
 #include "imgui.h"
 
-namespace lcs::ui {
+namespace ic::ui {
 
 Point PositionSelector(Point point, const char* prefix)
 {
@@ -27,7 +27,7 @@ Point PositionSelector(Point point, const char* prefix)
 
 void ToggleButton(Input& node)
 {
-    const LcsTheme& style = get_active_style();
+    const Theme& style = get_active_style();
     switch (node.get()) {
     case State::TRUE:
         ImGui::PushStyleColor(ImGuiCol_Button, style.green);
@@ -75,4 +75,4 @@ void NodeTypeTitle(Node n, sockid)
     NodeTypeTitle(n);
     ImGui::PopFont();
 }
-} // namespace lcs::ui
+} // namespace ic::ui

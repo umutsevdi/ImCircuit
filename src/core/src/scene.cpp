@@ -5,7 +5,7 @@
 #include "common.h"
 #include "core.h"
 
-namespace lcs {
+namespace ic {
 
 Scene::Scene(const std::string& _name, const std::string& _author,
         const std::string& _description, int _version) :
@@ -310,7 +310,7 @@ Error Scene::connect_with_id(
         break;
     }
     case Node::Type::COMPONENT_INPUT: /* Component input is not handled here. */
-        lcs_assert(component_context.has_value());
+        ic_assert(component_context.has_value());
         if (component_context->inputs.size() > from_node.index - 1) {
             std::vector<relid>& from_list
                 = component_context->inputs[from_node.index - 1];
@@ -382,7 +382,7 @@ Error Scene::disconnect(relid id)
         break;
     }
     case Node::Type::COMPONENT_INPUT: {
-        lcs_assert(component_context.has_value());
+        ic_assert(component_context.has_value());
         if (component_context->inputs.size() > r->second.from_node.index - 1) {
             auto& v = component_context->inputs[r->second.from_node.index - 1];
             v.erase(std::remove_if(v.begin(), v.end(), remove_fn));
@@ -391,7 +391,7 @@ Error Scene::disconnect(relid id)
         }
         break;
     }
-    default: lcs_assert(r->second.from_node.type == Node::Type::OUTPUT); break;
+    default: ic_assert(r->second.from_node.type == Node::Type::OUTPUT); break;
     }
 
     switch (r->second.to_node.type) {
@@ -423,7 +423,7 @@ Error Scene::disconnect(relid id)
         break;
     }
     case Node::Type::COMPONENT_OUTPUT: {
-        lcs_assert(component_context.has_value());
+        ic_assert(component_context.has_value());
         if (component_context->outputs.size() > r->second.to_node.index - 1) {
             component_context->outputs[r->second.to_node.index - 1] = 0;
             component_context->run();
@@ -432,7 +432,7 @@ Error Scene::disconnect(relid id)
         }
         break;
     }
-    default: lcs_assert(r->second.from_node.type == Node::Type::INPUT); break;
+    default: ic_assert(r->second.from_node.type == Node::Type::INPUT); break;
     }
     L_INFO("Disconnected %s@%d from %s%d.",
         to_str<Node::Type>(r->second.from_node.type), r->second.from_node.index,
@@ -447,9 +447,9 @@ Error Scene::disconnect(relid id)
 
 void Scene::signal(relid id, State value)
 {
-    lcs_assert(id != 0);
+    ic_assert(id != 0);
     auto r = get_rel(id);
-    lcs_assert(r != nullptr);
+    ic_assert(r != nullptr);
     if (r->value != value || r->value == DISABLED) {
         r->value = value;
         L_DEBUG("%s:rel@%-2d %s@%d:%d sent %s to %s@%d:%d",
@@ -459,7 +459,7 @@ void Scene::signal(relid id, State value)
             to_str<Node::Type>(r->to_node.type), r->to_node.index, r->to_sock);
         if (r->to_node.type != Node::Type::COMPONENT_OUTPUT) {
             auto n = get_base(r->to_node);
-            lcs_assert(n != nullptr);
+            ic_assert(n != nullptr);
             n->on_signal();
         } else {
             component_context->set_value(r->to_node.index, r->value);
@@ -534,4 +534,4 @@ void Scene::remove_dependency(size_t idx)
     _dependencies.erase(_dependencies.begin() + idx);
 }
 
-} // namespace lcs
+} // namespace ic

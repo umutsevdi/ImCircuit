@@ -4,7 +4,7 @@
 #include "common.h"
 #include "core.h"
 
-namespace lcs {
+namespace ic {
 
 ComponentContext::ComponentContext(
     Scene* parent, sockid input_s, sockid output_s)
@@ -194,7 +194,7 @@ void Component::on_signal(void)
         uint64_t input = 0;
         for (relid in : inputs) {
             auto rel = _parent->get_rel(in);
-            lcs_assert(rel != nullptr);
+            ic_assert(rel != nullptr);
             input <<= 1;
             if (rel->value == TRUE) {
                 input++;
@@ -211,4 +211,4 @@ void Component::on_signal(void)
     }
 }
 
-} // namespace lcs
+} // namespace ic

@@ -5,7 +5,7 @@
 #include <mutex>
 #include "common.h"
 
-namespace lcs {
+namespace ic {
 static std::chrono::time_point<std::chrono::steady_clock> app_start_time;
 namespace fs {
     bool is_verbose;
@@ -43,8 +43,8 @@ namespace fs {
         L_DEBUG("Library: %s", LIBRARY.string().c_str());
         L_DEBUG("Config: %s", CONFIG.string().c_str());
         if (!is_testing) {
-            lcs_assert(std::filesystem::exists(APPDATA));
-            lcs_assert(std::filesystem::exists(LOCALE));
+            ic_assert(std::filesystem::exists(APPDATA));
+            ic_assert(std::filesystem::exists(LOCALE));
         }
         try {
             if (!std::filesystem::exists(CACHE)) {
@@ -103,7 +103,7 @@ namespace fs {
                 L_WARN("Locale %s not found!", locales()[i]);
             }
         }
-        L_DEBUG("Module lcs::fs is ready");
+        L_DEBUG("Module fs is ready");
     }
 
     bool write(const std::filesystem::path& path, const std::string& data)
@@ -240,23 +240,23 @@ namespace fs {
         // Testing mode
         if (is_testing) {
             printf(F_BLUE "[%s] " F_BOLD "%s%-6s" F_RESET F_GREEN
-                          "|%-15s|" F_RESET F_TEAL "%-16s" F_RESET F_GREEN
+                          "|%-15s|" F_RESET F_TEAL "%-10s" F_RESET F_GREEN
                           "|" F_RESET " %s%s\r\n" F_RESET,
                 l.time_str.data(), clr, l.log_level.data(), l.file_line.data(),
-                l.fn.data(),
+                l.module.data(),
                 l.severity == Message::FATAL ? F_INVERT F_BOLD F_RED : "",
                 l.expr.data());
             if (_target_fp != nullptr) {
-                fprintf(_target_fp, "[%s] %-6s|%-15s|%-16s|%s\r\n",
+                fprintf(_target_fp, "[%s] %-6s|%-15s|%-10s|%s\r\n",
                     l.time_str.data(), l.log_level.data(), l.file_line.data(),
-                    l.fn.data(), l.expr.data());
+                    l.module.data(), l.expr.data());
             }
         } else if (is_verbose) {
             printf(F_BLUE "[%s] " F_BOLD "%s%-6s" F_RESET F_GREEN
-                          "|%-15s|" F_RESET F_TEAL "%-16s" F_RESET F_GREEN
+                          "|%-15s|" F_RESET F_TEAL "%-10s" F_RESET F_GREEN
                           "|" F_RESET " %s%s\r\n" F_RESET,
                 l.time_str.data(), clr, l.log_level.data(), l.file_line.data(),
-                l.fn.data(),
+                l.module.data(),
                 l.severity == Message::FATAL ? F_INVERT F_BOLD F_RED : "",
                 l.expr.data());
         } else {
@@ -271,7 +271,7 @@ namespace fs {
             std::lock_guard<std::mutex> lock(_target_fp_mtx);
             fclose(_target_fp);
         }
-        L_DEBUG("Module lcs::fs is closed.");
+        L_DEBUG("Module fs is closed.");
     }
 
     void logs_for_each(std::function<void(size_t, const Message& l)> fn)
@@ -322,59 +322,29 @@ void Message::_fn_parse(const char* name)
 {
     static std::map<const char*, std::string> line_cache {};
     if (const auto& p = line_cache.find(name); p != line_cache.end()) {
-        size_t class_end = p->second.find_first_of(' ');
-        std::strncpy(obj.data(), p->second.data(),
-            std::min(obj.max_size() - 1, class_end));
-        std::strncpy(fn.data(), p->second.data() + class_end + 1,
-            std::min(fn.max_size() - 1, p->second.size() - class_end - 1));
+        std::strncpy(module.data(), p->second.data(),
+            std::min(module.max_size() - 1, p->second.size()));
     } else {
-        std::string fnname = name;
-        size_t pos         = 0;
-        while ((pos = fnname.find("virtual ")) != std::string::npos) {
-            fnname.erase(pos, /* virtual */ 8);
-        }
-        while ((pos = fnname.find("__cdecl ")) != std::string::npos) {
-            fnname.erase(pos, /* __cdecl */ 8);
-        }
-        while ((pos = fnname.find("enum ")) != std::string::npos) {
-            fnname.erase(pos, /* enum */ 5);
-        }
-
-        while ((pos = fnname.find("lcs::")) != std::string::npos) {
-            fnname.erase(pos, /* lcs:: */ 5);
-        }
-        // Trim return type
-        fnname = fnname.substr(fnname.find_first_of(" ") + 1);
-
+        std::string fnname { name };
         if (fnname.find("lambda") == std::string::npos) {
-            size_t fn_end      = fnname.find_first_of('(');
-            size_t class_begin = 0;
-            fnname = fnname.substr(class_begin, fn_end - class_begin);
-
-            size_t fn_begin  = fnname.find_last_of("::") + 1;
-            fn_end           = fnname.size() - 1;
-            size_t class_end = fnname.find_last_of("::") - 1;
-            if (fn_begin == std::string::npos
-                || class_begin == std::string::npos) {
-                // No class found
-                class_end = class_begin;
-                fn_begin  = class_begin;
+            size_t fn_end   = fnname.find_first_of('(');
+            size_t fn_begin = 0;
+            fnname          = fnname.substr(fn_begin, fn_end - fn_begin);
+            size_t last_ns  = fnname.find_last_of("::") - 1;
+            if (last_ns != std::string::npos) {
+                fn_end = last_ns;
             }
-
-            std::string name_fn
-                = fnname.substr(fn_begin, fn_end - fn_begin + 1);
-            std::string name_class
-                = fnname.substr(class_begin, class_end - class_begin);
-
-            if (name_class == name_fn) {
-                name_class = "lcs";
+            fnname                = fnname.substr(fn_begin, fn_end - fn_begin);
+            size_t second_last_ns = fnname.find_last_of("::") + 1;
+            if (second_last_ns != std::string::npos) {
+                fn_begin = second_last_ns;
             }
-            line_cache[name] = name_class + " " + name_fn;
+            line_cache[name] = fnname.substr(fn_begin);
         } else {
-            line_cache[name] = " lambda";
+            line_cache[name] = "ImCircuit";
         }
         _fn_parse(name);
     }
 }
 
-} // namespace lcs
+} // namespace ic

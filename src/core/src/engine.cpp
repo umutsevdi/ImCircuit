@@ -1,6 +1,6 @@
 #include "core.h"
 
-namespace lcs {
+namespace ic {
 
 template <> const char* to_str<Node::Type>(Node::Type s)
 {
@@ -40,7 +40,7 @@ template <> const char* to_str<Gate::Type>(Gate::Type s)
 
 int encode_pair(Node node, sockid sock, bool is_out)
 {
-    lcs_assert(node.index < 0xFFFF);
+    ic_assert(node.index < 0xFFFF);
     int x = node.index | (node.type << 16) | (sock << 20);
     if (is_out) {
         x |= 1 << 29;
@@ -126,7 +126,7 @@ void Output::on_signal(void)
 {
     if (input != 0) {
         auto r = _parent->get_rel(input);
-        lcs_assert(r != nullptr);
+        ic_assert(r != nullptr);
         _value = r->value;
     } else {
         _value = DISABLED;
@@ -145,4 +145,4 @@ void Output::clean()
                                     Context
 *****************************************************************************/
 
-} // namespace lcs
+} // namespace ic

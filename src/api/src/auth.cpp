@@ -5,7 +5,7 @@
 #include "api.h"
 #include "common.h"
 
-namespace lcs::api {
+namespace ic::api {
 
 #ifdef _WIN32
 #define OS "win32";
@@ -335,4 +335,4 @@ Error upload_scene(Ref<const Scene> scene, std::string resp)
 }
 
 */
-} // namespace lcs::api
+} // namespace ic::api

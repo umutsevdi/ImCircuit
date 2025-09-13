@@ -2,7 +2,7 @@
 #include "common.h"
 #include "core.h"
 
-namespace lcs {
+namespace ic {
 static bool _and(const std::vector<bool>&);
 static bool _or(const std::vector<bool>&);
 static bool _xor(const std::vector<bool>&);
@@ -59,7 +59,7 @@ void Gate::on_signal(void)
         v.reserve(inputs.size());
         for (relid in : inputs) {
             auto rel = _parent->get_rel(in);
-            lcs_assert(rel != nullptr);
+            ic_assert(rel != nullptr);
             v.push_back(rel->value == TRUE ? TRUE : FALSE);
         }
         _value = _operations[_type](v) ? State::TRUE : State::FALSE;
@@ -128,4 +128,4 @@ static bool _nand(const std::vector<bool>& in) { return !_and(in); }
 static bool _nor(const std::vector<bool>& in) { return !_or(in); }
 static bool _xnor(const std::vector<bool>& in) { return !_xor(in); }
 static bool _not(const std::vector<bool>& in) { return in[0] != true; }
-} // namespace lcs
+} // namespace ic

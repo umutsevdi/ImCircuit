@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cstdio>
+#include <doctest.h>
 #include "common.h"
-#include "doctest.h"
 #define _create_full_adder_io(s)                                               \
-    using namespace lcs;                                                       \
+    using namespace ic;                                                        \
     Node a     = s.add_node<Input>();                                          \
     Node b     = s.add_node<Input>();                                          \
     Node c_in  = s.add_node<Input>();                                          \
@@ -36,7 +36,7 @@
     s.connect(c_out, 0, g_or);
 
 #include "core.h"
-inline bool scene_cmp(lcs::Scene& s1, lcs::Scene& s2)
+inline bool scene_cmp(ic::Scene& s1, ic::Scene& s2)
 {
     if (s1.name() != s2.name() || s1.description() != s2.description()
         || s1.version != s2.version || s1._inputs.size() != s2._inputs.size()
@@ -50,7 +50,7 @@ inline bool scene_cmp(lcs::Scene& s1, lcs::Scene& s2)
     return true;
 }
 
-namespace lcs {
+namespace ic {
 #define REPORT(...)                                                            \
     fs::_log(Message { Message::INFO, "", 0, "Reporter", __VA_ARGS__ })
 struct LcsReporter : public doctest::IReporter {
@@ -82,7 +82,7 @@ struct LcsReporter : public doctest::IReporter {
         if (in.numAssertsFailed > 0) {
             REPORT("Failed Cases:");
             for (const auto& msg : failed_cases) {
-                lcs::fs::_log(msg);
+                ic::fs::_log(msg);
             }
             exit(1);
         }
@@ -94,7 +94,7 @@ struct LcsReporter : public doctest::IReporter {
         std::filesystem::path file { in.m_file.c_str() };
         name = file.filename().replace_extension(".log").string();
 
-        lcs::fs::set_log_target(name.c_str());
+        ic::fs::set_log_target(name.c_str());
         REPORT("TEST CASE \"%s\"", in.m_name);
     }
 
@@ -157,5 +157,5 @@ struct LcsReporter : public doctest::IReporter {
 
     void test_case_skipped(const doctest::TestCaseData& /*in*/) override { }
 };
-} // namespace lcs
-REGISTER_REPORTER("lcs", 1, lcs::LcsReporter);
+} // namespace ic
+REGISTER_REPORTER("ic", 1, ic::LcsReporter);

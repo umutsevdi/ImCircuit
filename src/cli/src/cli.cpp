@@ -4,17 +4,17 @@
 #include "common.h"
 #include "core.h"
 
-namespace lcs {
+namespace ic {
 template <> const char* to_str<cli::Type>(cli::Type v)
 {
     switch (v) {
-    case lcs::cli::NONE: return "<none>";
-    case lcs::cli::STR: return "<string>";
-    case lcs::cli::INT: return "<int>"; ;
-    case lcs::cli::BOOL: return "<bool>";
-    case lcs::cli::NODE: return "<node>";
-    case lcs::cli::NODE_INT_INT: return "<node int int>";
-    case lcs::cli::NODE_INT_NODE_INT: return "<node int node int>";
+    case ic::cli::NONE: return "<none>";
+    case ic::cli::STR: return "<string>";
+    case ic::cli::INT: return "<int>"; ;
+    case ic::cli::BOOL: return "<bool>";
+    case ic::cli::NODE: return "<node>";
+    case ic::cli::NODE_INT_INT: return "<node int int>";
+    case ic::cli::NODE_INT_NODE_INT: return "<node int node int>";
     }
 }
 namespace cli {
@@ -44,7 +44,7 @@ namespace cli {
             } else {
                 std::filesystem::path filepath { arg };
                 if (!(filepath.has_extension()
-                        && filepath.extension() == ".lcs")) {
+                        && filepath.extension() == ".ic")) {
                     return ERROR(Error::INVALID_FILE);
                 }
                 if (Error err = tabs::open(filepath); err != Error::OK) {
@@ -168,4 +168,4 @@ namespace cli {
     }
 
 } // namespace cli
-} // namespace lcs
+} // namespace ic

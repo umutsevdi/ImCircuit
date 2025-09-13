@@ -4,11 +4,11 @@
 #include "common.h"
 #include "core.h"
 
-namespace lcs::ui {
+namespace ic::ui {
 namespace dialog {
 
     static nfdu8filteritem_t filters[]
-        = { { "Logic Circuit Simulation File", "lcs" } };
+        = { { "Logic Circuit Simulation File", "ic" } };
 
     LCS_ERROR open_file(void)
     {
@@ -43,9 +43,9 @@ namespace dialog {
         }
         if (result == NFD_OKAY) {
             std::string path = out;
-            if (path.rfind(".lcs") == std::string::npos) {
-                L_DEBUG("File is not an .lcs file. Adding file extension.");
-                path += ".lcs";
+            if (path.rfind(".ic") == std::string::npos) {
+                L_DEBUG("File is not an .ic file. Adding file extension.");
+                path += ".ic";
             }
             if (Error err = tabs::save_as(path); err) {
                 return err;
@@ -56,4 +56,4 @@ namespace dialog {
     }
 } // namespace dialog
 
-} // namespace lcs::ui
+} // namespace ic::ui

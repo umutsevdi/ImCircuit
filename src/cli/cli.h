@@ -1,12 +1,12 @@
 #pragma once
 /*******************************************************************************
  * \file
- * File: cli/cli.h
- * Created: 09/03/25
+ * File: cli.h
+ * Created: 03/09/25
  * Author: Umut Sevdi
  * Description: Command line parser and interactive shell
  *
- * Project: umutsevdi/logic-circuit-simulator-2
+ * Project: umutsevdi/imcircuit
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 #include <array>
@@ -15,7 +15,7 @@
 #include <functional>
 #include <string>
 #include "core.h"
-namespace lcs::cli {
+namespace ic::cli {
 int parse_args(int argc, char** argv);
 int run(void);
 
@@ -50,4 +50,4 @@ public:
 };
 extern std::array<Command, 34> root;
 
-} // namespace lcs::cli
+} // namespace ic::cli

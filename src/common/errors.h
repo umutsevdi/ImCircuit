@@ -4,13 +4,13 @@
  * File: errors.h
  * Created: 02/04/25
  * Author: Umut Sevdi
- * Description:
+ * Description: Error codes used in the simulator
  *
- * Project: umutsevdi/lc-simulator-2
+ * Project: umutsevdi/imcircuit
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 
-namespace lcs {
+namespace ic {
 enum Error {
     /** Operation is successful. */
     OK,
@@ -103,7 +103,7 @@ constexpr const char* errmsg(Error e)
         return "This build does not support Graphical User Interface. Run with "
                "--interactive parameter.";
     case INVALID_FILE:
-        return "Unexpected file type. Expected file type is \".lcs\".";
+        return "Unexpected file type. Expected file type is \".ic\".";
     case INCOMPLETE_INSTR:
         return "Parser encountered end of file before end of a instruction.";
     case INVALID_BYTE:
@@ -150,4 +150,4 @@ constexpr const char* errmsg(Error e)
     case ERROR_S: return "Unknown Error.";
     }
 };
-} // namespace lcs
+} // namespace ic

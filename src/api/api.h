@@ -2,16 +2,16 @@
 /*******************************************************************************
  * \file
  * File: api/api.h
- * Created: 08/16/25
+ * Created: 16/08/25
  * Author: Umut Sevdi
  * Description:
  *
- * Project: umutsevdi/logic-circuit-simulator-2
+ * Project: umutsevdi/imcircuit
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 #include <json/value.h>
 #include "common.h"
-namespace lcs::api {
+namespace ic::api {
 
 namespace gh {
     LCS_ERROR get_device_code(Json::Value& response, const std::string& _id);
@@ -34,4 +34,4 @@ namespace rest {
 
 } // namespace rest
 
-} // namespace lcs::api
+} // namespace ic::api

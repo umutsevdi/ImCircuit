@@ -3,10 +3,9 @@
 #include <imnodes.h>
 #include "common.h"
 #include "components.h"
-#include "configuration.h"
 #include "ui.h"
 
-namespace lcs::ui::layout {
+namespace ic::ui {
 
 Configuration cfg {};
 static bool _show_new       = false;
@@ -61,11 +60,9 @@ void MenuBar(void)
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu(_("View"))) {
-            ImGui::Checkbox(_("Palette"), &user_data.palette);
-            ImGui::Checkbox(_("Inspector"), &user_data.inspector);
-            ImGui::Checkbox(_("Console"), &user_data.console);
-            ImGui::Checkbox(_("Scene Info"), &user_data.scene_info);
-            ImGui::Checkbox(_("Property Editor"), &user_data.tree);
+            for (auto w : WINDOW_LIST) {
+                ImGui::Checkbox(_(w->basename), &w->is_active);
+            }
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu(_("Help"))) {
@@ -385,7 +382,7 @@ static void _changelog_popup(void)
     }
 }
 
-static void _color_buttons(const LcsTheme& style)
+static void _color_buttons(const Theme& style)
 {
     ImGui::PushID(style.name.c_str());
     ImGui::ColorButton(_("Background"), style.bg);
@@ -451,7 +448,7 @@ void _popup_pref(void)
     auto light_themes = get_available_styles(false);
     auto dark_themes  = get_available_styles(true);
     if (cfg.is_saved && cfg.is_applied) {
-        cfg = get_config();
+        cfg = Configuration::get();
         for (size_t i = 0; i < light_themes.size(); i++) {
             if (cfg.light_theme == light_themes[i]) {
                 light_idx = i;
@@ -468,8 +465,8 @@ void _popup_pref(void)
     ImGui::Begin(title.c_str(), &keep,
         ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize
             | ImGuiWindowFlags_NoDocking
-            | (!get_config().is_saved ? ImGuiWindowFlags_UnsavedDocument
-                                      : ImGuiWindowFlags_None));
+            | (!Configuration::get().is_saved ? ImGuiWindowFlags_UnsavedDocument
+                                              : ImGuiWindowFlags_None));
 
     ImGui::SetWindowPos(
         ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing);
@@ -534,8 +531,8 @@ void _popup_pref(void)
     ImGui::BeginDisabled(cfg.is_applied);
     if (IconButton(ICON_LC_REDO_DOT, _("Apply"))) {
         cfg.is_saved = false;
-        set_config(cfg);
-        cfg            = get_config();
+        Configuration::set(cfg);
+        cfg            = Configuration::get();
         cfg.is_applied = true;
         Toast(ICON_LC_SETTINGS_2, _("Preferences"),
             _("Configuration changes were applied."));
@@ -544,9 +541,9 @@ void _popup_pref(void)
     ImGui::SameLine(ImGui::GetWindowSize().x * 5 / 6);
     ImGui::BeginDisabled(cfg.is_saved);
     if (IconButton(ICON_LC_SAVE, _("Save"))) {
-        set_config(cfg);
-        cfg = get_config();
-        save_config();
+        Configuration::set(cfg);
+        cfg = Configuration::get();
+        Configuration::save();
         cfg.is_applied = true;
         cfg.is_saved   = true;
         L_DEBUG("Configuration changes were saved.");
@@ -556,15 +553,15 @@ void _popup_pref(void)
     ImGui::EndDisabled();
     ImGui::End();
     if (!keep) {
-        if (!get_config().is_saved) {
+        if (!Configuration::get().is_saved) {
             L_DEBUG("Configuration changes were reverted.");
             Toast(ICON_LC_UNDO, _("Preferences"),
                 _("Configuration changes were reverted."));
-            set_config(load_config());
-            cfg = get_config();
+            Configuration::set(Configuration::load());
+            cfg = Configuration::get();
         }
         _show_pref = false;
     }
 }
 
-} // namespace lcs::ui::layout
+} // namespace ic::ui

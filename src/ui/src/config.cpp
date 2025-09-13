@@ -6,13 +6,12 @@
 #include <json/value.h>
 #include <libintl.h>
 #include "common.h"
-#include "configuration.h"
+#include "ui.h"
 
-namespace lcs {
-
+namespace ic {
 template <>
-const char* to_str<ui::Configuration::ThemePreference>(
-    ui::Configuration::ThemePreference t)
+const char* to_str<ui::Configuration::Preference>(
+    ui::Configuration::Preference t)
 {
     switch (t) {
     case ui::Configuration::ALWAYS_LIGHT: return "light";
@@ -23,12 +22,12 @@ const char* to_str<ui::Configuration::ThemePreference>(
 
 namespace ui {
     static Error _set_locale(const std::string& locale);
+    static Json::Value _to_json(const Configuration& cfg);
+    LCS_ERROR static _from_json(const Json::Value& v, Configuration& cfg);
 
-    UserData user_data { true, true, true, true, true, {} };
-    static Configuration _config;
+    static Configuration ACTIVE_CONFIG;
 
-    static Configuration::ThemePreference str_to_ThemePreference(
-        const std::string& s)
+    static Configuration::Preference _str_to_pref(const std::string& s)
     {
         if (s == "light") {
             return Configuration::ALWAYS_LIGHT;
@@ -38,77 +37,80 @@ namespace ui {
         return Configuration::FOLLOW_OS;
     }
 
-    Configuration& load_config(void)
+    Configuration& Configuration::load(void)
     {
-        std::string old_locale = _config.language;
+        std::string old_locale = ACTIVE_CONFIG.language;
         std::string data;
         if (!fs::read(fs::CONFIG / "config.json", data)) {
             L_WARN("Configuration file was not found at %s. Initializing "
                    "defaults.",
                 (fs::CONFIG / "config.json").c_str());
-            fs::write(
-                fs::CONFIG / "config.json", _config.to_json().toStyledString());
-            return _config;
+            fs::write(fs::CONFIG / "config.json",
+                _to_json(ACTIVE_CONFIG).toStyledString());
+            return ACTIVE_CONFIG;
         }
 
         Json::Value v;
         Json::Reader r;
         if (!r.parse(data, v)) {
             L_ERROR("Invalid configuration file format. Overwriting.");
-            fs::write(
-                fs::CONFIG / "config.json", _config.to_json().toStyledString());
-            return _config;
+            fs::write(fs::CONFIG / "config.json",
+                _to_json(ACTIVE_CONFIG).toStyledString());
+            return ACTIVE_CONFIG;
         }
-        if (_config.from_json(v) != Error::OK) {
+        if (_from_json(v, ACTIVE_CONFIG) != Error::OK) {
             L_ERROR("Parse error.");
-            _config = Configuration();
+            ACTIVE_CONFIG = Configuration();
         }
-        if (old_locale != _config.language) {
-            _set_locale(_config.language);
+        if (old_locale != ACTIVE_CONFIG.language) {
+            _set_locale(ACTIVE_CONFIG.language);
         }
         L_DEBUG("Configuration was loaded.");
-        return _config;
+        return ACTIVE_CONFIG;
     }
 
-    Configuration& get_config(void) { return _config; }
+    Configuration& Configuration::get(void) { return ACTIVE_CONFIG; }
 
-    void set_config(Configuration& cfg)
+    void Configuration::set(Configuration& cfg)
     {
-        if (cfg.language != _config.language) {
+        if (cfg.language != ACTIVE_CONFIG.language) {
             if (_set_locale(cfg.language)) {
-                cfg.language = _config.language;
+                cfg.language = ACTIVE_CONFIG.language;
             }
         }
-        _config            = cfg;
-        _config.is_applied = false;
-        _config.is_saved   = false;
+        ACTIVE_CONFIG            = cfg;
+        ACTIVE_CONFIG.is_applied = false;
+        ACTIVE_CONFIG.is_saved   = false;
     }
 
-    void save_config(void)
+    void Configuration::save(void)
     {
-        fs::write(
-            fs::CONFIG / "config.json", _config.to_json().toStyledString());
-        _config.is_applied = true;
-        _config.is_saved   = true;
+        fs::write(fs::CONFIG / "config.json",
+            _to_json(ACTIVE_CONFIG).toStyledString());
+        ACTIVE_CONFIG.is_applied = true;
+        ACTIVE_CONFIG.is_saved   = true;
     }
 
-    Json::Value Configuration::to_json() const
+    static Json::Value _to_json(const Configuration& cfg)
     {
         Json::Value v;
-        v["theme"]["light"]       = light_theme;
-        v["theme"]["dark"]        = dark_theme;
-        v["theme"]["prefer"]      = to_str<ThemePreference>(preference);
-        v["theme"]["corners"]     = rounded_corners;
-        v["scale"]                = scale;
-        v["language"]             = language;
-        v["window"]["x"]          = startup_win_x;
-        v["window"]["y"]          = startup_win_y;
-        v["proxy"]                = api_proxy;
-        v["window"]["fullscreen"] = start_fullscreen;
+        v["theme"]["light"]       = cfg.light_theme;
+        v["theme"]["dark"]        = cfg.dark_theme;
+        v["theme"]["prefer"]      = to_str(cfg.preference);
+        v["theme"]["corners"]     = cfg.rounded_corners;
+        v["scale"]                = cfg.scale;
+        v["language"]             = cfg.language;
+        v["window"]["x"]          = cfg.startup_win_x;
+        v["window"]["y"]          = cfg.startup_win_y;
+        v["proxy"]                = cfg.api_proxy;
+        v["window"]["fullscreen"] = cfg.start_fullscreen;
+        if (!cfg.login.empty()) {
+            v["service"]["login"] = cfg.login;
+        }
         return v;
     }
 
-    LCS_ERROR Configuration::from_json(const Json::Value& v)
+    LCS_ERROR static _from_json(const Json::Value& v, Configuration& cfg)
     {
         if (!(v["theme"].isObject()
                 && (v["theme"]["light"].isString()
@@ -123,21 +125,24 @@ namespace ui {
             return ERROR(INVALID_JSON);
         }
 
-        light_theme = v["theme"]["light"].asString();
-        dark_theme  = v["theme"]["dark"].asString();
-        preference  = str_to_ThemePreference(v["theme"]["prefer"].asString());
-        rounded_corners  = v["theme"]["corners"].asInt();
-        scale            = v["scale"].asInt();
-        api_proxy        = v["proxy"].asString();
-        language         = v["language"].asString();
-        startup_win_x    = v["window"]["x"].asInt();
-        startup_win_y    = v["window"]["y"].asInt();
-        start_fullscreen = v["window"]["fullscreen"].asBool();
-        is_saved         = true;
+        cfg.light_theme      = v["theme"]["light"].asString();
+        cfg.dark_theme       = v["theme"]["dark"].asString();
+        cfg.preference       = _str_to_pref(v["theme"]["prefer"].asString());
+        cfg.rounded_corners  = v["theme"]["corners"].asInt();
+        cfg.scale            = v["scale"].asInt();
+        cfg.api_proxy        = v["proxy"].asString();
+        cfg.language         = v["language"].asString();
+        cfg.startup_win_x    = v["window"]["x"].asInt();
+        cfg.startup_win_y    = v["window"]["y"].asInt();
+        cfg.start_fullscreen = v["window"]["fullscreen"].asBool();
+        if (v["service"].isObject() && v["service"]["login"].isString()) {
+            cfg.login = cfg.login;
+        }
+        cfg.is_saved = true;
 
-        if (!(!light_theme.empty() && !dark_theme.empty()
-                && (rounded_corners >= 0 && rounded_corners <= 20)
-                && (scale >= 75 && scale <= 150))) {
+        if (!(!cfg.light_theme.empty() && !cfg.dark_theme.empty()
+                && (cfg.rounded_corners >= 0 && cfg.rounded_corners <= 20)
+                && (cfg.scale >= 75 && cfg.scale <= 150))) {
             return ERROR(INVALID_JSON);
         }
         return Error::OK;
@@ -170,59 +175,45 @@ namespace ui {
         return Error::OK;
     }
 
-    void _apply_all(ImGuiContext*, ImGuiSettingsHandler*)
-    {
-        //  if (!net::get_flow().start_existing()) {
-        //      Toast(ICON_LC_GITHUB,
-        //          ("Welcome back " + net::get_account().name).c_str(),
-        //          "Authentication was successful.");
-        //      L_INFO("Welcome back %s", net::get_account().name.c_str());
-        //  } else {
-        //      net::get_flow().resolve();
-        //  }
-    }
+    void _apply_all(ImGuiContext*, ImGuiSettingsHandler*) { }
 
     static void* _read_open(
         ImGuiContext*, ImGuiSettingsHandler*, const char* name)
     {
         if (std::strncmp(name, "default", sizeof("default")) == 0) {
-            return &user_data;
+            return &ACTIVE_CONFIG;
         }
         return nullptr;
     }
 
     static void _read_line(
-        ImGuiContext*, ImGuiSettingsHandler*, void* entry, const char* line)
+        ImGuiContext*, ImGuiSettingsHandler*, void*, const char* line)
     {
-        UserData* lo    = (UserData*)entry;
-        uint32_t layout = 0;
-        if (sscanf(line, "layout=0x%X", &layout) == 1) {
-            user_data.palette    = layout & 0b00001;
-            user_data.inspector  = layout & 0b00010;
-            user_data.scene_info = layout & 0b00100;
-            user_data.console    = layout & 0b01000;
-            user_data.tree       = layout & 0b10000;
+        char window_name[40];
+        char is_active[6];
+        if (sscanf(line, "%39[^\"]=%5[^\"]", window_name, is_active) == 2) {
+            bool value = false;
+            if (strncmp(is_active, "true", 4) == 0) {
+                value = true;
+            }
+            for (auto& win : WINDOW_LIST) {
+                if (strncmp(win->basename, window_name, 40) == 0) {
+                    L_INFO("??");
+                    win->is_active = value;
+                    break;
+                }
+            }
         }
-        if (sscanf(line, "login=\"%127[^\"]\"", lo->login.data()) == 1) { }
     }
 
     static void _write_all(
         ImGuiContext*, ImGuiSettingsHandler*, ImGuiTextBuffer* buf)
     {
         buf->appendf("[%s][%s]\n", APPNAME, "default");
-        uint32_t layout =
-
-            (user_data.palette) |
-
-            (user_data.inspector << 1) |
-
-            (user_data.scene_info << 2) |
-
-            (user_data.console << 3) |
-
-            (user_data.tree << 4);
-        buf->appendf("layout=0x%X\n", layout);
-        buf->appendf("login=\"%s\"\n\n", user_data.login.begin());
+        for (auto& win : WINDOW_LIST) {
+            buf->appendf(
+                "%s=%s\n", win->basename, win->is_active ? "true" : "false");
+        }
     }
 
     void bind_config(ImGuiContext* ctx)
@@ -240,4 +231,4 @@ namespace ui {
     }
 
 } // namespace ui
-} // namespace lcs
+} // namespace ic

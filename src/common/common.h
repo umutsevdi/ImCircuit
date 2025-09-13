@@ -7,7 +7,7 @@
  * Description: Methods and values used across the application
  * such as helpers for networking, file system access and logging
  *
- * Project: umutsevdi/logic-circuit-simulator-2
+ * Project: umutsevdi/imcircuit
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 
@@ -67,15 +67,15 @@
 
 #define LCS_ERROR [[nodiscard("Error codes must be handled")]] Error
 
-namespace lcs {
+namespace ic {
 template <typename T> const char* to_str(T);
 /**
  * A custom container class that stores a pointer to an object defined
  * within a scene. Can not be stored, copied or assigned.
  *
  * Intended use case:
- * get_node<lcs::GateNode>(id)->signal();
- * get_node<lcs::InputNode>(id)->toggle();
+ * get_node<ic::GateNode>(id)->signal();
+ * get_node<ic::InputNode>(id)->toggle();
  */
 template <typename T> class Ref {
 public:
@@ -113,10 +113,8 @@ struct Message {
     Severity severity = DEBUG;
     std::array<char, 12> time_str {};
     std::array<char, 6> log_level {};
-    std::array<char, 10> obj {};
-    std::array<char, 10> file {};
+    std::array<char, 10> module {};
     std::array<char, 15> file_line {};
-    std::array<char, 16> fn {};
     std::array<char, 380> expr {};
     int line = 0;
 
@@ -128,18 +126,17 @@ struct Message {
 #pragma warning(push)
 #endif
     template <typename... Args>
-    Message(Severity _severity, const char* _file, int _line, const char* _fn,
-        const char* _fmt, Args... _args)
+    Message(Severity _severity, const char* _file, int _line,
+        const char* _module, const char* _fmt, Args... _args)
     {
         _set_time();
         severity = _severity;
         line     = _line;
         std::strncpy(
             log_level.data(), _severity_to_str(_severity), log_level.size());
-        std::snprintf(file.data(), file.max_size(), "%s", _file);
         std::snprintf(
             file_line.data(), file_line.max_size(), "%s:%-4d", _file, _line);
-        _fn_parse(_fn);
+        _fn_parse(_module);
         std::snprintf(expr.data(), expr.max_size(), _fmt, _args...);
     }
 #if defined(__GNUC__)
@@ -165,13 +162,13 @@ private:
 namespace fs {
 #if defined(__GNUC__)
 #define __LLOG__(STATUS, ...)                                                  \
-    lcs::fs::_log(Message {                                                    \
+    ic::fs::_log(Message {                                                     \
         STATUS, __FILE_NAME__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__ })
 #elif defined(_MSC_VER)
 #define __FILENAME__                                                           \
     (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #define __LLOG__(STATUS, ...)                                                  \
-    lcs::fs::_log(                                                             \
+    ic::fs::_log(                                                              \
         Message { STATUS, __FILENAME__, __LINE__, __FUNCSIG__, __VA_ARGS__ })
 #endif
 
@@ -181,7 +178,7 @@ namespace fs {
 #define L_ERROR(...) __LLOG__(Message::ERROR, __VA_ARGS__)
 /** Runs an assertion. Displays an error message on failure. In debug builds
  * also crashes the application. */
-#define lcs_assert(expr)                                                       \
+#define ic_assert(expr)                                                        \
     {                                                                          \
         try {                                                                  \
             if (!(expr)) {                                                     \
@@ -354,7 +351,7 @@ namespace net {
      */
     void open_browser(const std::string& url);
 } // namespace net
-} // namespace lcs
+} // namespace ic
 
 std::vector<std::string> split(std::string& s, const std::string& delimiter);
 std::vector<std::string> split(std::string& s, const char delimiter);

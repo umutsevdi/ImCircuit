@@ -3,7 +3,7 @@
 #include "core.h"
 #include "test_util.h"
 
-using namespace lcs;
+using namespace ic;
 TEST_CASE("parse-scene")
 {
     Scene s { "parse-scene-subnodes" };
@@ -152,7 +152,7 @@ TEST_CASE("save-component-load-to-scene")
         s.connect(s.component_context->get_output(0), 0, g_xor);
         REQUIRE_EQ(s.write_to(data), Error::OK);
         REQUIRE(fs::write(
-            fs::LIBRARY / (base64_encode(s.to_dependency()) + ".lcs"), data));
+            fs::LIBRARY / (base64_encode(s.to_dependency()) + ".ic"), data));
 
         Scene s2 { "DependencyScene", "Author", "Description" };
         s2.add_dependency(std::move(s));

@@ -2,8 +2,21 @@
 #include <fstream>
 #include "components.h"
 
-static std::map<std::string, lcs::ui::ImageHandle> _TEXTURE_MAP;
-namespace lcs::ui {
+static std::map<std::string, ic::ui::ImageHandle> _TEXTURE_MAP;
+namespace ic::ui {
+
+void Window::loop(Ref<Scene> scene, bool switched)
+{
+    if (ImGui::Begin(title(), nullptr, _flags)) {
+        if (ImGui ::IsItemHovered(ImGuiHoveredFlags_None)) {
+            BeginTooltip(nullptr, _(basename));
+            ImGui ::TextUnformatted(tooltip());
+            EndTooltip(_shortcut);
+        };
+        show(scene, switched);
+    }
+    ImGui::End();
+}
 
 const ImageHandle* get_texture(const std::string& key)
 {
@@ -18,7 +31,7 @@ const ImageHandle* get_texture(const std::string& key)
     return &p->second;
 }
 
-} // namespace lcs::ui
+} // namespace ic::ui
 
 #ifdef _WIN32
 #include <windows.h>
@@ -29,7 +42,7 @@ const ImageHandle* get_texture(const std::string& key)
 #include <stb_image.h>
 // Simple helper function to load an image into a OpenGL texture with common
 // settings
-bool lcs::ui::load_texture(
+bool ic::ui::load_texture(
     const std::string& key, std::vector<unsigned char>& buffer)
 {
     // Load from file
@@ -51,12 +64,12 @@ bool lcs::ui::load_texture(
         GL_RGBA, GL_UNSIGNED_BYTE, image_data);
     stbi_image_free(image_data);
     _TEXTURE_MAP.insert_or_assign(key,
-        lcs::ui::ImageHandle {
+        ic::ui::ImageHandle {
             (uint32_t)image_texture, image_width, image_height });
     return true;
 }
 
-bool lcs::ui::load_texture(const std::string& key, const std::string& file_path)
+bool ic::ui::load_texture(const std::string& key, const std::string& file_path)
 {
     std::ifstream infile { file_path, std::ios::binary | std::ios::ate };
     if (!infile) {

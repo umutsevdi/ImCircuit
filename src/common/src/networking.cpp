@@ -6,7 +6,7 @@
 #include <thread>
 #include "common.h"
 
-namespace lcs::net {
+namespace ic::net {
 
 static size_t _write_cb(
     void* contents, size_t size, size_t nmemb, std::vector<unsigned char>& resp)
@@ -156,7 +156,7 @@ void init(bool)
             + std::string(curl_easy_strerror(res)));
     }
     _thread = std::thread { [&]() {
-        L_DEBUG("Module lcs::net is ready");
+        L_DEBUG("Module ic::net is ready");
         bool term = false;
         while (true) {
             std::vector<size_t> erase_list;
@@ -196,7 +196,7 @@ void close(void)
     if (_thread.joinable()) {
         _thread.join();
     }
-    L_DEBUG("Module lcs::net is closed.");
+    L_DEBUG("Module ic::net is closed.");
 }
 
 uint64_t get_request(const std::string& URL, const std::string& authorization)
@@ -268,4 +268,4 @@ void open_browser(const std::string& url)
     }
 }
 
-} // namespace lcs::net
+} // namespace ic::net

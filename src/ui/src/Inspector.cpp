@@ -5,71 +5,75 @@
 #include "core.h"
 #include "ui.h"
 
-namespace lcs::ui::layout {
+namespace ic::ui {
 
-static void _disconnect_button_tooltip();
-static void _input_table(Ref<Scene>, const std::vector<relid>&);
-static void _output_table(Ref<Scene>, const std::vector<relid>&);
-static void _inspector_input(Ref<Scene>, Node);
-static void _inspector_output(Ref<Scene>, Node);
-static void _inspector_component(Ref<Scene>, Node);
-static void _inspector_gate(Ref<Scene>, Node);
-static void _inspector_component_context(Ref<Scene>, Node);
-static void _inspector_tab(Ref<Scene>, Node);
+struct Inspector final : public Window {
+    Inspector();
+    ~Inspector() = default;
 
-void Inspector(Ref<Scene> scene)
-{
-    static int nodeids[1 << 20] = { 0 };
-    static char buffer[128];
-
-    if (!user_data.inspector) {
-        return;
+    virtual void show(Ref<Scene>, bool switched) override;
+    virtual const char* tooltip(void) override
+    {
+        return _("A panel that displays and allows you to modify the\n"
+                 "attributes of the currently selected logic gate node.");
     }
-    std::string title = std::string { _("Inspector") } + "###Inspector";
-    if (ImGui::Begin(title.c_str(), &user_data.inspector)) {
-        HINT("CTRL+I", _("Inspector"),
-            _("A panel that displays and allows you to modify the\n"
-              "attributes of the currently selected logic gate node."));
-        if (scene != nullptr) {
-            int len = ImNodes::NumSelectedNodes();
-            ImNodes::GetSelectedNodes(nodeids);
-            if (len) {
-                ImGui::BeginTabBar("InspectorTabs");
-                for (int i = 0; i < len; i++) {
-                    Node node = decode_pair(nodeids[i]);
-                    snprintf(buffer, 128, "%s@%u",
-                        to_str<Node::Type>(node.type), node.index);
-                    to_str<Node::Type>(node.type);
-                    if (ImGui::BeginTabItem(
-                            buffer, nullptr, ImGuiTabItemFlags_NoReorder)) {
-                        _inspector_tab(scene, node);
-                        ImGui::EndTabItem();
-                    };
-                }
-                ImGui::EndTabBar();
-                if (len > 1) {
-                    ImGui::PushFont(get_font(FontFlags::ITALIC), FONT_SMALL);
-                    ImGui::Text(_("%d items selected."), len);
-                    ImGui::PopFont();
-                    ImGui::SameLine();
-                    if (IconButton(ICON_LC_TRASH_2, _("Delete All"))) {
-                        ImNodes::ClearNodeSelection();
-                        for (int i = 0; i < len; i++) {
-                            Node node = decode_pair(nodeids[i]);
-                            L_DEBUG("Delete %s@%d",
-                                to_str<Node::Type>(node.type), node.index);
-                            scene->remove_node(node);
-                        }
+
+    int nodeids[1 << 20] = { 0 };
+    char buffer[128];
+
+private:
+    void _disconnect_button_tooltip();
+    void _input_table(Ref<Scene>, const std::vector<relid>&);
+    void _output_table(Ref<Scene>, const std::vector<relid>&);
+    void _inspector_input(Ref<Scene>, Node);
+    void _inspector_output(Ref<Scene>, Node);
+    void _inspector_component(Ref<Scene>, Node);
+    void _inspector_gate(Ref<Scene>, Node);
+    void _inspector_component_context(Ref<Scene>, Node);
+    void _inspector_tab(Ref<Scene>, Node);
+};
+REGISTER_WINDOW("Inspector", Inspector)
+
+void Inspector::show(Ref<Scene> scene, bool)
+{
+    if (scene != nullptr) {
+        int len = ImNodes::NumSelectedNodes();
+        ImNodes::GetSelectedNodes(nodeids);
+        if (len) {
+            ImGui::BeginTabBar("InspectorTabs");
+            for (int i = 0; i < len; i++) {
+                Node node = decode_pair(nodeids[i]);
+                snprintf(buffer, 128, "%s@%u", to_str<Node::Type>(node.type),
+                    node.index);
+                to_str<Node::Type>(node.type);
+                if (ImGui::BeginTabItem(
+                        buffer, nullptr, ImGuiTabItemFlags_NoReorder)) {
+                    _inspector_tab(scene, node);
+                    ImGui::EndTabItem();
+                };
+            }
+            ImGui::EndTabBar();
+            if (len > 1) {
+                ImGui::PushFont(get_font(FontFlags::ITALIC), FONT_SMALL);
+                ImGui::Text(_("%d items selected."), len);
+                ImGui::PopFont();
+                ImGui::SameLine();
+                if (IconButton(ICON_LC_TRASH_2, _("Delete All"))) {
+                    ImNodes::ClearNodeSelection();
+                    for (int i = 0; i < len; i++) {
+                        Node node = decode_pair(nodeids[i]);
+                        L_DEBUG("Delete %s@%d", to_str<Node::Type>(node.type),
+                            node.index);
+                        scene->remove_node(node);
                     }
                 }
             }
         }
     }
-    ImGui::End();
 }
 
 // FIXME Delete node failure
-static void _inspector_tab(Ref<Scene> scene, Node node)
+void Inspector::_inspector_tab(Ref<Scene> scene, Node node)
 {
     const static float KEY_WIDTH = ImGui::CalcTextSize("SOCKET COUNT").x;
     ImGui::BeginChild(
@@ -123,7 +127,7 @@ static void _inspector_tab(Ref<Scene> scene, Node node)
     }
     ImGui::EndChild();
 }
-static void _inspector_input(Ref<Scene> scene, Node node)
+void Inspector::_inspector_input(Ref<Scene> scene, Node node)
 {
     auto _node                = scene->get_node<Input>(node);
     constexpr size_t SIZE     = 20;
@@ -168,7 +172,7 @@ static void _inspector_input(Ref<Scene> scene, Node node)
     ImGui::EndTable();
 }
 
-static void _inspector_output(Ref<Scene> scene, Node node)
+void Inspector::_inspector_output(Ref<Scene> scene, Node node)
 {
     auto _node = scene->get_node<Output>(node);
     TablePair(Field("Value"), ImGui::Text("%s", to_str(_node->get())));
@@ -178,7 +182,7 @@ static void _inspector_output(Ref<Scene> scene, Node node)
     ImGui::EndTable();
 }
 
-static void _inspector_gate(Ref<Scene> scene, Node node)
+void Inspector::_inspector_gate(Ref<Scene> scene, Node node)
 {
     const static ImVec2 __selector_size = ImGui::CalcTextSize("-000000000000");
 
@@ -225,7 +229,7 @@ static void _inspector_gate(Ref<Scene> scene, Node node)
     ImGui::EndTable();
 }
 
-static void _inspector_component(Ref<Scene> scene, Node node)
+void Inspector::_inspector_component(Ref<Scene> scene, Node node)
 {
     auto _node = scene->get_node<Component>(node);
     TableKey(Field(_("Value")));
@@ -259,7 +263,7 @@ static void _inspector_component(Ref<Scene> scene, Node node)
     ImGui::EndTable();
 }
 
-static void _inspector_component_context(Ref<Scene> scene, Node node)
+void Inspector::_inspector_component_context(Ref<Scene> scene, Node node)
 {
     ComponentContext& ctx = scene->component_context.value();
     if (node.type == Node::Type::COMPONENT_INPUT) {
@@ -297,7 +301,7 @@ static void _inspector_component_context(Ref<Scene> scene, Node node)
     ImGui::EndTable();
 }
 
-static void _input_table(Ref<Scene> scene, const std::vector<relid>& inputs)
+void Inspector::_input_table(Ref<Scene> scene, const std::vector<relid>& inputs)
 {
     if (ImGui::BeginTable("Inputs", 4,
             ImGuiTableFlags_BordersInner | ImGuiTableFlags_RowBg)) {
@@ -340,7 +344,8 @@ static void _input_table(Ref<Scene> scene, const std::vector<relid>& inputs)
     };
 }
 
-static void _output_table(Ref<Scene> scene, const std::vector<relid>& outputs)
+void Inspector::_output_table(
+    Ref<Scene> scene, const std::vector<relid>& outputs)
 {
     if (ImGui::BeginTable("Outputs", 2,
             ImGuiTableFlags_BordersInner | ImGuiTableFlags_RowBg)) {
@@ -379,12 +384,11 @@ static void _output_table(Ref<Scene> scene, const std::vector<relid>& outputs)
     }
 }
 
-static void _disconnect_button_tooltip()
+void Inspector::_disconnect_button_tooltip()
 {
     if (ImGui::BeginTooltip()) {
         ImGui::Text(_("Disconnect relation"));
         ImGui::EndTooltip();
     }
 }
-} // namespace lcs::ui::layout
-  //
+} // namespace ic::ui

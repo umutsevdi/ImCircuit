@@ -36,7 +36,7 @@ static inline uint32_t _htonl(uint32_t host)
  */
 static inline uint32_t _ntohl(uint32_t network) { return _htonl(network); }
 
-namespace lcs {
+namespace ic {
 /**
  * Instructions are set of commands to rebuild the given scene. Instructions are
  * non readable ASCII characters.
@@ -380,8 +380,8 @@ LCS_ERROR static inline _decode_branch(const uint8_t** bgnptr,
 LCS_ERROR Scene::read_from(const std::vector<uint8_t>& buffer)
 {
     const uint8_t* cursor = buffer.data();
-    uint8_t lcs_version   = *cursor;
-    if (lcs_version != 1) {
+    uint8_t ic_version   = *cursor;
+    if (ic_version != 1) {
         return ERROR(Error::INVALID_SCENE_FORMAT);
     }
     cursor++; // skip version
@@ -412,7 +412,7 @@ static Error _check_fs(const std::string& name, Scene& s)
     if (tokens.size() != 3) {
         return ERROR(Error::INVALID_DEPENDENCY_FORMAT);
     }
-    std::filesystem::path path = fs::LIBRARY / (base64_encode(name) + ".lcs");
+    std::filesystem::path path = fs::LIBRARY / (base64_encode(name) + ".ic");
     std::vector<uint8_t> data;
     if (!fs::read(path, data)) {
         return ERROR(Error::COMPONENT_NOT_FOUND);
@@ -437,7 +437,7 @@ static Error _check_src(const std::string& path, Scene&)
     //          if(resp.err==Error::OK && resp.status_code ==200 &&
     //          !resp.data.empty())
     //          {
-    //          fs::write(fs::LIBRARY / (base64_encode(resp.path) + ".lcs"),
+    //          fs::write(fs::LIBRARY / (base64_encode(resp.path) + ".ic"),
     //          resp);
     //          }
     //          },url, ""
@@ -457,4 +457,4 @@ Error load_dependency(const std::string& name, Scene& scene)
     return OK;
 }
 
-} // namespace lcs
+} // namespace ic

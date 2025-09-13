@@ -3,7 +3,6 @@
 #include <imgui_impl_opengl3.h>
 #include <imnodes.h>
 #include <nfd.h>
-#include "configuration.h"
 #include "core.h"
 #include "ui.h"
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -16,7 +15,8 @@
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
-namespace lcs ::ui {
+namespace ic ::ui {
+std::vector<Window*> WINDOW_LIST;
 
 static void glcb(int error, const char* description)
 {
@@ -56,7 +56,7 @@ int run()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 #endif
 
-    Configuration& cfg = load_config();
+    Configuration& cfg = Configuration::load();
     GLFWwindow* window = glfwCreateWindow(
         cfg.startup_win_x, cfg.startup_win_y, APPNAME, nullptr, nullptr);
     if (window == nullptr) {
@@ -82,6 +82,7 @@ int run()
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
+    WINDOW_LIST = INIT_WINDOW_LIST();
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0) {
@@ -92,25 +93,23 @@ int run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         ImGui::DockSpaceOverViewport();
-        layout::MenuBar();
+        MenuBar();
         Ref<Scene> scene = tabs::active();
         bool is_changed  = tabs::is_changed();
         if (scene != nullptr) {
             scene->run(imio.DeltaTime);
         }
-        layout::SceneInfo(scene, is_changed);
-        layout::NodeEditor(scene, is_changed);
-        layout::Inspector(scene);
-        layout::PropertyEditor(scene);
-        layout::Palette(scene);
-        layout::Console();
+        for (auto& win : WINDOW_LIST) {
+            if (win->is_active) {
+                win->loop(scene, is_changed);
+            }
+        }
 #ifndef NDEBUG
-        layout::DebugWindow(scene);
         ImGui::ShowDemoWindow(nullptr);
 #endif
-        RenderNotifications();
+        show_notifications();
         ImGui::Render();
-        if (!get_config().is_applied) {
+        if (!Configuration::get().is_applied) {
             set_style(imio);
         }
         ImVec4 clear_color = get_active_style().bg;
@@ -150,4 +149,4 @@ int run()
     return 0;
 }
 
-} // namespace lcs::ui
+} // namespace ic::ui

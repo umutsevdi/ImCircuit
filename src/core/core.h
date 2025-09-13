@@ -2,11 +2,11 @@
 /*******************************************************************************
  * \file
  * File: core.h
- * Created: 01/18/25
+ * Created: 18/01/25
  * Author: Umut Sevdi
  * Description: Core logic circuit engine.
  *
- * Project: umutsevdi/logic-circuit-simulator-2
+ * Project: umutsevdi/imcircuit
  * License: GNU GENERAL PUBLIC LICENSE
  ******************************************************************************/
 
@@ -19,7 +19,7 @@
 #include <stack>
 #include "common.h"
 
-namespace lcs {
+namespace ic {
 
 class Scene;
 /** id type for socket, sock_t = 0 means disconnected */
@@ -480,7 +480,7 @@ public:
     template <typename T> inline Ref<T> get_node(Node id)
     {
         std::vector<T>& vec = vector<T>();
-        lcs_assert(id.type == as_node_type<T>());
+        ic_assert(id.type == as_node_type<T>());
         return id.index < vec.size() && !vec[id.index].is_null()
             ? &vec[id.index]
             : nullptr;
@@ -750,4 +750,4 @@ namespace tabs {
  */
 Error load_dependency(const std::string& name, Scene& scene);
 
-} // namespace lcs
+} // namespace ic
