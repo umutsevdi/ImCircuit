@@ -1,3 +1,4 @@
+#include <chrono>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -15,12 +16,39 @@
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
-namespace ic ::ui {
+namespace ic::ui {
 std::vector<Window*> WINDOW_LIST;
 
 static void glcb(int error, const char* description)
 {
     L_ERROR("GLFW Error %d: %s\n", error, description);
+}
+static double get_timediff(void)
+{
+    using namespace std::chrono;
+    static const auto start  = steady_clock::now();
+    auto now                 = steady_clock::now();
+    duration<double> elapsed = now - start;
+    return elapsed.count();
+}
+
+/** Attempts to reduce resource usage if no animation is being played. */
+static bool save_power(void)
+{
+    if (ic::ui::has_notifications()) {
+        return false;
+    }
+    constexpr float FPS_IDLE   = 5.f; // FPS while saving
+    constexpr double TOLERANCE = 0.9;
+    double before_wait         = get_timediff();
+    double wait_timeout        = 1. / (double)FPS_IDLE;
+
+    glfwWaitEventsTimeout(wait_timeout);
+
+    double after_wait    = get_timediff();
+    double duration      = (after_wait - before_wait);
+    double expected_idle = 1. / FPS_IDLE;
+    return duration > expected_idle * TOLERANCE;
 }
 
 int run()
@@ -82,8 +110,17 @@ int run()
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
-    WINDOW_LIST = INIT_WINDOW_LIST();
+    WINDOW_LIST   = INIT_WINDOW_LIST();
+    bool switched = false;
     while (!glfwWindowShouldClose(window)) {
+        bool is_enabled = save_power();
+        if (is_enabled && !switched) {
+            L_DEBUG("Started power saving.");
+            switched = true;
+        } else if (switched && !is_enabled) {
+            L_DEBUG("Stopped power saving.");
+            switched = false;
+        }
         glfwPollEvents();
         if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0) {
             ImGui_ImplGlfw_Sleep(10);
@@ -97,6 +134,7 @@ int run()
         Ref<Scene> scene = tabs::active();
         bool is_changed  = tabs::is_changed();
         if (scene != nullptr) {
+            L_INFO("%f", imio.DeltaTime);
             scene->run(imio.DeltaTime);
         }
         for (auto& win : WINDOW_LIST) {

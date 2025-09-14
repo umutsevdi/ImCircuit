@@ -20,16 +20,9 @@ constexpr float FONT_SMALL  = 12.f;
 constexpr float FONT_NORMAL = 16.f;
 constexpr float FONT_LARGE  = 24.f;
 constexpr float FONT_ULTRA  = 48.f;
-enum FontFlags {
-    /** Format Flag: REGULAR */ REGULAR,
-    /** Format Flag: ITALIC */ ITALIC,
-    /** Format Flag: BOLD */ BOLD,
-    /** Format Flag: ICON */ ICON,
-    FONT_S
-};
+enum FontType { REGULAR, LIGHT, BOLD, ICON, FONT_S };
 
-ImFont* get_font(int attributes);
-float get_font_size(int attributes);
+ImFont* get_font(FontType type);
 
 void SceneType(Ref<Scene>);
 
@@ -74,7 +67,7 @@ void NodeTypeTitle(Node n, sockid sock);
 
 inline void ShowIcon(const char* icon)
 {
-    ImGui::PushFont(get_font(FontFlags::ICON), 0.f);
+    ImGui::PushFont(get_font(FontType::ICON), 0.f);
     ImGui::Text("%s", icon);
     ImGui::PopFont();
 }
@@ -149,7 +142,7 @@ inline void EndSection()
 template <typename... Args> inline void Field(Args... args)
 {
     ImGui::BeginGroup();
-    ImGui::PushFont(get_font(FontFlags::BOLD), 0.0f);
+    ImGui::PushFont(get_font(FontType::BOLD), 0.0f);
     ImGui::PushStyleColor(ImGuiCol_Text, get_active_style().cyan);
     ImGui::Text(args...);
     ImGui::PopFont();

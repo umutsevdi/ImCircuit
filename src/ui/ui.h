@@ -16,6 +16,7 @@
 
 namespace ic::ui {
 void show_notifications(void);
+bool has_notifications(void);
 
 inline ImVec4 v4mul(ImVec4 vec, float pct)
 {

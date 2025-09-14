@@ -71,7 +71,7 @@ void NodeTypeTitle(Node n)
 
 void NodeTypeTitle(Node n, sockid)
 {
-    ImGui::PushFont(get_font(FontFlags::REGULAR));
+    ImGui::PushFont(get_font(REGULAR));
     NodeTypeTitle(n);
     ImGui::PopFont();
 }

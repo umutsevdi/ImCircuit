@@ -54,7 +54,7 @@ void Inspector::show(Ref<Scene> scene, bool)
             }
             ImGui::EndTabBar();
             if (len > 1) {
-                ImGui::PushFont(get_font(FontFlags::ITALIC), FONT_SMALL);
+                ImGui::PushFont(get_font(LIGHT), FONT_SMALL);
                 ImGui::Text(_("%d items selected."), len);
                 ImGui::PopFont();
                 ImGui::SameLine();
@@ -318,7 +318,7 @@ void Inspector::_input_table(Ref<Scene> scene, const std::vector<relid>& inputs)
         for (size_t i = 0; i < inputs.size(); i++) {
             TableKey(Field("%zu", i + 1));
             ImGui::SameLine();
-            ImGui::PushFont(get_font(FontFlags::BOLD), 0.f);
+            ImGui::PushFont(get_font(BOLD), 0.f);
             State value = State::DISABLED;
             if (inputs[i] != 0) {
                 Ref<Rel> r = scene->get_rel(inputs[i]);
@@ -358,7 +358,7 @@ void Inspector::_output_table(
         for (size_t i = 0; i < outputs.size(); i++) {
             ImGui ::TableNextRow();
             ImGui ::TableSetColumnIndex(0);
-            ImGui::PushFont(get_font(FontFlags::BOLD), 0.f);
+            ImGui::PushFont(get_font(BOLD), 0.f);
             if (outputs[i] == 0) {
                 ImGui::TextColored(get_active_style().black_bright, "%s",
                     to_str<State>(State::DISABLED));

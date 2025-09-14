@@ -27,6 +27,9 @@ struct Notification {
 };
 
 static std::vector<Notification> notifications;
+
+bool has_notifications(void) { return notifications.size(); }
+
 static bool _show_toast(
     Notification& n, uint64_t tick, const ImVec2 pos, uint64_t& height);
 

@@ -15,8 +15,8 @@ static std::map<std::string, Theme> themes;
 static std::vector<const char*> names_light {};
 size_t selected_light = 0;
 static std::vector<const char*> names_dark {};
-size_t selected_dark                    = 0;
-static ImFont* _FONT[FontFlags::FONT_S] = {};
+size_t selected_dark                   = 0;
+static ImFont* _FONT[FontType::FONT_S] = {};
 
 static Error _read_theme(Theme& theme, const Json::Value& v);
 static void _init_fonts(ImGuiIO& io);
@@ -25,7 +25,7 @@ static void _init_themes(Configuration& cfg);
 static void _set_colors(
     ImVec4 clr_gui[ImGuiCol_COUNT], ImU32 clr_node[ImNodesCol_COUNT]);
 
-ImFont* get_font(int attributes) { return _FONT[attributes]; }
+ImFont* get_font(FontType type) { return _FONT[type]; }
 
 void set_style(ImGuiIO& io, bool init)
 {
@@ -117,7 +117,7 @@ static void _init_fonts(ImGuiIO& io)
     font             = (dir / "MPLUS1p-Bold.ttf").string();
     _FONT[BOLD]      = io.Fonts->AddFontFromFileTTF(font.c_str());
     font             = (dir / "MPLUS1p-Light.ttf").string();
-    _FONT[ITALIC]    = io.Fonts->AddFontFromFileTTF(font.c_str());
+    _FONT[LIGHT]     = io.Fonts->AddFontFromFileTTF(font.c_str());
     _FONT[ICON]      = io.Fonts->AddFontFromFileTTF(font_lucide.c_str());
     io.FontDefault   = _FONT[REGULAR];
 }

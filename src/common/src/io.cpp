@@ -240,20 +240,20 @@ namespace fs {
         // Testing mode
         if (is_testing) {
             printf(F_BLUE "[%s] " F_BOLD "%s%-6s" F_RESET F_GREEN
-                          "|%-15s|" F_RESET F_TEAL "%-10s" F_RESET F_GREEN
+                          "|%-15s|" F_RESET F_TEAL "%-14s" F_RESET F_GREEN
                           "|" F_RESET " %s%s\r\n" F_RESET,
                 l.time_str.data(), clr, l.log_level.data(), l.file_line.data(),
                 l.module.data(),
                 l.severity == Message::FATAL ? F_INVERT F_BOLD F_RED : "",
                 l.expr.data());
             if (_target_fp != nullptr) {
-                fprintf(_target_fp, "[%s] %-6s|%-15s|%-10s|%s\r\n",
+                fprintf(_target_fp, "[%s] %-6s|%-15s|%-14s|%s\r\n",
                     l.time_str.data(), l.log_level.data(), l.file_line.data(),
                     l.module.data(), l.expr.data());
             }
         } else if (is_verbose) {
             printf(F_BLUE "[%s] " F_BOLD "%s%-6s" F_RESET F_GREEN
-                          "|%-15s|" F_RESET F_TEAL "%-10s" F_RESET F_GREEN
+                          "|%-15s|" F_RESET F_TEAL "%-14s" F_RESET F_GREEN
                           "|" F_RESET " %s%s\r\n" F_RESET,
                 l.time_str.data(), clr, l.log_level.data(), l.file_line.data(),
                 l.module.data(),

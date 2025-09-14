@@ -113,7 +113,7 @@ struct Message {
     Severity severity = DEBUG;
     std::array<char, 12> time_str {};
     std::array<char, 6> log_level {};
-    std::array<char, 10> module {};
+    std::array<char, 14> module {};
     std::array<char, 15> file_line {};
     std::array<char, 380> expr {};
     int line = 0;
