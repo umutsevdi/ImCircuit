@@ -72,12 +72,11 @@ void Inspector::show(Ref<Scene> scene, bool)
     }
 }
 
-// FIXME Delete node failure
 void Inspector::_inspector_tab(Ref<Scene> scene, Node node)
 {
     const static float KEY_WIDTH = ImGui::CalcTextSize("SOCKET COUNT").x;
-    ImGui::BeginChild(
-        "##InspectorFrame", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY);
+    ImGui::BeginChild("##InspectorFrame", ImVec2(0, 0),
+        ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_Border);
     if (ImGui::BeginTable(
             "##InspectorTable", 2, ImGuiTableFlags_BordersInnerV)) {
         ImGui::TableSetupColumn(
@@ -106,23 +105,11 @@ void Inspector::_inspector_tab(Ref<Scene> scene, Node node)
         default: _inspector_component_context(scene, node); break;
         }
     };
-    if (IconButton(ICON_LC_EYE, _("Select Node"))) {
-        ImNodes::ClearNodeSelection();
-        switch (node.type) {
-        case Node::Type::COMPONENT_INPUT:
-        case Node::Type::COMPONENT_OUTPUT:
-            ImNodes::SelectNode(Node { 0, node.type }.numeric());
-            break;
-        default: ImNodes::SelectNode(node.numeric()); break;
-        }
-    }
     if (node.type != Node::Type::COMPONENT_OUTPUT
         && node.type != Node::Type::COMPONENT_INPUT) {
-        ImGui::SameLine();
         if (IconButton(ICON_LC_TRASH, _("Delete Node"))) {
             ImNodes::ClearNodeSelection();
             scene->remove_node(node);
-            return;
         }
     }
     ImGui::EndChild();

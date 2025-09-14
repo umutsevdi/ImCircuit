@@ -195,14 +195,16 @@ static void _popup_new(void)
     std::string title = std::string { _("New Scene") } + "###NewScene";
     ImGui::OpenPopup(title.c_str());
     if (ImGui::BeginPopupModal(title.c_str(), &_show_new,
-            ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
+            ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize
+                | ImGuiWindowFlags_NoSavedSettings)) {
         static bool is_scene         = true;
         static char author[60]       = "local";
         static char name[128]        = { 0 };
         static char description[512] = { 0 };
         static size_t input_size     = 0;
         static size_t output_size    = 0;
-        AnonTable("NewFlow", 0, 
+        AnonTable(
+            "NewFlow", 0,
             TablePair(Field(_("Scene Name")),
                 ImGui::InputText("##SceneCreate_Name", name, 128,
                     ImGuiInputTextFlags_CharsNoBlank));
@@ -221,13 +223,12 @@ static void _popup_new(void)
                     is_scene = true;
                 });
             ImGui::SameLine();
-            IconText(ICON_LC_LAND_PLOT,FONT_NORMAL, _("Scene"));
+            IconText(ICON_LC_LAND_PLOT, FONT_NORMAL, _("Scene"));
             ImGui::SameLine();
             if (ImGui::RadioButton("##IsComponent", !is_scene)) {
                 is_scene = false;
-            }
-            ImGui::SameLine();
-            IconText(ICON_LC_PACKAGE,FONT_NORMAL, _("Component"));
+            } ImGui::SameLine();
+            IconText(ICON_LC_PACKAGE, FONT_NORMAL, _("Component"));
 
             if (!is_scene) {
                 ImGui::Separator();
@@ -235,22 +236,21 @@ static void _popup_new(void)
                     ImGui::InputInt("##CompInputSize", (int*)&input_size));
                 TablePair(Field(_("Output Size")),
                     ImGui::InputInt("##CompOutputSize", (int*)&output_size));
+            });
+        if (ImGui::Button("Create")) {
+            Ref<Scene> scene
+                = tabs::active(tabs::create(name, author, description, 1));
+            if (!is_scene) {
+                scene->component_context.emplace(
+                    &*scene, input_size, output_size);
             }
-            TablePair(
-                if (ImGui::Button("Create")) {
-                    Ref<Scene> scene = tabs::active(
-                        tabs::create(name, author, description, 1));
-                    if (!is_scene) {
-                        scene->component_context.emplace(
-                            &*scene, input_size, output_size);
-                    }
-                    _show_new = false;
-                },
-                if (ImGui::Button(_("Cancel"))) {
-                    ImGui::CloseCurrentPopup();
-                    _show_new = false;
-                });
-            );
+            _show_new = false;
+        };
+        ImGui::SameLine();
+        if (ImGui::Button(_("Cancel"))) {
+            ImGui::CloseCurrentPopup();
+            _show_new = false;
+        };
         ImGui::EndPopup();
     }
 }
@@ -525,11 +525,8 @@ void _popup_pref(void)
 
     );
     EndSection();
-    ImGuiIO& imio = ImGui::GetIO();
-    ImGui::Text(
-        "FPS: %4.f Uptime: %4.f seconds", imio.Framerate, ImGui::GetTime());
     ImGui::BeginDisabled(cfg.is_applied);
-    if (IconButton(ICON_LC_REDO_DOT, _("Apply"))) {
+    if (IconButton(ICON_LC_CHECK, _("Apply"))) {
         cfg.is_saved = false;
         Configuration::set(cfg);
         cfg            = Configuration::get();

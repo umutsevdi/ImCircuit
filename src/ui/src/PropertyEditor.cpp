@@ -58,10 +58,14 @@ void PropertyEditor::show(Ref<Scene> scene, bool)
                     && !scene->_gates[i].is_null()) {
                     ImGui::TableNextRow();
                     ImGui::TableNextColumn();
+                    Node node { i, Node::GATE };
                     if (ImGui::TreeNode(name.c_str())) {
-                        _show_gate(scene, { i, Node::GATE });
+                        if (!ImNodes::IsNodeSelected(node.numeric())) {
+                            ImNodes::SelectNode(node.numeric());
+                        }
+                        _show_gate(scene, node);
                         ImGui::TreePop();
-                    };
+                    }
                 }
             }
             for (uint16_t i = 0; i < scene->_inputs.size(); i++) {
@@ -72,10 +76,14 @@ void PropertyEditor::show(Ref<Scene> scene, bool)
                     && !scene->_inputs[i].is_null()) {
                     ImGui::TableNextRow();
                     ImGui::TableNextColumn();
+                    Node node { i, Node::INPUT };
                     if (ImGui::TreeNode(name.c_str())) {
-                        _show_input(scene, { i, Node::INPUT });
+                        if (!ImNodes::IsNodeSelected(node.numeric())) {
+                            ImNodes::SelectNode(node.numeric());
+                        }
+                        _show_input(scene, node);
                         ImGui::TreePop();
-                    };
+                    }
                 }
             }
             for (uint16_t i = 0; i < scene->_outputs.size(); i++) {
@@ -86,10 +94,14 @@ void PropertyEditor::show(Ref<Scene> scene, bool)
                     && !scene->_outputs[i].is_null()) {
                     ImGui::TableNextRow();
                     ImGui::TableNextColumn();
+                    Node node { i, Node::OUTPUT };
                     if (ImGui::TreeNode(name.c_str())) {
-                        _show_output(scene, Node { i, Node::OUTPUT });
+                        if (!ImNodes::IsNodeSelected(node.numeric())) {
+                            ImNodes::SelectNode(node.numeric());
+                        }
+                        _show_output(scene, node);
                         ImGui::TreePop();
-                    };
+                    }
                 }
             }
         }
@@ -101,10 +113,6 @@ void PropertyEditor::show(Ref<Scene> scene, bool)
 void PropertyEditor::_show_input(Ref<Scene> scene, Node id)
 {
     auto input = scene->get_node<Input>(id);
-    if (ImGui::IsItemFocused() && !ImNodes::IsNodeSelected(id.numeric())) {
-        ImNodes::SelectNode(id.numeric());
-    }
-
     ImGui::BeginGroup();
     ImGui::BulletText(_("Value: %s"), to_str<State>(input->get()));
     if (input->output.empty()) {
@@ -125,9 +133,6 @@ void PropertyEditor::_show_input(Ref<Scene> scene, Node id)
 void PropertyEditor::_show_output(Ref<Scene> scene, Node id)
 {
     auto output = scene->get_node<Output>(id);
-    if (ImGui::IsItemFocused() && !ImNodes::IsNodeSelected(id.numeric())) {
-        ImNodes::SelectNode(id.numeric());
-    }
     ImGui::BeginGroup();
     ImGui::BulletText(_("Value: %s"), to_str<State>(output->get()));
 
@@ -148,9 +153,6 @@ void PropertyEditor::_show_component(Ref<Scene> scene, Node id) { }
 
 void PropertyEditor::_show_gate(Ref<Scene> scene, Node id)
 {
-    if (ImGui::IsItemFocused() && !ImNodes::IsNodeSelected(id.numeric())) {
-        ImNodes::SelectNode(id.numeric());
-    }
     auto gate = scene->get_node<Gate>(id);
     ImGui::BeginGroup();
     ImGui::BulletText(_("Type: %s"), to_str<Gate::Type>(gate->type()));

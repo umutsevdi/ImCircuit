@@ -465,6 +465,14 @@ public:
     }
 
     /**
+     * Duplicates given node at desired position. If the duplication succeeds
+     * the node reference will be updated to the new.
+     * @param node to duplicate
+     *
+     */
+    Error duplicate_node(Node& node);
+
+    /**
      * Safely removes given node from the scene.
      *
      * @param id node to remove

@@ -26,48 +26,56 @@ REGISTER_WINDOW("Scene Info", SceneInfo);
 
 void SceneInfo::show(Ref<Scene> scene, bool switched)
 {
+    static const float TABLE_SIZE = ImGui::CalcTextSize("DESCRIPTION").x;
     ImGui::BeginDisabled(scene == nullptr);
     if (scene != nullptr && switched) {
         _name        = scene->name();
         _description = scene->description();
     }
-    Section(_("Scene"));
-    Field(_("Scene Name"));
-    if (scene != nullptr
-        && ImGui::InputText("##SceneNameInputText", _name.data(),
-            _name.max_size(), ImGuiInputTextFlags_CharsNoBlank)) {
-        scene->set_name(_name.data());
-    };
-    Field(_("Author"));
-    if (scene != nullptr) {
-        ImGui::TextUnformatted(scene->author().data());
-        Field(_("Version"));
-        ImGui::Text("%d", scene->version);
-    }
-    Field(_("Description"));
-    if (scene != nullptr
-        && ImGui::InputTextMultiline("##SceneDescInputText",
-            _description.data(), _description.max_size(),
-            ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
-        scene->set_name(_description.data());
-    };
-    EndSection();
+    ImGui::BeginChild("##frame", ImVec2 { 0, 0 },
+        ImGuiChildFlags_Borders | ImGuiChildFlags_AutoResizeY);
+    AnonTable(
+        "AppearanceTable", TABLE_SIZE,
+        TablePair(
+            Field(_("Scene Name")),
+            if (scene != nullptr
+                && ImGui::InputText("##SceneNameInputText", _name.data(),
+                    _name.max_size(), ImGuiInputTextFlags_CharsNoBlank)) {
+                scene->set_name(_name.data());
+            });
+        TableKey(Field(_("Author"))); if (scene != nullptr) {
+            ImGui::TextUnformatted(scene->author().data());
+            TablePair(Field(_("Version")), ImGui::Text("%d", scene->version));
+        };
+        TablePair(
+            Field(_("Description")),
+            if (scene != nullptr
+                && ImGui::InputTextMultiline("##SceneDescInputText",
+                    _description.data(), _description.max_size(),
+                    ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
+                scene->set_name(_description.data());
+            };)
 
-    if (scene != nullptr && scene->component_context.has_value()) {
-        Section(_("Component Attributes"));
-        Field(_("Input Size"));
-        size_t input_size  = scene->component_context->inputs.size();
-        size_t output_size = scene->component_context->outputs.size();
-        ImGui::InputInt("##CompInputSize", (int*)&input_size);
-        Field(_("Output Size"));
-        ImGui::InputInt("##CompOutputSize", (int*)&output_size);
+            if (scene != nullptr && scene->component_context.has_value()) {
+                TablePair(Field(_("Input Size")),
+                    size_t input_size = scene->component_context->inputs.size();
+                    size_t output_size
+                    = scene->component_context->outputs.size();
+                    ImGui::InputInt("##CompInputSize", (int*)&input_size));
+                TablePair(Field(_("Output Size")),
+                    ImGui::InputInt("##CompOutputSize", (int*)&output_size));
 
-        if (input_size != scene->component_context->inputs.size()
-            || output_size != scene->component_context->outputs.size()) {
-            scene->component_context->setup(input_size, output_size);
-        }
-        EndSection();
-    }
+                if (input_size > 0 && output_size > 0
+                    && (input_size != scene->component_context->inputs.size()
+                        || output_size
+                            != scene->component_context->outputs.size())) {
+                    scene->component_context->setup(input_size, output_size);
+                }
+            }
+
+    );
+    ImGui::EndChild();
+
     if (scene != nullptr && !scene->dependencies().empty()) {
         Section(_("Dependencies"));
         if (ImGui::BeginTable(_("Dependencies"), 4,

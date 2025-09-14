@@ -17,7 +17,6 @@ Point PositionSelector(Point point, const char* prefix)
     ImGui::SameLine();
     ImGui::PushItemWidth(_SELECTOR_SIZE.x);
     ImGui::InputInt("##x", &x);
-    ImGui::SameLine();
     ImGui::Text("y");
     ImGui::SameLine();
     ImGui::InputInt("##y", &y);

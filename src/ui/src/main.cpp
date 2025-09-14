@@ -38,7 +38,7 @@ static bool save_power(void)
     if (ic::ui::has_notifications()) {
         return false;
     }
-    constexpr float FPS_IDLE   = 5.f; // FPS while saving
+    constexpr float FPS_IDLE   = 10.f; // FPS while saving
     constexpr double TOLERANCE = 0.9;
     double before_wait         = get_timediff();
     double wait_timeout        = 1. / (double)FPS_IDLE;
@@ -134,7 +134,6 @@ int run()
         Ref<Scene> scene = tabs::active();
         bool is_changed  = tabs::is_changed();
         if (scene != nullptr) {
-            L_INFO("%f", imio.DeltaTime);
             scene->run(imio.DeltaTime);
         }
         for (auto& win : WINDOW_LIST) {

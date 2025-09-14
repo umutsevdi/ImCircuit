@@ -182,6 +182,72 @@ void Scene::_move_from(Scene&& other)
     }
 }
 
+Error Scene::duplicate_node(Node& id)
+{
+    // Add node to the back regardless to make it simpler
+    L_INFO("Duplicate %s@%d", to_str(id.type), id.index);
+    switch (id.type) {
+    case Node::GATE: {
+        auto node = get_node<Gate>(id);
+        if (node == nullptr) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
+        auto g { *node };
+        g.reload(this);
+        if (_last_node[id.type].index == _gates.size()) {
+            _last_node[id.type].index++;
+        }
+        _gates.push_back(g);
+        id.index = _gates.size() - 1;
+        break;
+    }
+    case Node::COMPONENT: {
+        auto node = get_node<Component>(id);
+        if (node == nullptr) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
+        auto g { *node };
+        g.reload(this);
+        if (_last_node[id.type].index == _components.size()) {
+            _last_node[id.type].index++;
+        }
+        _components.push_back(g);
+        id.index = _components.size() - 1;
+        break;
+    }
+    case Node::INPUT: {
+        auto node = get_node<Input>(id);
+        if (node == nullptr) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
+        auto g { *node };
+        g.reload(this);
+        if (_last_node[id.type].index == _inputs.size()) {
+            _last_node[id.type].index++;
+        }
+        _inputs.push_back(g);
+        id.index = _inputs.size() - 1;
+        break;
+    }
+    case Node::OUTPUT: {
+        auto node = get_node<Output>(id);
+        if (node == nullptr) {
+            return ERROR(Error::NODE_NOT_FOUND);
+        }
+        auto g { *node };
+        g.reload(this);
+        if (_last_node[id.type].index == _outputs.size()) {
+            _last_node[id.type].index++;
+        }
+        _outputs.push_back(g);
+        id.index = _outputs.size() - 1;
+        break;
+    }
+    default: return ERROR(Error::INVALID_NODE);
+    }
+    return Error::OK;
+}
+
 Error Scene::remove_node(Node id)
 {
     auto node = get_base(id);
@@ -434,7 +500,7 @@ Error Scene::disconnect(relid id)
     }
     default: ic_assert(r->second.from_node.type == Node::Type::INPUT); break;
     }
-    L_INFO("Disconnected %s@%d from %s%d.",
+    L_INFO("Disconnected %s@%d from %s@%d.",
         to_str<Node::Type>(r->second.from_node.type), r->second.from_node.index,
         to_str<Node::Type>(r->second.to_node.type), r->second.to_node.index);
     undo.push([this, r](void) {

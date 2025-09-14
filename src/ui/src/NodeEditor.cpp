@@ -9,6 +9,7 @@
 namespace ic::ui {
 
 struct NodeEditor final : public Window {
+    enum MenuType { NODE, LINK, NEW };
     NodeEditor();
     ~NodeEditor() = default;
 
@@ -19,7 +20,7 @@ struct NodeEditor final : public Window {
     }
 
     int id         = 0;
-    bool is_node   = false;
+    MenuType menu  = NODE;
     bool is_active = false;
 
 private:
@@ -29,6 +30,8 @@ private:
     void _show_node(Component& node, uint16_t id, bool is_changed);
     void _show_node(ComponentContext& node, uint16_t, bool);
     void _sync_position(BaseNode& node, uint32_t node_id, bool is_changed);
+
+    void _context_menu_new(Ref<Scene>);
 
     inline ImNodesPinShape_ to_shape(bool value, bool is_input)
     {
@@ -48,6 +51,10 @@ private:
         return mouse.x > wmin.x && mouse.y > wmin.y && mouse.x < wmax.x
             && mouse.y < wmax.y;
     }
+
+    bool is_copied = false;
+    ImVec2 copy_node_position;
+    int nodeids[1 << 20] = { 0 };
 };
 REGISTER_WINDOW("Editor", NodeEditor, {
     _flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoFocusOnAppearing
@@ -186,39 +193,109 @@ void NodeEditor::show(Ref<Scene> scene, bool is_changed)
 
         if (_is_mouse_in() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
             if (ImNodes::IsLinkHovered((int*)&id)) {
-                is_node   = false;
-                is_active = true;
-                ImGui::OpenPopup("##NodeContextOptions");
+                menu = MenuType::LINK;
             } else if (ImNodes::IsNodeHovered((int*)&id)) {
-                is_node   = true;
-                is_active = true;
-                ImGui::OpenPopup("##NodeContextOptions");
+                if (!ImNodes::IsNodeSelected(id)) {
+                    ImNodes::SelectNode(id);
+                }
+                menu = MenuType::NODE;
             } else {
-                is_active = false;
+                menu = MenuType::NEW;
             }
+            is_active = true;
+            ImGui::OpenPopup("##NodeContextOptions");
         }
         if (is_active
             && ImGui::BeginPopup(
                 "##NodeContextOptions", ImGuiWindowFlags_AlwaysAutoResize)) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImGuiCol_PopupBg);
-            if (is_node) {
+            int len = ImNodes::NumSelectedNodes();
+            ImNodes::GetSelectedNodes(nodeids);
+
+            switch (menu) {
+            case MenuType::NODE:
                 if (IconButton(ICON_LC_TRASH, _("Delete Node"))) {
+                    ImNodes::ClearNodeSelection();
                     scene->remove_node(decode_pair(id));
                     ImGui::CloseCurrentPopup();
                 }
-            } else {
+                if (IconButton(ICON_LC_CLIPBOARD_COPY, _("Copy"))) {
+                    is_copied          = true;
+                    copy_node_position = ImGui::GetMousePos();
+                }
+                break;
+            case MenuType::LINK:
                 if (IconButton(ICON_LC_CIRCLE_SLASH_2, _("Disconnect"))) {
                     scene->disconnect(id);
                     ImGui::CloseCurrentPopup();
                 }
+                break;
+            case MenuType::NEW: break;
             }
-            if (IconButton(ICON_LC_COPY_MINUS, _("Cut"))) { }
-            if (IconButton(ICON_LC_COPY, _("Copy"))) { }
-            if (IconButton(ICON_LC_CLIPBOARD_PASTE, _("Paste"))) { }
+            ImGui::BeginDisabled(!is_copied);
+            if (IconButton(ICON_LC_CLIPBOARD_PASTE, _("Paste"))) {
+                for (int i = 0; i < len; i++) {
+                    Node node = decode_pair(nodeids[i]);
+                    scene->duplicate_node(node);
+                    ImVec2 mouse = ImGui::GetMousePos();
+                    mouse        = ImVec2(mouse.x - copy_node_position.x,
+                               mouse.y - copy_node_position.y);
+                    auto nref    = scene->get_base(node);
+                    nref->move(
+                        Point { static_cast<int16_t>(nref->point().x + mouse.x),
+                            static_cast<int16_t>(nref->point().y + mouse.y) });
+                }
+            }
+            ImGui::EndDisabled();
+            if (len > 1) {
+                if (IconButton(ICON_LC_TRASH_2, _("Delete Selected"))) {
+                    ImNodes::ClearNodeSelection();
+                    for (int i = 0; i < len; i++) {
+                        scene->remove_node(decode_pair(nodeids[i]));
+                    }
+                }
+            }
+
+            if (ImGui::BeginMenu("Create")) {
+                bool created = true;
+                Node node;
+                if (ImGui::MenuItem(_("Input"))) {
+                    node = scene->add_node<Input>();
+                } else if (ImGui::MenuItem(_("Output"))) {
+                    node = scene->add_node<Output>();
+                } else if (ImGui::MenuItem(_("Timer"))) {
+                    node = scene->add_node<Input>(static_cast<sockid>(10));
+                } else if (ImGui::MenuItem(_("NOT Gate"))) {
+                    node = scene->add_node<Gate>(Gate::Type::NOT);
+                } else if (ImGui::MenuItem(_("AND Gate"))) {
+                    node = scene->add_node<Gate>(Gate::Type::AND);
+                } else if (ImGui::MenuItem(_("NAND Gate"))) {
+                    node = scene->add_node<Gate>(Gate::Type::NAND);
+                } else if (ImGui::MenuItem(_("OR Gate"))) {
+                    node = scene->add_node<Gate>(Gate::Type::OR);
+                } else if (ImGui::MenuItem(_("NOR Gate"))) {
+                    node = scene->add_node<Gate>(Gate::Type::NOR);
+                } else if (ImGui::MenuItem(_("XOR Gate"))) {
+                    node = scene->add_node<Gate>(Gate::Type::XOR);
+                } else if (ImGui::MenuItem(_("XNOR Gate"))) {
+                    node = scene->add_node<Gate>(Gate::Type::XNOR);
+                } else {
+                    created = false;
+                }
+                if (created) {
+                    ImVec2 mouse = ImGui::GetMousePos();
+                    ImNodes::SetNodeScreenSpacePos(node.numeric(), mouse);
+                    auto pos = ImNodes::GetNodeGridSpacePos(node.numeric());
+                    scene->get_base(node)->move(
+                        { static_cast<int16_t>(std::floor(pos.x)),
+                            static_cast<int16_t>(std::floor(pos.y)) });
+                }
+                ImGui::EndMenu();
+            }
+
             ImGui::PopStyleColor();
             ImGui::EndPopup();
         }
-        // TODO Add palette as right click menu
     } else {
         ImNodes::EndNodeEditor();
     }
@@ -376,4 +453,7 @@ void NodeEditor::_sync_position(
         }
     }
 }
+
+void NodeEditor::_context_menu_new(Ref<Scene>) { }
+
 } // namespace ic::ui
