@@ -83,7 +83,10 @@ struct Node {
  *
  * Note: bit 30 stays unused – it can be repurposed later if needed.
  */
+
+/** Encode a node-socket relation to a numeric value. */
 int encode_pair(Node node, sockid sock, bool is_out);
+/** Decode a node-socket relation from a numeric value. */
 Node decode_pair(int pair_code, sockid* sock = nullptr, bool* is_out = nullptr);
 
 enum State {
@@ -181,9 +184,7 @@ struct Rel {
     State value;
 };
 
-/**
- * Describes a single logic gate.
- */
+/** Describes a single logic gate. */
 class Gate final : public BaseNode {
 public:
     enum Type : uint8_t { NOT, AND, OR, XOR, NAND, NOR, XNOR };
@@ -428,7 +429,8 @@ public:
      */
     void run(float delta);
 
-    /** Creates a node in a scene with given type. Passes arguments to
+    /**
+     * Creates a node in a scene with given type. Passes arguments to
      * the constructor similar to emplace methods.
      * @param args to pass
      * @returns node identifier of newly created node.
@@ -468,7 +470,6 @@ public:
      * Duplicates given node at desired position. If the duplication succeeds
      * the node reference will be updated to the new.
      * @param node to duplicate
-     *
      */
     Error duplicate_node(Node& node);
 
@@ -569,6 +570,7 @@ public:
      * @param value to set
      */
     void signal(relid id, State value);
+
     /**
      * Serializes given scene.
      * @param buffer to write into

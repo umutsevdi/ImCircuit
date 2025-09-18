@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ImCircuit 0.2.0\n"
+"Project-Id-Version: ImCircuit 0.1.0\n"
 "Report-Msgid-Bugs-To: ask@umutsevdi.com\n"
-"POT-Creation-Date: 2025-09-14 02:38+0300\n"
+"POT-Creation-Date: 2025-09-19 00:35+0300\n"
 "PO-Revision-Date: 2025-09-01 15:03+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,390 +17,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/ui/src/menubar.cpp:33
-msgid "File"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:34
-msgid "New"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:37
-msgid "Open"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:41 src/ui/src/menubar.cpp:543
-msgid "Save"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:47
-msgid "Save As"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:51 src/ui/src/menubar.cpp:464
-#: src/ui/src/menubar.cpp:537 src/ui/src/menubar.cpp:550
-#: src/ui/src/menubar.cpp:558
-msgid "Preferences"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:54
-msgid "Close"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:59
-msgid "Edit"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:62
-msgid "View"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:68
-msgid "Help"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:69 src/ui/src/menubar.cpp:371
-msgid "Changelog"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:72 src/ui/src/menubar.cpp:313
-msgid "About"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:151
-msgid "Scene Tabs"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:163
-msgid "Untitled Scene"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:195
-msgid "New Scene"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:206 src/ui/src/SceneInfo.cpp:35
-msgid "Scene Name"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:210 src/ui/src/SceneInfo.cpp:41
-#: src/ui/src/SceneInfo.cpp:77
-msgid "Author"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:214 src/ui/src/SceneInfo.cpp:47
-msgid "Description"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:219 src/ui/src/Inspector.cpp:89
-msgid "Type"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:224 src/ui/src/SceneInfo.cpp:34
-msgid "Scene"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:230 src/core/src/engine.cpp:9
-msgid "Component"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:234 src/ui/src/SceneInfo.cpp:58
-msgid "Input Size"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:236 src/ui/src/SceneInfo.cpp:62
-msgid "Output Size"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:249
-msgid "Cancel"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:271
-msgid "Close Scene"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:275
-msgid ""
-"You have unsaved changes. Would you like to save your changes before closing?"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:277
-msgid "Save & Close"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:284
-msgid "Exit Without Saving"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:317
-msgid ""
-"ImCircuit is a free and open-source cross-platform desktop\n"
-"application to simulate logic circuits."
-msgstr ""
-
-#: src/ui/src/menubar.cpp:319
-msgid "Developer: "
-msgstr ""
-
-#: src/ui/src/menubar.cpp:324
-msgid "Source code is available at "
-msgstr ""
-
-#: src/ui/src/menubar.cpp:329
-msgid "Version: "
-msgstr ""
-
-#: src/ui/src/menubar.cpp:339
-msgid "Contact"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:341
-msgid "Email"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:345
-msgid "Website"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:388
-msgid "Background"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:390
-msgid "Foreground"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:392
-msgid "Black"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:394
-msgid "Red"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:396
-msgid "Green"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:398
-msgid "Yellow"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:400
-msgid "Black Bright"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:402
-msgid "Red Bright"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:404
-msgid "Green Bright"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:406
-msgid "Yellow Bright"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:408
-msgid "Blue"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:410
-msgid "Magenta"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:412
-msgid "Cyan"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:414
-msgid "White"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:416
-msgid "Blue Bright"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:418
-msgid "Magenta Bright"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:420
-msgid "Cyan Bright"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:422
-msgid "White Bright"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:441
-msgid "Follow Device"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:442
-msgid "Light Theme"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:443
-msgid "Dark Theme"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:473
-msgid "Appearance"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:477
-msgid "UI Scale"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:482
-msgid "Language"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:489
-msgid "Light Theme Style"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:496
-msgid "Dark Theme Style"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:503
-msgid "Rounded Corners"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:507
-msgid "Theme Preference"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:511
-msgid "Start in Fullscreen"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:516
-msgid "Startup Window"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:532
-msgid "Apply"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:538
-msgid "Configuration changes were applied."
-msgstr ""
-
-#: src/ui/src/menubar.cpp:551
-msgid "Configuration changes were saved."
-msgstr ""
-
-#: src/ui/src/menubar.cpp:559
-msgid "Configuration changes were reverted."
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:17
-msgid "Searchable object tree."
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:44
-msgid "Search Box"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:46
-msgid ""
-"Search among nodes. You can filter multiple nodes separated by\n"
-"commas; a leading ‑ excludes a node."
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:109 src/ui/src/PropertyEditor.cpp:132
-#: src/ui/src/PropertyEditor.cpp:195
+#: src/ui/components.h:196
 #, c-format
-msgid "Value: %s"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:111 src/ui/src/PropertyEditor.cpp:113
-#: src/ui/src/PropertyEditor.cpp:168 src/ui/src/Palette.cpp:38
-#: src/ui/src/NodeEditor.cpp:159 src/core/src/engine.cpp:11
-msgid "Output"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:135 src/ui/src/PropertyEditor.cpp:142
-#: src/ui/src/Palette.cpp:34 src/ui/src/NodeEditor.cpp:159
-#: src/ui/src/NodeEditor.cpp:263 src/core/src/engine.cpp:10
-msgid "Input"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:156
-#, c-format
-msgid "Type: %s"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:157 src/ui/src/Inspector.cpp:181
-#: src/ui/src/Inspector.cpp:212 src/ui/src/Inspector.cpp:243
-#: src/ui/src/Inspector.cpp:298
-msgid "Inputs"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:196 src/ui/src/NodeEditor.cpp:105
-msgid "From"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:198 src/ui/src/PropertyEditor.cpp:203
-#, c-format
-msgid "Socket %d"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:201 src/ui/src/NodeEditor.cpp:108
-msgid "To"
-msgstr ""
-
-#: src/ui/src/notification.cpp:121
-msgid "Dismiss"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:14
-msgid ""
-"A collection of available nodes that you can add to your\n"
-"project. Select a node from this panel to instantly place\n"
-"it into the editor."
-msgstr ""
-
-#: src/ui/src/Palette.cpp:28
-msgid "Gates"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:43 src/ui/src/NodeEditor.cpp:263
-msgid "Timer"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:47
-msgid "NOT Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:52
-msgid "AND Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:56
-msgid "NAND Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:61
-msgid "OR Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:65
-msgid "NOR Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:70
-msgid "XOR Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:74
-msgid "XNOR Gate"
-msgstr ""
+msgid "Shortcut: %s"
+msgstr "ショートカット: %s"
 
 #: src/ui/src/SceneInfo.cpp:16
 msgid ""
@@ -408,237 +28,644 @@ msgid ""
 "scene's details. Use this menu to handle dependencies and share\n"
 "your scene with others."
 msgstr ""
+"アクティブなシーンの詳細を更新・設定する管理パネルです。\n"
+"このメニューで依存関係を処理したり、シーンを他者と共有したりできます。"
 
-#: src/ui/src/SceneInfo.cpp:44 src/ui/src/SceneInfo.cpp:83
+#: src/ui/src/SceneInfo.cpp:40 src/ui/src/menubar.cpp:208
+msgid "Scene Name"
+msgstr "シーン名"
+
+#: src/ui/src/SceneInfo.cpp:46 src/ui/src/SceneInfo.cpp:85
+#: src/ui/src/menubar.cpp:212
+msgid "Author"
+msgstr "作者"
+
+#: src/ui/src/SceneInfo.cpp:48 src/ui/src/SceneInfo.cpp:91
 msgid "Version"
-msgstr ""
+msgstr "バージョン"
 
-#: src/ui/src/SceneInfo.cpp:57
-msgid "Component Attributes"
-msgstr ""
+#: src/ui/src/SceneInfo.cpp:51 src/ui/src/menubar.cpp:216
+msgid "Description"
+msgstr "説明"
 
-#: src/ui/src/SceneInfo.cpp:72 src/ui/src/SceneInfo.cpp:73
+#: src/ui/src/SceneInfo.cpp:60 src/ui/src/menubar.cpp:235
+msgid "Input Size"
+msgstr "入力サイズ"
+
+#: src/ui/src/SceneInfo.cpp:65 src/ui/src/menubar.cpp:237
+msgid "Output Size"
+msgstr "出力サイズ"
+
+#: src/ui/src/SceneInfo.cpp:80 src/ui/src/SceneInfo.cpp:81
 msgid "Dependencies"
-msgstr ""
+msgstr "依存関係"
 
-#: src/ui/src/SceneInfo.cpp:80
+#: src/ui/src/SceneInfo.cpp:88
 msgid "Name"
-msgstr ""
+msgstr "名前"
 
-#: src/ui/src/SceneInfo.cpp:86
+#: src/ui/src/SceneInfo.cpp:94
 msgid "Number of Nodes"
-msgstr ""
+msgstr "ノード数"
 
-#: src/ui/src/SceneInfo.cpp:111 src/ui/src/Console.cpp:89
+#: src/ui/src/SceneInfo.cpp:119 src/ui/src/Console.cpp:89
 msgid "Clipboard"
-msgstr ""
+msgstr "クリップボード"
 
-#: src/ui/src/SceneInfo.cpp:112
+#: src/ui/src/SceneInfo.cpp:120
 msgid "Dependency name is copied to the clipboard."
-msgstr ""
+msgstr "依存関係名がクリップボードにコピーされました。"
 
-#: src/ui/src/SceneInfo.cpp:117
+#: src/ui/src/SceneInfo.cpp:125
 msgid "Add Component"
-msgstr ""
+msgstr "コンポーネントを追加"
 
-#: src/ui/src/SceneInfo.cpp:121
+#: src/ui/src/SceneInfo.cpp:129
 msgid "Upload"
-msgstr ""
+msgstr "アップロード"
 
-#: src/ui/src/NodeEditor.cpp:18
-msgid "A Panel to edit nodes in the selected scene."
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:103
-#, c-format
-msgid "Relation %d"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:109 src/ui/src/NodeEditor.cpp:126
-#: src/ui/src/NodeEditor.cpp:164 src/ui/src/Inspector.cpp:137
-#: src/ui/src/Inspector.cpp:153 src/ui/src/Inspector.cpp:164
-#: src/ui/src/Inspector.cpp:190 src/ui/src/Inspector.cpp:222
-#: src/ui/src/Inspector.cpp:235 src/ui/src/Inspector.cpp:252
-#: src/ui/src/Inspector.cpp:280 src/ui/src/Inspector.cpp:316
-msgid "Value"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:120
-#, c-format
-msgid "Node %s@%d"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:124 src/ui/src/Inspector.cpp:93
-msgid "Position"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:141
-msgid "Please connect all pins."
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:158
-#, c-format
-msgid "%s Socket %u"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:162
-msgid "Owner"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:205 src/ui/src/Inspector.cpp:122
-msgid "Delete Node"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:210 src/ui/src/Inspector.cpp:357
-msgid "Disconnect"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:215
-msgid "Cut"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:216
-msgid "Copy"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:217
-msgid "Paste"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:233 src/core/src/engine.cpp:12
-msgid "Component Input"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:245 src/core/src/engine.cpp:13
-msgid "Component Output"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:294
-#, c-format
-msgid "Output %u"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:312
-#, c-format
-msgid "%s Gate %u"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:340
-#, c-format
-msgid "Component Node %u"
-msgstr ""
-
-#: src/ui/src/Console.cpp:16
-msgid "Displays warning messages."
-msgstr ""
-
-#: src/ui/src/Console.cpp:39 src/ui/src/Console.cpp:42
-msgid "Clear"
-msgstr ""
-
-#: src/ui/src/Console.cpp:42
-msgid "Clears all log messages."
-msgstr ""
-
-#: src/ui/src/Console.cpp:44 src/ui/src/Console.cpp:45
-msgid "Auto-scroll"
-msgstr ""
-
-#: src/ui/src/Console.cpp:46
+#: src/ui/src/Palette.cpp:14
 msgid ""
-"When enabled, the scrollbar will be locked to the bottom \n"
-"to display live updates."
+"A collection of available nodes that you can add to your\n"
+"project. Select a node from this panel to instantly place\n"
+"it into the editor."
 msgstr ""
+"プロジェクトに追加できる利用可能なノードのコレクションです。\n"
+"このパネルからノードを選択すると、エディタに即座に配置できます。"
 
-#: src/ui/src/Console.cpp:53
-msgid "Time"
-msgstr ""
+#: src/ui/src/Palette.cpp:28
+msgid "Gates"
+msgstr "ゲート"
 
-#: src/ui/src/Console.cpp:55
-msgid "Severity"
-msgstr ""
+#: src/ui/src/Palette.cpp:34 src/ui/src/PropertyEditor.cpp:140
+#: src/ui/src/PropertyEditor.cpp:147 src/ui/src/NodeEditor.cpp:166
+#: src/ui/src/NodeEditor.cpp:262 src/ui/src/NodeEditor.cpp:340
+#: src/core/src/engine.cpp:10
+msgid "Input"
+msgstr "入力"
 
-#: src/ui/src/Console.cpp:57
-msgid "Module"
-msgstr ""
+#: src/ui/src/Palette.cpp:38 src/ui/src/PropertyEditor.cpp:119
+#: src/ui/src/PropertyEditor.cpp:121 src/ui/src/PropertyEditor.cpp:170
+#: src/ui/src/NodeEditor.cpp:166 src/ui/src/NodeEditor.cpp:264
+#: src/core/src/engine.cpp:11
+msgid "Output"
+msgstr "出力"
 
-#: src/ui/src/Console.cpp:60
-msgid "Message"
-msgstr ""
+#: src/ui/src/Palette.cpp:43 src/ui/src/NodeEditor.cpp:266
+#: src/ui/src/NodeEditor.cpp:340
+msgid "Timer"
+msgstr "タイマー"
 
-#: src/ui/src/Console.cpp:90
-msgid "Message is copied to the clipboard."
-msgstr ""
+#: src/ui/src/Palette.cpp:47 src/ui/src/NodeEditor.cpp:268
+msgid "NOT Gate"
+msgstr "NOT ゲート"
+
+#: src/ui/src/Palette.cpp:52 src/ui/src/NodeEditor.cpp:270
+msgid "AND Gate"
+msgstr "AND ゲート"
+
+#: src/ui/src/Palette.cpp:56 src/ui/src/NodeEditor.cpp:272
+msgid "NAND Gate"
+msgstr "NAND ゲート"
+
+#: src/ui/src/Palette.cpp:61 src/ui/src/NodeEditor.cpp:274
+msgid "OR Gate"
+msgstr "OR ゲート"
+
+#: src/ui/src/Palette.cpp:65 src/ui/src/NodeEditor.cpp:276
+msgid "NOR Gate"
+msgstr "NOR ゲート"
+
+#: src/ui/src/Palette.cpp:70 src/ui/src/NodeEditor.cpp:278
+msgid "XOR Gate"
+msgstr "XOR ゲート"
+
+#: src/ui/src/Palette.cpp:74 src/ui/src/NodeEditor.cpp:280
+msgid "XNOR Gate"
+msgstr "XNOR ゲート"
 
 #: src/ui/src/Inspector.cpp:17
 msgid ""
 "A panel that displays and allows you to modify the\n"
 "attributes of the currently selected logic gate node."
 msgstr ""
+"現在選択されている論理ゲートノードの属性を表示し、\n"
+"変更できるパネルです。"
 
 #: src/ui/src/Inspector.cpp:58
 #, c-format
 msgid "%d items selected."
-msgstr ""
+msgstr "%d 件が選択されています。"
 
 #: src/ui/src/Inspector.cpp:61
 msgid "Delete All"
-msgstr ""
+msgstr "すべて削除"
 
-#: src/ui/src/Inspector.cpp:87
+#: src/ui/src/Inspector.cpp:86
 msgid "Id"
-msgstr ""
+msgstr "ID"
 
-#: src/ui/src/Inspector.cpp:95
+#: src/ui/src/Inspector.cpp:88 src/ui/src/menubar.cpp:221
+msgid "Type"
+msgstr "タイプ"
+
+#: src/ui/src/Inspector.cpp:92 src/ui/src/NodeEditor.cpp:131
+msgid "Position"
+msgstr "位置"
+
+#: src/ui/src/Inspector.cpp:94 src/ui/ui.h:166
 msgid "Inspector"
-msgstr ""
+msgstr "インスペクター"
 
-#: src/ui/src/Inspector.cpp:109
-msgid "Select Node"
-msgstr ""
+#: src/ui/src/Inspector.cpp:110 src/ui/src/NodeEditor.cpp:217
+msgid "Delete Node"
+msgstr "ノードを削除"
 
-#: src/ui/src/Inspector.cpp:138
+#: src/ui/src/Inspector.cpp:124 src/ui/src/Inspector.cpp:140
+#: src/ui/src/Inspector.cpp:151 src/ui/src/Inspector.cpp:177
+#: src/ui/src/Inspector.cpp:209 src/ui/src/Inspector.cpp:222
+#: src/ui/src/Inspector.cpp:239 src/ui/src/Inspector.cpp:267
+#: src/ui/src/Inspector.cpp:303 src/ui/src/NodeEditor.cpp:116
+#: src/ui/src/NodeEditor.cpp:133 src/ui/src/NodeEditor.cpp:171
+msgid "Value"
+msgstr "値"
+
+#: src/ui/src/Inspector.cpp:125
 msgid "Frequency"
-msgstr ""
+msgstr "周波数"
 
-#: src/ui/src/Inspector.cpp:156 src/ui/src/Inspector.cpp:214
-#: src/ui/src/Inspector.cpp:244 src/ui/src/Inspector.cpp:270
+#: src/ui/src/Inspector.cpp:143 src/ui/src/Inspector.cpp:201
+#: src/ui/src/Inspector.cpp:231 src/ui/src/Inspector.cpp:257
 msgid "Outputs"
-msgstr ""
+msgstr "出力"
 
-#: src/ui/src/Inspector.cpp:159 src/ui/src/Inspector.cpp:217
-#: src/ui/src/Inspector.cpp:247 src/ui/src/Inspector.cpp:274
-#: src/ui/src/Inspector.cpp:308
+#: src/ui/src/Inspector.cpp:146 src/ui/src/Inspector.cpp:204
+#: src/ui/src/Inspector.cpp:234 src/ui/src/Inspector.cpp:261
+#: src/ui/src/Inspector.cpp:295
 msgid "Socket"
-msgstr ""
+msgstr "ソケット"
 
-#: src/ui/src/Inspector.cpp:162 src/ui/src/Inspector.cpp:220
-#: src/ui/src/Inspector.cpp:277 src/ui/src/Inspector.cpp:311
-#: src/ui/src/Inspector.cpp:354
+#: src/ui/src/Inspector.cpp:149 src/ui/src/Inspector.cpp:207
+#: src/ui/src/Inspector.cpp:264 src/ui/src/Inspector.cpp:298
+#: src/ui/src/Inspector.cpp:341
 msgid "Connection"
-msgstr ""
+msgstr "接続"
 
-#: src/ui/src/Inspector.cpp:191
+#: src/ui/src/Inspector.cpp:168 src/ui/src/Inspector.cpp:199
+#: src/ui/src/Inspector.cpp:230 src/ui/src/Inspector.cpp:285
+#: src/ui/src/PropertyEditor.cpp:159
+msgid "Inputs"
+msgstr "入力"
+
+#: src/ui/src/Inspector.cpp:178
 msgid "Gate Type"
-msgstr ""
+msgstr "ゲート種別"
 
-#: src/ui/src/Inspector.cpp:194
+#: src/ui/src/Inspector.cpp:181
 msgid "Socket Count"
-msgstr ""
+msgstr "ソケット数"
 
-#: src/ui/src/Inspector.cpp:390
+#: src/ui/src/Inspector.cpp:344 src/ui/src/NodeEditor.cpp:228
+msgid "Disconnect"
+msgstr "切断"
+
+#: src/ui/src/Inspector.cpp:377
 msgid "Disconnect relation"
+msgstr "リレーションを切断"
+
+#: src/ui/src/PropertyEditor.cpp:17
+msgid "Searchable object tree."
+msgstr "検索可能なオブジェクトツリー。"
+
+#: src/ui/src/PropertyEditor.cpp:44
+msgid "Search Box"
+msgstr "検索ボックス"
+
+#: src/ui/src/PropertyEditor.cpp:46
+msgid ""
+"Search among nodes. You can filter multiple nodes separated by\n"
+"commas; a leading ‑ excludes a node."
+msgstr ""
+"ノードを検索します。カンマで区切って複数のノードをフィルタリングできます。\n"
+"先頭に「‑」を付けるとそのノードを除外します。"
+
+#: src/ui/src/PropertyEditor.cpp:117 src/ui/src/PropertyEditor.cpp:137
+#: src/ui/src/PropertyEditor.cpp:197
+#, c-format
+msgid "Value: %s"
+msgstr "値: %s"
+
+#: src/ui/src/PropertyEditor.cpp:158
+#, c-format
+msgid "Type: %s"
+msgstr "型: %s"
+
+#: src/ui/src/PropertyEditor.cpp:198 src/ui/src/NodeEditor.cpp:112
+msgid "From"
+msgstr "送信元"
+
+#: src/ui/src/PropertyEditor.cpp:200 src/ui/src/PropertyEditor.cpp:205
+#, c-format
+msgid "Socket %d"
+msgstr "ソケット %d"
+
+#: src/ui/src/PropertyEditor.cpp:203 src/ui/src/NodeEditor.cpp:115
+msgid "To"
+msgstr "宛先"
+
+#: src/ui/src/NodeEditor.cpp:19
+msgid "A Panel to edit nodes in the selected scene."
+msgstr "選択されたシーン内のノードを編集するパネルです。"
+
+#: src/ui/src/NodeEditor.cpp:110
+#, c-format
+msgid "Relation %d"
+msgstr "リレーション %d"
+
+#: src/ui/src/NodeEditor.cpp:127
+#, c-format
+msgid "Node %s@%d"
+msgstr "ノード %s@%d"
+
+#: src/ui/src/NodeEditor.cpp:148
+msgid "Please connect all pins."
+msgstr "すべてのピンを接続してください。"
+
+#: src/ui/src/NodeEditor.cpp:165
+#, c-format
+msgid "%s Socket %u"
+msgstr "%s ソケット %u"
+
+#: src/ui/src/NodeEditor.cpp:169
+msgid "Owner"
+msgstr "所有者"
+
+#: src/ui/src/NodeEditor.cpp:222
+msgid "Copy"
+msgstr "コピー"
+
+#: src/ui/src/NodeEditor.cpp:236
+msgid "Paste"
+msgstr "貼り付け"
+
+#: src/ui/src/NodeEditor.cpp:251
+msgid "Delete Selected"
+msgstr "選択項目を削除"
+
+#: src/ui/src/NodeEditor.cpp:310 src/core/src/engine.cpp:12
+msgid "Component Input"
+msgstr "コンポーネント入力"
+
+#: src/ui/src/NodeEditor.cpp:322 src/core/src/engine.cpp:13
+msgid "Component Output"
+msgstr "コンポーネント出力"
+
+#: src/ui/src/NodeEditor.cpp:371
+#, c-format
+msgid "Output %u"
 msgstr ""
 
-#: src/ui/components.h:203
+#: src/ui/src/NodeEditor.cpp:389
 #, c-format
-msgid "Shortcut: %s"
+msgid "%s Gate %u"
 msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:417
+#, c-format
+msgid "Component Node %u"
+msgstr ""
+
+#: src/ui/src/menubar.cpp:33
+msgid "File"
+msgstr "ファイル"
+
+#: src/ui/src/menubar.cpp:34
+msgid "New"
+msgstr "新規作成"
+
+#: src/ui/src/menubar.cpp:37
+msgid "Open"
+msgstr "開く"
+
+#: src/ui/src/menubar.cpp:41 src/ui/src/menubar.cpp:540
+msgid "Save"
+msgstr "保存"
+
+#: src/ui/src/menubar.cpp:47
+msgid "Save As"
+msgstr "名前を付けて保存"
+
+#: src/ui/src/menubar.cpp:51 src/ui/src/menubar.cpp:464
+#: src/ui/src/menubar.cpp:534 src/ui/src/menubar.cpp:547
+#: src/ui/src/menubar.cpp:555
+msgid "Preferences"
+msgstr "設定"
+
+#: src/ui/src/menubar.cpp:54
+msgid "Close"
+msgstr "閉じる"
+
+#: src/ui/src/menubar.cpp:59
+msgid "Edit"
+msgstr "編集"
+
+#: src/ui/src/menubar.cpp:62
+msgid "View"
+msgstr "表示"
+
+#: src/ui/src/menubar.cpp:68
+msgid "Help"
+msgstr "ヘルプ"
+
+#: src/ui/src/menubar.cpp:69 src/ui/src/menubar.cpp:371
+msgid "Changelog"
+msgstr "変更履歴"
+
+#: src/ui/src/menubar.cpp:72 src/ui/src/menubar.cpp:313
+msgid "About"
+msgstr "このアプリについて"
+
+#: src/ui/src/menubar.cpp:151
+msgid "Scene Tabs"
+msgstr "シーンタブ"
+
+#: src/ui/src/menubar.cpp:163
+msgid "Untitled Scene"
+msgstr "無題のシーン"
+
+#: src/ui/src/menubar.cpp:195
+msgid "New Scene"
+msgstr "新しいシーン"
+
+#: src/ui/src/menubar.cpp:226
+msgid "Scene"
+msgstr "シーン"
+
+#: src/ui/src/menubar.cpp:231 src/core/src/engine.cpp:9
+msgid "Component"
+msgstr "コンポーネント"
+
+#: src/ui/src/menubar.cpp:250
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: src/ui/src/menubar.cpp:271
+msgid "Close Scene"
+msgstr "シーンを閉じる"
+
+#: src/ui/src/menubar.cpp:275
+msgid ""
+"You have unsaved changes. Would you like to save your changes before closing?"
+msgstr "未保存の変更があります。閉じる前に保存しますか？"
+
+#: src/ui/src/menubar.cpp:277
+msgid "Save & Close"
+msgstr "保存して閉じる"
+
+#: src/ui/src/menubar.cpp:284
+msgid "Exit Without Saving"
+msgstr "保存せずに終了"
+
+#: src/ui/src/menubar.cpp:317
+msgid ""
+"ImCircuit is a free and open-source cross-platform desktop\n"
+"application to simulate logic circuits."
+msgstr ""
+"ImCircuit は、ロジック回路をシミュレートする無料・オープンソースのクロスプ\n"
+"ラットフォームデスクトップアプリケーションです。"
+
+#: src/ui/src/menubar.cpp:319
+msgid "Developer: "
+msgstr "開発者: "
+
+#: src/ui/src/menubar.cpp:324
+msgid "Source code is available at "
+msgstr "ソースコードは次で入手できます: "
+
+#: src/ui/src/menubar.cpp:329
+msgid "Version: "
+msgstr "バージョン: "
+
+#: src/ui/src/menubar.cpp:339
+msgid "Contact"
+msgstr "お問い合わせ"
+
+#: src/ui/src/menubar.cpp:341
+msgid "Email"
+msgstr "メール"
+
+#: src/ui/src/menubar.cpp:345
+msgid "Website"
+msgstr "ウェブサイト"
+
+#: src/ui/src/menubar.cpp:388
+msgid "Background"
+msgstr "背景"
+
+#: src/ui/src/menubar.cpp:390
+msgid "Foreground"
+msgstr "前景"
+
+#: src/ui/src/menubar.cpp:392
+msgid "Black"
+msgstr "黒"
+
+#: src/ui/src/menubar.cpp:394
+msgid "Red"
+msgstr "赤"
+
+#: src/ui/src/menubar.cpp:396
+msgid "Green"
+msgstr "緑"
+
+#: src/ui/src/menubar.cpp:398
+msgid "Yellow"
+msgstr "黄"
+
+#: src/ui/src/menubar.cpp:400
+msgid "Black Bright"
+msgstr "明るい黒"
+
+#: src/ui/src/menubar.cpp:402
+msgid "Red Bright"
+msgstr "明るい赤"
+
+#: src/ui/src/menubar.cpp:404
+msgid "Green Bright"
+msgstr "明るい緑"
+
+#: src/ui/src/menubar.cpp:406
+msgid "Yellow Bright"
+msgstr "明るい黄"
+
+#: src/ui/src/menubar.cpp:408
+msgid "Blue"
+msgstr "青"
+
+#: src/ui/src/menubar.cpp:410
+msgid "Magenta"
+msgstr "マゼンタ"
+
+#: src/ui/src/menubar.cpp:412
+msgid "Cyan"
+msgstr "シアン"
+
+#: src/ui/src/menubar.cpp:414
+msgid "White"
+msgstr "白"
+
+#: src/ui/src/menubar.cpp:416
+msgid "Blue Bright"
+msgstr "明るい青"
+
+#: src/ui/src/menubar.cpp:418
+msgid "Magenta Bright"
+msgstr "明るいマゼンタ"
+
+#: src/ui/src/menubar.cpp:420
+msgid "Cyan Bright"
+msgstr "明るいシアン"
+
+#: src/ui/src/menubar.cpp:422
+msgid "White Bright"
+msgstr "明るい白"
+
+#: src/ui/src/menubar.cpp:441
+msgid "Follow Device"
+msgstr "端末設定に従う"
+
+#: src/ui/src/menubar.cpp:442
+msgid "Light Theme"
+msgstr "ライトテーマ"
+
+#: src/ui/src/menubar.cpp:443
+msgid "Dark Theme"
+msgstr "ダークテーマ"
+
+#: src/ui/src/menubar.cpp:473
+msgid "Appearance"
+msgstr "外観"
+
+#: src/ui/src/menubar.cpp:477
+msgid "UI Scale"
+msgstr "UI スケール"
+
+#: src/ui/src/menubar.cpp:482
+msgid "Language"
+msgstr "言語"
+
+#: src/ui/src/menubar.cpp:489
+msgid "Light Theme Style"
+msgstr "ライトテーマスタイル"
+
+#: src/ui/src/menubar.cpp:496
+msgid "Dark Theme Style"
+msgstr "ダークテーマスタイル"
+
+#: src/ui/src/menubar.cpp:503
+msgid "Rounded Corners"
+msgstr "角丸"
+
+#: src/ui/src/menubar.cpp:507
+msgid "Theme Preference"
+msgstr "テーマの優先設定"
+
+#: src/ui/src/menubar.cpp:511
+msgid "Start in Fullscreen"
+msgstr "フルスクリーンで起動"
+
+#: src/ui/src/menubar.cpp:516
+msgid "Startup Window"
+msgstr "起動時ウィンドウ"
+
+#: src/ui/src/menubar.cpp:529
+msgid "Apply"
+msgstr "適用"
+
+#: src/ui/src/menubar.cpp:535
+msgid "Configuration changes were applied."
+msgstr "設定が適用されました。"
+
+#: src/ui/src/menubar.cpp:548
+msgid "Configuration changes were saved."
+msgstr "設定が保存されました。"
+
+#: src/ui/src/menubar.cpp:556
+msgid "Configuration changes were reverted."
+msgstr "設定が元に戻されました。"
+
+#: src/ui/src/Console.cpp:16
+msgid "Displays warning messages."
+msgstr "警告メッセージを表示します。"
+
+#: src/ui/src/Console.cpp:39 src/ui/src/Console.cpp:42
+msgid "Clear"
+msgstr "クリア"
+
+#: src/ui/src/Console.cpp:42
+msgid "Clears all log messages."
+msgstr "すべてのログメッセージを消去します。"
+
+#: src/ui/src/Console.cpp:44 src/ui/src/Console.cpp:45
+msgid "Auto-scroll"
+msgstr "自動スクロール"
+
+#: src/ui/src/Console.cpp:46
+msgid ""
+"When enabled, the scrollbar will be locked to the bottom \n"
+"to display live updates."
+msgstr ""
+"有効にすると、スクロールバーが常に最下部に固定され、\n"
+"リアルタイム更新が表示されます。"
+
+#: src/ui/src/Console.cpp:53
+msgid "Time"
+msgstr "時間"
+
+#: src/ui/src/Console.cpp:55
+msgid "Severity"
+msgstr "重要度"
+
+#: src/ui/src/Console.cpp:57
+msgid "Module"
+msgstr "モジュール"
+
+#: src/ui/src/Console.cpp:60
+msgid "Message"
+msgstr "メッセージ"
+
+#: src/ui/src/Console.cpp:90
+msgid "Message is copied to the clipboard."
+msgstr "メッセージがクリップボードにコピーされました。"
+
+#: src/ui/src/notification.cpp:124
+msgid "Dismiss"
+msgstr "非表示"
+
+#: src/ui/ui.h:165
+msgid "Console"
+msgstr "コンソール"
+
+#: src/ui/ui.h:167
+msgid "Editor"
+msgstr "エディタ"
+
+#: src/ui/ui.h:168
+msgid "Palette"
+msgstr "パレット"
+
+#: src/ui/ui.h:169
+msgid "Property Editor"
+msgstr "プロパティエディタ"
+
+#: src/ui/ui.h:170
+msgid "Scene Info"
+msgstr "シーン情報"
 
 #: src/core/src/engine.cpp:8
 msgid "Gate"
-msgstr ""
+msgstr "ゲート"
 
 #: src/core/src/engine.cpp:23
 msgid "DISABLED"
-msgstr ""
+msgstr "無効"

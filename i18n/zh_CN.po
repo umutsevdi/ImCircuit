@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ImCircuit 0.2.0\n"
+"Project-Id-Version: ImCircuit 0.1.0\n"
 "Report-Msgid-Bugs-To: ask@umutsevdi.com\n"
-"POT-Creation-Date: 2025-09-14 02:38+0300\n"
+"POT-Creation-Date: 2025-09-19 00:35+0300\n"
 "PO-Revision-Date: 2025-08-27 17:02+0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -15,6 +15,316 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: src/ui/components.h:196
+#, c-format
+msgid "Shortcut: %s"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:16
+msgid ""
+"A management panel for updating and configuring the active\n"
+"scene's details. Use this menu to handle dependencies and share\n"
+"your scene with others."
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:40 src/ui/src/menubar.cpp:208
+msgid "Scene Name"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:46 src/ui/src/SceneInfo.cpp:85
+#: src/ui/src/menubar.cpp:212
+msgid "Author"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:48 src/ui/src/SceneInfo.cpp:91
+msgid "Version"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:51 src/ui/src/menubar.cpp:216
+msgid "Description"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:60 src/ui/src/menubar.cpp:235
+msgid "Input Size"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:65 src/ui/src/menubar.cpp:237
+msgid "Output Size"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:80 src/ui/src/SceneInfo.cpp:81
+msgid "Dependencies"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:88
+msgid "Name"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:94
+msgid "Number of Nodes"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:119 src/ui/src/Console.cpp:89
+msgid "Clipboard"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:120
+msgid "Dependency name is copied to the clipboard."
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:125
+msgid "Add Component"
+msgstr ""
+
+#: src/ui/src/SceneInfo.cpp:129
+msgid "Upload"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:14
+msgid ""
+"A collection of available nodes that you can add to your\n"
+"project. Select a node from this panel to instantly place\n"
+"it into the editor."
+msgstr ""
+
+#: src/ui/src/Palette.cpp:28
+msgid "Gates"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:34 src/ui/src/PropertyEditor.cpp:140
+#: src/ui/src/PropertyEditor.cpp:147 src/ui/src/NodeEditor.cpp:166
+#: src/ui/src/NodeEditor.cpp:262 src/ui/src/NodeEditor.cpp:340
+#: src/core/src/engine.cpp:10
+msgid "Input"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:38 src/ui/src/PropertyEditor.cpp:119
+#: src/ui/src/PropertyEditor.cpp:121 src/ui/src/PropertyEditor.cpp:170
+#: src/ui/src/NodeEditor.cpp:166 src/ui/src/NodeEditor.cpp:264
+#: src/core/src/engine.cpp:11
+msgid "Output"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:43 src/ui/src/NodeEditor.cpp:266
+#: src/ui/src/NodeEditor.cpp:340
+msgid "Timer"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:47 src/ui/src/NodeEditor.cpp:268
+msgid "NOT Gate"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:52 src/ui/src/NodeEditor.cpp:270
+msgid "AND Gate"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:56 src/ui/src/NodeEditor.cpp:272
+msgid "NAND Gate"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:61 src/ui/src/NodeEditor.cpp:274
+msgid "OR Gate"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:65 src/ui/src/NodeEditor.cpp:276
+msgid "NOR Gate"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:70 src/ui/src/NodeEditor.cpp:278
+msgid "XOR Gate"
+msgstr ""
+
+#: src/ui/src/Palette.cpp:74 src/ui/src/NodeEditor.cpp:280
+msgid "XNOR Gate"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:17
+msgid ""
+"A panel that displays and allows you to modify the\n"
+"attributes of the currently selected logic gate node."
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:58
+#, c-format
+msgid "%d items selected."
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:61
+msgid "Delete All"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:86
+msgid "Id"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:88 src/ui/src/menubar.cpp:221
+msgid "Type"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:92 src/ui/src/NodeEditor.cpp:131
+msgid "Position"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:94 src/ui/ui.h:166
+msgid "Inspector"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:110 src/ui/src/NodeEditor.cpp:217
+msgid "Delete Node"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:124 src/ui/src/Inspector.cpp:140
+#: src/ui/src/Inspector.cpp:151 src/ui/src/Inspector.cpp:177
+#: src/ui/src/Inspector.cpp:209 src/ui/src/Inspector.cpp:222
+#: src/ui/src/Inspector.cpp:239 src/ui/src/Inspector.cpp:267
+#: src/ui/src/Inspector.cpp:303 src/ui/src/NodeEditor.cpp:116
+#: src/ui/src/NodeEditor.cpp:133 src/ui/src/NodeEditor.cpp:171
+msgid "Value"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:125
+msgid "Frequency"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:143 src/ui/src/Inspector.cpp:201
+#: src/ui/src/Inspector.cpp:231 src/ui/src/Inspector.cpp:257
+msgid "Outputs"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:146 src/ui/src/Inspector.cpp:204
+#: src/ui/src/Inspector.cpp:234 src/ui/src/Inspector.cpp:261
+#: src/ui/src/Inspector.cpp:295
+msgid "Socket"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:149 src/ui/src/Inspector.cpp:207
+#: src/ui/src/Inspector.cpp:264 src/ui/src/Inspector.cpp:298
+#: src/ui/src/Inspector.cpp:341
+msgid "Connection"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:168 src/ui/src/Inspector.cpp:199
+#: src/ui/src/Inspector.cpp:230 src/ui/src/Inspector.cpp:285
+#: src/ui/src/PropertyEditor.cpp:159
+msgid "Inputs"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:178
+msgid "Gate Type"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:181
+msgid "Socket Count"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:344 src/ui/src/NodeEditor.cpp:228
+msgid "Disconnect"
+msgstr ""
+
+#: src/ui/src/Inspector.cpp:377
+msgid "Disconnect relation"
+msgstr ""
+
+#: src/ui/src/PropertyEditor.cpp:17
+msgid "Searchable object tree."
+msgstr ""
+
+#: src/ui/src/PropertyEditor.cpp:44
+msgid "Search Box"
+msgstr ""
+
+#: src/ui/src/PropertyEditor.cpp:46
+msgid ""
+"Search among nodes. You can filter multiple nodes separated by\n"
+"commas; a leading ‑ excludes a node."
+msgstr ""
+
+#: src/ui/src/PropertyEditor.cpp:117 src/ui/src/PropertyEditor.cpp:137
+#: src/ui/src/PropertyEditor.cpp:197
+#, c-format
+msgid "Value: %s"
+msgstr ""
+
+#: src/ui/src/PropertyEditor.cpp:158
+#, c-format
+msgid "Type: %s"
+msgstr ""
+
+#: src/ui/src/PropertyEditor.cpp:198 src/ui/src/NodeEditor.cpp:112
+msgid "From"
+msgstr ""
+
+#: src/ui/src/PropertyEditor.cpp:200 src/ui/src/PropertyEditor.cpp:205
+#, c-format
+msgid "Socket %d"
+msgstr ""
+
+#: src/ui/src/PropertyEditor.cpp:203 src/ui/src/NodeEditor.cpp:115
+msgid "To"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:19
+msgid "A Panel to edit nodes in the selected scene."
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:110
+#, c-format
+msgid "Relation %d"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:127
+#, c-format
+msgid "Node %s@%d"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:148
+msgid "Please connect all pins."
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:165
+#, c-format
+msgid "%s Socket %u"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:169
+msgid "Owner"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:222
+msgid "Copy"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:236
+msgid "Paste"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:251
+msgid "Delete Selected"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:310 src/core/src/engine.cpp:12
+msgid "Component Input"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:322 src/core/src/engine.cpp:13
+msgid "Component Output"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:371
+#, c-format
+msgid "Output %u"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:389
+#, c-format
+msgid "%s Gate %u"
+msgstr ""
+
+#: src/ui/src/NodeEditor.cpp:417
+#, c-format
+msgid "Component Node %u"
+msgstr ""
 
 #: src/ui/src/menubar.cpp:33
 msgid "File"
@@ -28,7 +338,7 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:41 src/ui/src/menubar.cpp:543
+#: src/ui/src/menubar.cpp:41 src/ui/src/menubar.cpp:540
 msgid "Save"
 msgstr ""
 
@@ -37,8 +347,8 @@ msgid "Save As"
 msgstr ""
 
 #: src/ui/src/menubar.cpp:51 src/ui/src/menubar.cpp:464
-#: src/ui/src/menubar.cpp:537 src/ui/src/menubar.cpp:550
-#: src/ui/src/menubar.cpp:558
+#: src/ui/src/menubar.cpp:534 src/ui/src/menubar.cpp:547
+#: src/ui/src/menubar.cpp:555
 msgid "Preferences"
 msgstr ""
 
@@ -78,40 +388,15 @@ msgstr ""
 msgid "New Scene"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:206 src/ui/src/SceneInfo.cpp:35
-msgid "Scene Name"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:210 src/ui/src/SceneInfo.cpp:41
-#: src/ui/src/SceneInfo.cpp:77
-msgid "Author"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:214 src/ui/src/SceneInfo.cpp:47
-msgid "Description"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:219 src/ui/src/Inspector.cpp:89
-msgid "Type"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:224 src/ui/src/SceneInfo.cpp:34
+#: src/ui/src/menubar.cpp:226
 msgid "Scene"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:230 src/core/src/engine.cpp:9
+#: src/ui/src/menubar.cpp:231 src/core/src/engine.cpp:9
 msgid "Component"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:234 src/ui/src/SceneInfo.cpp:58
-msgid "Input Size"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:236 src/ui/src/SceneInfo.cpp:62
-msgid "Output Size"
-msgstr ""
-
-#: src/ui/src/menubar.cpp:249
+#: src/ui/src/menubar.cpp:250
 msgid "Cancel"
 msgstr ""
 
@@ -282,249 +567,20 @@ msgstr ""
 msgid "Startup Window"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:532
+#: src/ui/src/menubar.cpp:529
 msgid "Apply"
 msgstr ""
 
-#: src/ui/src/menubar.cpp:538
+#: src/ui/src/menubar.cpp:535
 msgid "Configuration changes were applied."
 msgstr ""
 
-#: src/ui/src/menubar.cpp:551
+#: src/ui/src/menubar.cpp:548
 msgid "Configuration changes were saved."
 msgstr ""
 
-#: src/ui/src/menubar.cpp:559
+#: src/ui/src/menubar.cpp:556
 msgid "Configuration changes were reverted."
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:17
-msgid "Searchable object tree."
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:44
-msgid "Search Box"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:46
-msgid ""
-"Search among nodes. You can filter multiple nodes separated by\n"
-"commas; a leading ‑ excludes a node."
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:109 src/ui/src/PropertyEditor.cpp:132
-#: src/ui/src/PropertyEditor.cpp:195
-#, c-format
-msgid "Value: %s"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:111 src/ui/src/PropertyEditor.cpp:113
-#: src/ui/src/PropertyEditor.cpp:168 src/ui/src/Palette.cpp:38
-#: src/ui/src/NodeEditor.cpp:159 src/core/src/engine.cpp:11
-msgid "Output"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:135 src/ui/src/PropertyEditor.cpp:142
-#: src/ui/src/Palette.cpp:34 src/ui/src/NodeEditor.cpp:159
-#: src/ui/src/NodeEditor.cpp:263 src/core/src/engine.cpp:10
-msgid "Input"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:156
-#, c-format
-msgid "Type: %s"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:157 src/ui/src/Inspector.cpp:181
-#: src/ui/src/Inspector.cpp:212 src/ui/src/Inspector.cpp:243
-#: src/ui/src/Inspector.cpp:298
-msgid "Inputs"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:196 src/ui/src/NodeEditor.cpp:105
-msgid "From"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:198 src/ui/src/PropertyEditor.cpp:203
-#, c-format
-msgid "Socket %d"
-msgstr ""
-
-#: src/ui/src/PropertyEditor.cpp:201 src/ui/src/NodeEditor.cpp:108
-msgid "To"
-msgstr ""
-
-#: src/ui/src/notification.cpp:121
-msgid "Dismiss"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:14
-msgid ""
-"A collection of available nodes that you can add to your\n"
-"project. Select a node from this panel to instantly place\n"
-"it into the editor."
-msgstr ""
-
-#: src/ui/src/Palette.cpp:28
-msgid "Gates"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:43 src/ui/src/NodeEditor.cpp:263
-msgid "Timer"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:47
-msgid "NOT Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:52
-msgid "AND Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:56
-msgid "NAND Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:61
-msgid "OR Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:65
-msgid "NOR Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:70
-msgid "XOR Gate"
-msgstr ""
-
-#: src/ui/src/Palette.cpp:74
-msgid "XNOR Gate"
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:16
-msgid ""
-"A management panel for updating and configuring the active\n"
-"scene's details. Use this menu to handle dependencies and share\n"
-"your scene with others."
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:44 src/ui/src/SceneInfo.cpp:83
-msgid "Version"
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:57
-msgid "Component Attributes"
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:72 src/ui/src/SceneInfo.cpp:73
-msgid "Dependencies"
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:80
-msgid "Name"
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:86
-msgid "Number of Nodes"
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:111 src/ui/src/Console.cpp:89
-msgid "Clipboard"
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:112
-msgid "Dependency name is copied to the clipboard."
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:117
-msgid "Add Component"
-msgstr ""
-
-#: src/ui/src/SceneInfo.cpp:121
-msgid "Upload"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:18
-msgid "A Panel to edit nodes in the selected scene."
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:103
-#, c-format
-msgid "Relation %d"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:109 src/ui/src/NodeEditor.cpp:126
-#: src/ui/src/NodeEditor.cpp:164 src/ui/src/Inspector.cpp:137
-#: src/ui/src/Inspector.cpp:153 src/ui/src/Inspector.cpp:164
-#: src/ui/src/Inspector.cpp:190 src/ui/src/Inspector.cpp:222
-#: src/ui/src/Inspector.cpp:235 src/ui/src/Inspector.cpp:252
-#: src/ui/src/Inspector.cpp:280 src/ui/src/Inspector.cpp:316
-msgid "Value"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:120
-#, c-format
-msgid "Node %s@%d"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:124 src/ui/src/Inspector.cpp:93
-msgid "Position"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:141
-msgid "Please connect all pins."
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:158
-#, c-format
-msgid "%s Socket %u"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:162
-msgid "Owner"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:205 src/ui/src/Inspector.cpp:122
-msgid "Delete Node"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:210 src/ui/src/Inspector.cpp:357
-msgid "Disconnect"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:215
-msgid "Cut"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:216
-msgid "Copy"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:217
-msgid "Paste"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:233 src/core/src/engine.cpp:12
-msgid "Component Input"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:245 src/core/src/engine.cpp:13
-msgid "Component Output"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:294
-#, c-format
-msgid "Output %u"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:312
-#, c-format
-msgid "%s Gate %u"
-msgstr ""
-
-#: src/ui/src/NodeEditor.cpp:340
-#, c-format
-msgid "Component Node %u"
 msgstr ""
 
 #: src/ui/src/Console.cpp:16
@@ -569,69 +625,28 @@ msgstr ""
 msgid "Message is copied to the clipboard."
 msgstr ""
 
-#: src/ui/src/Inspector.cpp:17
-msgid ""
-"A panel that displays and allows you to modify the\n"
-"attributes of the currently selected logic gate node."
+#: src/ui/src/notification.cpp:124
+msgid "Dismiss"
 msgstr ""
 
-#: src/ui/src/Inspector.cpp:58
-#, c-format
-msgid "%d items selected."
+#: src/ui/ui.h:165
+msgid "Console"
 msgstr ""
 
-#: src/ui/src/Inspector.cpp:61
-msgid "Delete All"
+#: src/ui/ui.h:167
+msgid "Editor"
 msgstr ""
 
-#: src/ui/src/Inspector.cpp:87
-msgid "Id"
+#: src/ui/ui.h:168
+msgid "Palette"
 msgstr ""
 
-#: src/ui/src/Inspector.cpp:95
-msgid "Inspector"
+#: src/ui/ui.h:169
+msgid "Property Editor"
 msgstr ""
 
-#: src/ui/src/Inspector.cpp:109
-msgid "Select Node"
-msgstr ""
-
-#: src/ui/src/Inspector.cpp:138
-msgid "Frequency"
-msgstr ""
-
-#: src/ui/src/Inspector.cpp:156 src/ui/src/Inspector.cpp:214
-#: src/ui/src/Inspector.cpp:244 src/ui/src/Inspector.cpp:270
-msgid "Outputs"
-msgstr ""
-
-#: src/ui/src/Inspector.cpp:159 src/ui/src/Inspector.cpp:217
-#: src/ui/src/Inspector.cpp:247 src/ui/src/Inspector.cpp:274
-#: src/ui/src/Inspector.cpp:308
-msgid "Socket"
-msgstr ""
-
-#: src/ui/src/Inspector.cpp:162 src/ui/src/Inspector.cpp:220
-#: src/ui/src/Inspector.cpp:277 src/ui/src/Inspector.cpp:311
-#: src/ui/src/Inspector.cpp:354
-msgid "Connection"
-msgstr ""
-
-#: src/ui/src/Inspector.cpp:191
-msgid "Gate Type"
-msgstr ""
-
-#: src/ui/src/Inspector.cpp:194
-msgid "Socket Count"
-msgstr ""
-
-#: src/ui/src/Inspector.cpp:390
-msgid "Disconnect relation"
-msgstr ""
-
-#: src/ui/components.h:203
-#, c-format
-msgid "Shortcut: %s"
+#: src/ui/ui.h:170
+msgid "Scene Info"
 msgstr ""
 
 #: src/core/src/engine.cpp:8

@@ -19,6 +19,7 @@ Changes:
     - Added property tree.
     - Added right-click menu options.
     - Added tooltips.
+    - Added Japanese Language support.
 
 -------------------------------------------------------------------------------
 0.0.2 - Fri, Sep 05 2025

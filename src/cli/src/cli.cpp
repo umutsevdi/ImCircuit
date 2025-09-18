@@ -19,7 +19,7 @@ template <> const char* to_str<cli::Type>(cli::Type v)
 }
 namespace cli {
     using namespace replxx;
-    static void print_help(void);
+    static void _print_help(void);
 
     int parse_args(int argc, char** argv)
     {
@@ -34,7 +34,7 @@ namespace cli {
             if (arg == "-i" || arg == "--interactive") {
                 gui = false;
             } else if (arg == "-h" || arg == "--help") {
-                print_help();
+                _print_help();
                 exit(0);
             } else if (arg == "-v" || arg == "--version") {
                 printf(APPPKG "." APPVERSION "." APPOS "." APPBUILD "\r\n");
@@ -58,24 +58,24 @@ namespace cli {
         return 0;
     }
 
-    static void print_help(void)
+    static void _print_help(void)
     {
-        printf("Usage:\r\n"
-               "  " APPNAME_BIN " [OPTIONS] [FILE ...]\r\n"
-               "\r\n"
-               "  A free and open-source cross-platform logic circuit "
-               "simulator.\r\n"
-               "\r\n"
-               "Options:\r\n"
-               "  -i, --interactive     Enters interactive mode.\r\n"
-               "  -v, --version         Print version information.\r\n"
-               "  -V, --verbose         Enable verbose logging.\r\n"
-               "  -h, --help            Prints this section.\r\n"
-               "\r\n"
-               "Report bugs in the bug tracker at\r\n"
-               "<https://github.com/umutsevdi/imcircuit/"
-               "issues>\r\n"
-               "or by email to <ask@umutsevdi.com>.\r\n");
+        puts("Usage:\r\n"
+             "  " APPNAME_BIN " [OPTIONS] [FILE ...]\r\n"
+             "\r\n"
+             "  A free and open-source cross-platform logic circuit "
+             "simulator.\r\n"
+             "\r\n"
+             "Options:\r\n"
+             "  -i, --interactive     Enters interactive mode.\r\n"
+             "  -v, --version         Print version information.\r\n"
+             "  -V, --verbose         Enable verbose logging.\r\n"
+             "  -h, --help            Prints this section.\r\n"
+             "\r\n"
+             "Report bugs in the bug tracker at\r\n"
+             "<https://github.com/umutsevdi/imcircuit/"
+             "issues>\r\n"
+             "or by email to <ask@umutsevdi.com>.\r\n");
     }
 
     static Replxx::completions_t completion_cb(
@@ -119,18 +119,16 @@ namespace cli {
         return filtered;
     }
 
-    bool keep = true;
     int run(void)
     {
         Replxx replxx {};
-        replxx.history_load(fs::CACHE / "historyfile");
+        std::string history_file = (fs::CACHE / "historyfile").string();
+        replxx.history_load(history_file);
         replxx.set_beep_on_ambiguous_completion(true);
-
         replxx.set_completion_callback(completion_cb);
         replxx.set_hint_callback(hint_cb);
-
         std::string line;
-        while (keep) {
+        while (keep_shell()) {
             auto scene = tabs::active();
             if (scene == nullptr) {
                 line = replxx.input("(empty) # ");
@@ -140,11 +138,8 @@ namespace cli {
             }
             if (line.empty()) {
                 continue;
-            } else if (line == "exit") {
-                keep = false;
-                break;
             }
-            bool found = false;
+            bool matched = false;
             for (Command& cmd : root) {
                 std::string arg;
                 if (cmd.is_matching(line, arg)) {
@@ -155,15 +150,15 @@ namespace cli {
                         L_ERROR("Expected argument type of %s, found %s",
                             to_str<Type>(cmd.type), arg.c_str());
                     }
-                    found = true;
+                    matched = true;
                     break;
                 }
             }
-            if (!found) {
+            if (!matched) {
                 L_ERROR("Unrecognized command <%s>.", line.c_str());
             }
         }
-        replxx.history_save(fs::CACHE / "historyfile");
+        replxx.history_save(history_file);
         return 0;
     }
 

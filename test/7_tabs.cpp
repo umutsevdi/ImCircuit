@@ -21,9 +21,9 @@ TEST_CASE("Save a scene and load")
     s->connect(g_and, 1, v1);
     s->connect(o, 0, g_or);
     REQUIRE_EQ(
-        tabs::save_as(ic::fs::LIBRARY / "test.ic", s_handle), Error::OK);
+        tabs::save_as(ic::fs::LIBRARY / "test.imcircuit", s_handle), Error::OK);
     REQUIRE_EQ(tabs::close(s_handle), Error::OK);
-    REQUIRE_EQ(tabs::open(ic::fs::LIBRARY / "test.ic"), Error::OK);
+    REQUIRE_EQ(tabs::open(ic::fs::LIBRARY / "test.imcircuit"), Error::OK);
     REQUIRE_EQ(tabs::close(), Error::OK);
 }
 
@@ -31,8 +31,8 @@ TEST_CASE("Try Invalid Actions")
 {
     REQUIRE_NE(tabs::close(42), Error::OK);
     REQUIRE_NE(tabs::open(fs::LIBRARY / "NOT_FOUND.SCENE"), Error::OK);
-    fs::write(fs::LIBRARY / "INVALID_SCENE.ic", "INVALID_BYTES");
-    REQUIRE_NE(tabs::open(fs::LIBRARY / "INVALID_SCENE.ic"), Error::OK);
+    fs::write(fs::LIBRARY / "INVALID_SCENE.imcircuit", "INVALID_BYTES");
+    REQUIRE_NE(tabs::open(fs::LIBRARY / "INVALID_SCENE.imcircuit"), Error::OK);
 }
 
 TEST_CASE("Notify")
@@ -58,10 +58,10 @@ TEST_CASE("Create tabs and then close")
 TEST_CASE("Open save close reopen")
 {
     size_t id = tabs::create("scene", "Author", "", 0);
-    REQUIRE_EQ(tabs::save_as(fs::LIBRARY / "scene.ic", id), Error::OK);
+    REQUIRE_EQ(tabs::save_as(fs::LIBRARY / "scene.imcircuit", id), Error::OK);
     REQUIRE_EQ(tabs::close(), Error::OK);
     REQUIRE_EQ(tabs::active(), nullptr);
-    REQUIRE_EQ(tabs::open(fs::LIBRARY / "scene.ic"), Error::OK);
+    REQUIRE_EQ(tabs::open(fs::LIBRARY / "scene.imcircuit"), Error::OK);
     REQUIRE_NE(tabs::active(), nullptr);
     REQUIRE_EQ(tabs::close(), Error::OK);
 }
@@ -82,9 +82,10 @@ TEST_CASE("Get result from saved scene")
     scene->get_node<Input>(input)->set(true);
 
     REQUIRE_EQ(scene->get_node<Output>(output)->get(), State::TRUE);
-    REQUIRE_EQ(tabs::save_as(fs::LIBRARY / "or_scene.ic", id), Error::OK);
+    REQUIRE_EQ(
+        tabs::save_as(fs::LIBRARY / "or_scene.imcircuit", id), Error::OK);
     REQUIRE_EQ(tabs::close(), Error::OK);
-    REQUIRE_EQ(tabs::open(fs::LIBRARY / "or_scene.ic"), Error::OK);
+    REQUIRE_EQ(tabs::open(fs::LIBRARY / "or_scene.imcircuit"), Error::OK);
     auto scene2 = tabs::active();
     REQUIRE_EQ(scene2->get_node<Output>(output)->get(), State::TRUE);
     REQUIRE_EQ(tabs::close(), Error::OK);

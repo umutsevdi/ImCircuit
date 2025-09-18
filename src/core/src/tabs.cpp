@@ -114,8 +114,13 @@ LCS_ERROR save_as(const std::filesystem::path& new_path, size_t idx)
     if (inode.path == new_path) {
         return OK;
     }
+    std::string pathstr = new_path.string();
+    if (pathstr.rfind(".imcircuit") == std::string::npos) {
+        L_DEBUG("File is not an .imcircuit file. Adding file extension.");
+        pathstr += ".imcircuit";
+    }
     std::filesystem::path oldpath = inode.path;
-    inode.path                    = new_path;
+    inode.path                    = pathstr;
     inode.is_saved                = false;
     Error err                     = save(idx);
     if (err) {

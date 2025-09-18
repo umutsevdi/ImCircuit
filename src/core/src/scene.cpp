@@ -107,9 +107,11 @@ Error Scene::set_name(const std::string& name)
         undo.push([this, old]() {
             std::strncpy(_name.data(), old.c_str(),
                 std::min(_name.size() - 1, old.size()));
+            _name[old.size()] = 0;
         });
         std::strncpy(_name.data(), name.c_str(),
             std::min(_name.size() - 1, name.size()));
+        _name[name.size()] = 0;
         return Error::OK;
     }
     return ERROR(Error::INVALID_STRING);
@@ -121,9 +123,11 @@ Error Scene::set_author(const std::string& author)
         undo.push([this, old]() {
             std::strncpy(_author.data(), old.c_str(),
                 std::min(_author.size() - 1, old.size()));
+            _author[old.size()] = 0;
         });
         std::strncpy(_author.data(), author.c_str(),
             std::min(_author.size() - 1, author.size()));
+        _author[author.size()] = 0;
         return Error::OK;
     }
     return ERROR(Error::INVALID_STRING);
@@ -135,9 +139,11 @@ Error Scene::set_description(const std::string& description)
         undo.push([this, old]() {
             std::strncpy(_description.data(), old.c_str(),
                 std::min(_description.size() - 1, old.size()));
+            _description[old.size()] = 0;
         });
         std::strncpy(_description.data(), description.c_str(),
             std::min(_description.size() - 1, _description.size()));
+        _description[description.size()] = 0;
         return Error::OK;
     }
     return ERROR(Error::INVALID_STRING);

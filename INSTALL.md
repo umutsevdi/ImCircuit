@@ -1,7 +1,7 @@
 # Installation
 
 ## With Installer
-* Installers are located [here](https://github.com/umutsevdi/logic-circuit-simulator-2/releases/tag/v0.01).
+* Installers are located [here](https://github.com/umutsevdi/imcircuit/releases/).
 * Download the dedicated installer and run.
 
 ## Building From the Source
@@ -9,7 +9,7 @@
 1. Clone the repository.
 ```sh
 git clone https://github.com/umutsevdi/imcircuit.git
-cd  logic-circuit-simulator-2
+cd  imcircuit
 mkdir build
 ```
 
@@ -22,10 +22,12 @@ Windows build requires CMake,
 ```bat
     vckpg.exe install
 ```
-3. Compile project using Visual Studio.
-4. Copy `build\package\win32\ImCircuit\` to `%LOCALAPPDATA%\Programs\`.
-5. Copy files generated at `build\release` to
-`%LOCALAPPDATA%\Programs\ImCircuit\bin\`
+3. Generate the locales using `i18n\build.sh` script or install pre-built 
+translations.
+4. Compile project using Visual Studio.
+5. Copy `build\package\win32\ImCircuit\` to `%LOCALAPPDATA%\Programs\`.
+6. Copy files generated at `build\release` to
+`%LOCALAPPDATA%\Programs\ImCircuit\`
 
 > [!NOTE]
 > To enforce software rendering install(For Virtual Machines)
@@ -43,7 +45,9 @@ Windows build requires CMake,
 |libsecret|libsecret-devel|libsecret-1-dev|
 | GTK3| |libgtk-3-dev|
 
-2. CMake Installation
+2. Generate the locales using `i18n\build.sh` script or install pre-built 
+translations.
+3. CMake Installation
 ```sh
 mkdir build
 cd build
@@ -51,7 +55,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 make 
 cpack
 ```
-3. This will generate APT and RPM builds. Run them with your package manager
+4. This will generate APT and RPM builds. Run them with your package manager
 to install/uninstall.
 
 > [!NOTE]
@@ -59,3 +63,6 @@ to install/uninstall.
 > To do that copy files found under `build/package/` folder. This directory will
 > mirror the root `/` in UNIX. Copy files in the `/usr/`
 > to their dedicated locations.
+
+> If your desktop environment does not support XDG Portal's for file picker. 
+> Compile with NFD_PORTAL=False option. This will enforce GTK file picker.

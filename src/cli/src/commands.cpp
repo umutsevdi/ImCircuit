@@ -9,6 +9,9 @@
 
 namespace ic::cli {
 
+static bool shell = true;
+bool keep_shell(void) { return shell; }
+
 Command::Command(const std::string& _name, const std::string& _desc,
     std::function<Error(Ref<Scene>, const std::string& arg)> _cmd, Type _value,
     bool _optional)
@@ -206,7 +209,7 @@ Error _add_gate_and(Ref<Scene> scene, const std::string& arg)
     if (Error err = _parse_gate_size(scene, arg, amount); err != Error::OK) {
         return err;
     };
-    scene->add_node<Gate>(Gate::Type::AND, amount);
+    scene->add_node<Gate>(Gate::Type::AND, static_cast<sockid>(amount));
     return Error::OK;
 }
 
@@ -216,7 +219,7 @@ Error _add_gate_nand(Ref<Scene> scene, const std::string& arg)
     if (Error err = _parse_gate_size(scene, arg, amount); err != Error::OK) {
         return err;
     };
-    scene->add_node<Gate>(Gate::Type::NAND, amount);
+    scene->add_node<Gate>(Gate::Type::NAND, static_cast<sockid>(amount));
     return Error::OK;
 }
 
@@ -226,7 +229,7 @@ Error _add_gate_nor(Ref<Scene> scene, const std::string& arg)
     if (Error err = _parse_gate_size(scene, arg, amount); err != Error::OK) {
         return err;
     };
-    scene->add_node<Gate>(Gate::Type::NOR, amount);
+    scene->add_node<Gate>(Gate::Type::NOR, static_cast<sockid>(amount));
     return Error::OK;
 }
 
@@ -243,7 +246,7 @@ Error _add_gate_or(Ref<Scene> scene, const std::string& arg)
     if (Error err = _parse_gate_size(scene, arg, amount); err != Error::OK) {
         return err;
     };
-    scene->add_node<Gate>(Gate::Type::OR, amount);
+    scene->add_node<Gate>(Gate::Type::OR, static_cast<sockid>(amount));
     return Error::OK;
 }
 
@@ -253,7 +256,7 @@ Error _add_gate_xnor(Ref<Scene> scene, const std::string& arg)
     if (Error err = _parse_gate_size(scene, arg, amount); err != Error::OK) {
         return err;
     };
-    scene->add_node<Gate>(Gate::Type::XNOR, amount);
+    scene->add_node<Gate>(Gate::Type::XNOR, static_cast<sockid>(amount));
     return Error::OK;
 }
 
@@ -263,7 +266,7 @@ Error _add_gate_xor(Ref<Scene> scene, const std::string& arg)
     if (Error err = _parse_gate_size(scene, arg, amount); err != Error::OK) {
         return err;
     };
-    scene->add_node<Gate>(Gate::Type::XOR, amount);
+    scene->add_node<Gate>(Gate::Type::XOR, static_cast<sockid>(amount));
     return Error::OK;
 }
 
@@ -292,7 +295,7 @@ Error _add_timer(Ref<Scene> scene, const std::string& arg)
     if (Error err = as(arg, freq, false); err != Error ::OK) {
         return err;
     }
-    scene->add_node<Input>(freq);
+    scene->add_node<Input>(static_cast<uint8_t>(freq));
     return Error::OK;
 }
 
@@ -622,7 +625,13 @@ Error _toggle(Ref<Scene> scene, const std::string& arg)
     return Error::OK;
 }
 
-std::array<Command, 34> root {
+Error _exit(Ref<Scene>, const std::string&)
+{
+    shell = false;
+    return Error::OK;
+}
+
+std::array<Command, 35> root {
     Command {
         "add component", "Add a component to the scene.", _add_component, STR },
     { "add gate AND", "Add an AND gate.", _add_gate_and, INT, true },
@@ -638,6 +647,7 @@ std::array<Command, 34> root {
     { "close", "Close the existing scene.", _close },
     { "connect", "Connect two nodes.", _connect, NODE_INT_NODE_INT },
     { "disconnect", "Severe a connection.", _disconnect, INT },
+    { "exit ", "Exit the shell.", _exit },
     { "help", "Display information about the shell.", _help },
     { "include ", "Import a dependency to the active scene.", _include, STR },
     { "list component", "List all components.", _list_component },

@@ -109,8 +109,7 @@ static void _init_fonts(ImGuiIO& io)
     // Load the fonts twice the size and scale them back to have clear
     // visuals.
     io.Fonts->AddFontDefault();
-    auto dir         = fs::APPDATA / "font" / "MPLUS1p";
-    auto font_lucide = fs::APPDATA / "font" / "Lucide" / "Lucide.ttf";
+    auto dir = fs::APPDATA / "font" / "MPLUS1p";
 
     std::string font = (dir / "MPLUS1p-Regular.ttf").string();
     _FONT[REGULAR]   = io.Fonts->AddFontFromFileTTF(font.c_str());
@@ -118,8 +117,9 @@ static void _init_fonts(ImGuiIO& io)
     _FONT[BOLD]      = io.Fonts->AddFontFromFileTTF(font.c_str());
     font             = (dir / "MPLUS1p-Light.ttf").string();
     _FONT[LIGHT]     = io.Fonts->AddFontFromFileTTF(font.c_str());
-    _FONT[ICON]      = io.Fonts->AddFontFromFileTTF(font_lucide.c_str());
-    io.FontDefault   = _FONT[REGULAR];
+    font           = (fs::APPDATA / "font" / "Lucide" / "Lucide.ttf").string();
+    _FONT[ICON]    = io.Fonts->AddFontFromFileTTF(font.c_str());
+    io.FontDefault = _FONT[REGULAR];
 }
 
 #define CLRU32(...) ImGui::GetColorU32(__VA_ARGS__)

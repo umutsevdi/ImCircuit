@@ -110,7 +110,7 @@ if(IMC_GUI)
         common
         core
         jsoncpp_static
-        keychain
+        #        keychain
         cli
         ui)
     target_compile_definitions(ImCircuit
@@ -126,7 +126,7 @@ else()
         common
         core
         jsoncpp_static
-        keychain
+        #        keychain
         cli
     )
 endif()
@@ -229,7 +229,7 @@ add_dependencies(${PROJECT_NAME} bundle)
 if(CMAKE_BUILD_TYPE STREQUAL "Release" AND IMC_PACKAGE)
 	if(NOT WIN32)
 		set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
-		set(CPACK_PACKAGE_VERSION "0.2.0")
+		set(CPACK_PACKAGE_VERSION "0.1.0")
 		set(CPACK_PACKAGE_DESCRIPTION "A free and open-source cross-platform logic circuit simulator.")
 		set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${CPACK_PACKAGE_DESCRIPTION})
 		set(CPACK_PACKAGE_VENDOR "Umut Sevdi")

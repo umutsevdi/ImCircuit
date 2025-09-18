@@ -1,6 +1,6 @@
 # ImCircuit
 
-A free and open-source cross-platform Logic Circuit Simulator rewritten in C++. 
+A free and open-source cross-platform logic circuit simulator written in C++. 
 
 > [!WARNING]  
 > Currently in progress. Visit the original Logic Circuit Simulator from
@@ -63,4 +63,11 @@ https://github.com/user-attachments/assets/a770f99d-ed13-40cf-bca7-54b13cea11b8
     - [X] Add LCS_GUI option.
     - [X] Add LCS_PACKAGE target.
     - [X] Add bundle target.
-
+- Localization
+    - [X] Deutsch(de_DE)
+    - [ ] Español(es_ES)
+    - [ ] Français(fr_FR)
+    - [X] 日本語(ja_JP)
+    - [ ] Русский(ru_RU)
+    - [X] Türkçe(tr_TR)
+    - [ ] 中国人(zh_CN)

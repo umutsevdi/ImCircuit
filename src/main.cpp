@@ -25,10 +25,13 @@ namespace ic::ui {
 extern int run(void);
 }
 #endif
-constexpr int START_UI = -1;
-static int _start(int argc, char* argv[])
+static int entrypoint(int argc, char* argv[])
 {
+    constexpr int START_UI = -1;
     int code = cli::parse_args(argc, argv);
+    if (code > 0) {
+        return code;
+    }
     fs::init();
     net::init();
     std::atexit([]() {
@@ -52,9 +55,9 @@ static int _start(int argc, char* argv[])
 int WINAPI WinMain(
     HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    return _start(__argc, __argv);
+    return entrypoint(__argc, __argv);
 }
 #else
-int main(int argc, char* argv[]) { return _start(argc, argv); }
+int main(int argc, char* argv[]) { return entrypoint(argc, argv); }
 #endif
 #endif

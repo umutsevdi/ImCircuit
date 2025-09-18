@@ -22,7 +22,7 @@ namespace fs {
     static inline void _set_dirs(const std::filesystem::path& home)
     {
 #ifdef _WIN32
-        APPDATA = std::filesystem::path { home } / Programs / APPNAME;
+        APPDATA = std::filesystem::path { home } / "Programs" / APPNAME;
         LOCALE  = APPDATA / "locale";
         CACHE   = home / APPNAME_BIN / "Cache";
         CONFIG  = home / APPNAME_BIN / "Config";
@@ -58,12 +58,12 @@ namespace fs {
             if (!std::filesystem::exists(CONFIG)) {
                 L_DEBUG("Creating %s directory.", CONFIG.c_str());
                 std::filesystem::create_directories(CONFIG);
-                std::filesystem::copy_file(
-                    APPDATA / "default.ini", CONFIG / "default.ini");
-                std::filesystem::copy_file(
-                    APPDATA / "themes.json", CONFIG / "themes.json");
-                std::filesystem::copy_file(
-                    APPDATA / "config.json", CONFIG / "config.json");
+                std::filesystem::copy_file(APPDATA / "defaults" / "default.ini",
+                    CONFIG / "default.ini");
+                std::filesystem::copy_file(APPDATA / "defaults" / "themes.json",
+                    CONFIG / "themes.json");
+                std::filesystem::copy_file(APPDATA / "defaults" / "config.json",
+                    CONFIG / "config.json");
             }
         } catch (const std::exception& e) {
             L_ERROR("Directory creation failed. %s ", e.what());
@@ -112,7 +112,7 @@ namespace fs {
             std::filesystem::create_directories(path.parent_path());
             std::ofstream outfile { path };
             if (outfile) {
-                outfile << data;
+                outfile.write(data.data(), data.size());
                 L_INFO("%s is saved.", path.c_str());
                 return true;
             }
@@ -204,11 +204,10 @@ namespace fs {
             fclose(_target_fp);
             _target_fp = nullptr;
         }
-        std::string filepath = (fs::LOGPATH / file).string();
 #ifdef _MSC_VER
-        _target_fp = _wfopen(filepath.c_str(), L"w");
+        _target_fp = _wfopen((fs::LOGPATH / file).c_str(), L"w");
 #else
-        _target_fp = std::fopen(filepath.c_str(), "w");
+        _target_fp = std::fopen((fs::LOGPATH / file).c_str(), "w");
 #endif
         _target_filename = file;
     }

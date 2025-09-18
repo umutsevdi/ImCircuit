@@ -175,56 +175,45 @@ namespace ui {
         return Error::OK;
     }
 
-    void _apply_all(ImGuiContext*, ImGuiSettingsHandler*) { }
-
-    static void* _read_open(
-        ImGuiContext*, ImGuiSettingsHandler*, const char* name)
-    {
-        if (std::strncmp(name, "default", sizeof("default")) == 0) {
-            return &ACTIVE_CONFIG;
-        }
-        return nullptr;
-    }
-
-    static void _read_line(
-        ImGuiContext*, ImGuiSettingsHandler*, void*, const char* line)
-    {
-        char window_name[40];
-        char is_active[6];
-        if (sscanf(line, "%39[^\"]=%5[^\"]", window_name, is_active) == 2) {
-            bool value = false;
-            if (strncmp(is_active, "true", 4) == 0) {
-                value = true;
-            }
-            for (auto& win : WINDOW_LIST) {
-                if (strncmp(win->basename, window_name, 40) == 0) {
-                    L_INFO("??");
-                    win->is_active = value;
-                    break;
-                }
-            }
-        }
-    }
-
-    static void _write_all(
-        ImGuiContext*, ImGuiSettingsHandler*, ImGuiTextBuffer* buf)
-    {
-        buf->appendf("[%s][%s]\n", APPNAME, "default");
-        for (auto& win : WINDOW_LIST) {
-            buf->appendf(
-                "%s=%s\n", win->basename, win->is_active ? "true" : "false");
-        }
-    }
-
     void bind_config(ImGuiContext* ctx)
     {
         ImGuiSettingsHandler handler {};
         handler.TypeName   = APPNAME;
         handler.TypeHash   = ImHashStr(APPNAME);
-        handler.ReadOpenFn = _read_open;
-        handler.ReadLineFn = _read_line;
-        handler.WriteAllFn = _write_all;
-        handler.ApplyAllFn = _apply_all;
+        handler.ReadOpenFn = [](ImGuiContext*, ImGuiSettingsHandler*,
+                                 const char* name) -> void* {
+            if (std::strncmp(name, "default", sizeof("default")) == 0) {
+                return &ACTIVE_CONFIG;
+            }
+            return nullptr;
+        };
+        handler.ReadLineFn = [](ImGuiContext*, ImGuiSettingsHandler*, void*,
+                                 const char* line) {
+            char window_name[40];
+            char is_active[6];
+            if (sscanf(line, "%39[^\"]=%5[^\"]", window_name, is_active) == 2) {
+                bool value = false;
+                if (strncmp(is_active, "true", 4) == 0) {
+                    value = true;
+                }
+                for (auto& win : WINDOW_LIST) {
+                    if (strncmp(win->basename, window_name, 40) == 0) {
+                        L_INFO("??");
+                        win->is_active = value;
+                        break;
+                    }
+                }
+            }
+        };
+        handler.WriteAllFn
+            = [](ImGuiContext*, ImGuiSettingsHandler*, ImGuiTextBuffer* buf) {
+                  buf->appendf("[%s][%s]\n", APPNAME, "default");
+                  for (auto& win : WINDOW_LIST) {
+                      buf->appendf("%s=%s\n", win->basename,
+                          win->is_active ? "true" : "false");
+                  }
+              };
+        handler.ApplyAllFn = [](ImGuiContext*, ImGuiSettingsHandler*) { };
         handler.UserData   = nullptr;
         ctx->SettingsHandlers.push_back(handler);
         L_DEBUG("Bind .ini completed.");

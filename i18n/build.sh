@@ -27,12 +27,12 @@ xgettext \
     --copyright-holder="$AUTHOR"\
     --language=C++ \
     --keyword=_ \
-    --keyword=N_ \
+    --keyword=WINDOWNAME\
     --from-code=UTF-8 \
     --msgid-bugs-address="${AUTHOR_MAIL}" \
     --add-comments="TRANSLATORS:$AUTHOR" \
     --package-name=$APPNAME_BIN \
-    --package-version="0.2.0" \
+    --package-version="0.1.0" \
     --output=i18n/${APPNAME_BIN}.pot \
     $(find src/ -name '*.cpp' -o -name '*.h')
 
