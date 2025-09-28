@@ -347,7 +347,7 @@ void Inspector::_output_table(
             ImGui ::TableSetColumnIndex(0);
             ImGui::PushFont(get_font(BOLD), 0.f);
             if (outputs[i] == 0) {
-                ImGui::TextColored(get_active_style().black_bright, "%s",
+                ImGui::TextColored(get_active_style().gray, "%s",
                     to_str<State>(State::DISABLED));
             } else {
                 Ref<Rel> r = scene->get_rel(outputs[i]);

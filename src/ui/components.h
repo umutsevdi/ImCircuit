@@ -143,7 +143,7 @@ template <typename... Args> inline void Field(Args... args)
 {
     ImGui::BeginGroup();
     ImGui::PushFont(get_font(FontType::BOLD), 0.0f);
-    ImGui::PushStyleColor(ImGuiCol_Text, get_active_style().cyan);
+    ImGui::PushStyleColor(ImGuiCol_Text, get_active_style().blue);
     ImGui::Text(args...);
     ImGui::PopFont();
     ImGui::PopStyleColor();

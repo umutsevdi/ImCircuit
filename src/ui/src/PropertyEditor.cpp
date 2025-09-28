@@ -7,9 +7,9 @@
 
 namespace ic::ui {
 
-struct PropertyEditor final : public Window {
-    PropertyEditor();
-    ~PropertyEditor() = default;
+struct Properties final : public Window {
+    Properties();
+    ~Properties() = default;
 
     virtual void show(Ref<Scene>, bool switched) override;
     virtual const char* tooltip(void) override
@@ -27,9 +27,9 @@ private:
     void _show_gate(Ref<Scene> scene, Node id);
     void _show_node(Ref<Scene> scene, Node id);
 };
-REGISTER_WINDOW("Property Editor", PropertyEditor);
+REGISTER_WINDOW("Properties", Properties);
 
-void PropertyEditor::show(Ref<Scene> scene, bool)
+void Properties::show(Ref<Scene> scene, bool)
 {
     IconText(ICON_LC_SEARCH, FONT_NORMAL, "");
     ImGui::SameLine();
@@ -110,7 +110,7 @@ void PropertyEditor::show(Ref<Scene> scene, bool)
     ImGui::EndChild();
 }
 
-void PropertyEditor::_show_input(Ref<Scene> scene, Node id)
+void Properties::_show_input(Ref<Scene> scene, Node id)
 {
     auto input = scene->get_node<Input>(id);
     ImGui::BeginGroup();
@@ -130,7 +130,7 @@ void PropertyEditor::_show_input(Ref<Scene> scene, Node id)
     }
     ImGui::EndGroup();
 }
-void PropertyEditor::_show_output(Ref<Scene> scene, Node id)
+void Properties::_show_output(Ref<Scene> scene, Node id)
 {
     auto output = scene->get_node<Output>(id);
     ImGui::BeginGroup();
@@ -149,9 +149,9 @@ void PropertyEditor::_show_output(Ref<Scene> scene, Node id)
     ImGui::EndGroup();
 }
 
-void PropertyEditor::_show_component(Ref<Scene> scene, Node id) { }
+void Properties::_show_component(Ref<Scene> scene, Node id) { }
 
-void PropertyEditor::_show_gate(Ref<Scene> scene, Node id)
+void Properties::_show_gate(Ref<Scene> scene, Node id)
 {
     auto gate = scene->get_node<Gate>(id);
     ImGui::BeginGroup();
@@ -176,7 +176,7 @@ void PropertyEditor::_show_gate(Ref<Scene> scene, Node id)
     ImGui::EndGroup();
 }
 
-void PropertyEditor::_show_node(Ref<Scene> scene, Node id)
+void Properties::_show_node(Ref<Scene> scene, Node id)
 {
     switch (id.type) {
     case Node::GATE: _show_gate(scene, id); break;
@@ -187,7 +187,7 @@ void PropertyEditor::_show_node(Ref<Scene> scene, Node id)
     }
 }
 
-void PropertyEditor::_show_rel(Ref<Scene> scene, relid id)
+void Properties::_show_rel(Ref<Scene> scene, relid id)
 {
     if (id == 0) {
         return;

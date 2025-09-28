@@ -132,7 +132,7 @@ static void _set_colors(ImVec4 ig[ImGuiCol_COUNT], ImU32 in[ImNodesCol_COUNT])
     ig[ImGuiCol_Text]           = t.fg;
     ig[ImGuiCol_TextDisabled]   = v4mul(t.fg, 0.7f);
     ig[ImGuiCol_TextSelectedBg] = v4mul(t.blue, 0.8f);
-    ig[ImGuiCol_TextLink]       = t.blue_bright;
+    ig[ImGuiCol_TextLink]       = v4mul(t.blue, 1.2f);
 
     // Headers
     ig[ImGuiCol_MenuBarBg]     = v4mul(t.bg, DL(0.5f, 0.8f));
@@ -141,15 +141,13 @@ static void _set_colors(ImVec4 ig[ImGuiCol_COUNT], ImU32 in[ImNodesCol_COUNT])
     ig[ImGuiCol_HeaderActive]  = v4mul(DL(t.black, t.white), DL(0.75f, 1.05f));
 
     // Buttons
-    ig[ImGuiCol_Button] = v4mul(DL(t.blue, t.blue_bright), DL(0.5f, 0.9f));
-    ig[ImGuiCol_ButtonHovered]
-        = v4mul(DL(t.blue, t.blue_bright), DL(0.8f, 1.0f));
-    ig[ImGuiCol_ButtonActive]
-        = v4mul(DL(t.blue, t.blue_bright), DL(0.8f, 1.1f));
-    ig[ImGuiCol_CheckMark] = t.yellow;
+    ig[ImGuiCol_Button]        = v4mul(DL(t.blue, t.blue), DL(0.5f, 0.9f));
+    ig[ImGuiCol_ButtonHovered] = v4mul(t.blue, DL(0.8f, 1.0f));
+    ig[ImGuiCol_ButtonActive]  = v4mul(t.blue, DL(0.8f, 1.1f));
+    ig[ImGuiCol_CheckMark]     = t.yellow;
 
-    ig[ImGuiCol_DockingPreview] = v4mul(t.blue_bright, 1.f, 0.5f);
-    ig[ImGuiCol_DockingEmptyBg] = v4mul(t.blue_bright, 1.f, 0.5f);
+    ig[ImGuiCol_DockingPreview] = v4mul(t.blue, 1.f, 0.5f);
+    ig[ImGuiCol_DockingEmptyBg] = v4mul(t.blue, 1.f, 0.5f);
 
     // Frame BG
     ig[ImGuiCol_FrameBg]          = v4mul(t.bg, DL(0.5f, 0.8f));
@@ -188,18 +186,16 @@ static void _set_colors(ImVec4 ig[ImGuiCol_COUNT], ImU32 in[ImNodesCol_COUNT])
     ig[ImGuiCol_ScrollbarGrabActive]
         = v4mul(DL(t.black, t.white), DL(0.75f, 1.05f));
 
-    ig[ImGuiCol_TableHeaderBg]
-        = v4mul(DL(t.yellow, t.yellow_bright), DL(0.8f, 1.f));
+    ig[ImGuiCol_TableHeaderBg] = v4mul(t.yellow, DL(0.8f, 1.f));
     ig[ImGuiCol_TableRowBg]    = t.bg;
     ig[ImGuiCol_TableRowBgAlt] = v4mul(t.bg, 0.8f);
 
-    ig[ImGuiCol_PlotLines]        = v4mul(DL(t.green, t.yellow_bright), 0.9f);
-    ig[ImGuiCol_PlotLinesHovered] = v4mul(DL(t.green, t.yellow_bright), 1.0f);
-    ig[ImGuiCol_PlotHistogram]    = v4mul(DL(t.green, t.yellow_bright), 0.9f);
-    ig[ImGuiCol_PlotHistogramHovered]
-        = v4mul(DL(t.green, t.yellow_bright), 1.0f);
-    in[ImNodesCol_GridBackground] = CLRU32(v4mul(t.bg, DL(1.2f, 0.8f)));
-    in[ImNodesCol_GridLine]       = CLRU32(v4mul(t.fg, 0.5f));
+    ig[ImGuiCol_PlotLines]            = v4mul(t.green, 0.9f);
+    ig[ImGuiCol_PlotLinesHovered]     = v4mul(t.green, 1.0f);
+    ig[ImGuiCol_PlotHistogram]        = v4mul(t.green, 0.9f);
+    ig[ImGuiCol_PlotHistogramHovered] = v4mul(t.green, 1.0f);
+    in[ImNodesCol_GridBackground]     = CLRU32(v4mul(t.bg, DL(1.2f, 0.8f)));
+    in[ImNodesCol_GridLine]           = CLRU32(v4mul(t.fg, 0.5f));
     //    clr_node[ImNodesCol_GridLinePrimary] = CLRU32(ImGuiCol_FrameBgActive);
     in[ImNodesCol_NodeBackground]         = CLRU32(ImGuiCol_WindowBg);
     in[ImNodesCol_NodeBackgroundHovered]  = CLRU32(v4mul(t.bg, 1.3f));
@@ -214,7 +210,7 @@ static void _set_colors(ImVec4 ig[ImGuiCol_COUNT], ImU32 in[ImNodesCol_COUNT])
     in[ImNodesCol_LinkHovered]        = CLRU32(ImGuiCol_ButtonHovered);
     in[ImNodesCol_LinkSelected]       = CLRU32(ImGuiCol_ButtonActive);
     in[ImNodesCol_Pin]                = CLRU32(v4mul(t.yellow, 1.0f));
-    in[ImNodesCol_PinHovered]         = CLRU32(v4mul(t.yellow_bright, 1.2f));
+    in[ImNodesCol_PinHovered]         = CLRU32(v4mul(t.yellow, 1.2f));
     in[ImNodesCol_BoxSelector]        = CLRU32(ImGuiCol_DockingPreview);
     in[ImNodesCol_BoxSelectorOutline] = CLRU32(ImGuiCol_DockingEmptyBg);
 
@@ -288,33 +284,21 @@ static Error _read_theme(Theme& theme, const Json::Value& v)
             && v["red"].isString() && v["green"].isString()
             && v["yellow"].isString() && v["blue"].isString()
             && v["magenta"].isString() && v["cyan"].isString()
-            && v["white"].isString() && v["black_bright"].isString()
-            && v["red_bright"].isString() && v["green_bright"].isString()
-            && v["yellow_bright"].isString() && v["blue_bright"].isString()
-            && v["magenta_bright"].isString() && v["cyan_bright"].isString()
-            && v["white_bright"].isString())) {
+            && v["white"].isString() && v["gray"].isString())) {
         return ERROR(Error::INVALID_JSON);
     }
-    theme.name           = v["name"].asString();
-    theme.is_dark        = v["is_dark"].asBool();
-    theme.bg             = to_imvec4(v["bg"].asString());
-    theme.fg             = to_imvec4(v["fg"].asString());
-    theme.black          = to_imvec4(v["black"].asString());
-    theme.red            = to_imvec4(v["red"].asString());
-    theme.green          = to_imvec4(v["green"].asString());
-    theme.yellow         = to_imvec4(v["yellow"].asString());
-    theme.blue           = to_imvec4(v["blue"].asString());
-    theme.magenta        = to_imvec4(v["magenta"].asString());
-    theme.cyan           = to_imvec4(v["cyan"].asString());
-    theme.white          = to_imvec4(v["white"].asString());
-    theme.black_bright   = to_imvec4(v["black_bright"].asString());
-    theme.red_bright     = to_imvec4(v["red_bright"].asString());
-    theme.green_bright   = to_imvec4(v["green_bright"].asString());
-    theme.yellow_bright  = to_imvec4(v["yellow_bright"].asString());
-    theme.blue_bright    = to_imvec4(v["blue_bright"].asString());
-    theme.magenta_bright = to_imvec4(v["magenta_bright"].asString());
-    theme.cyan_bright    = to_imvec4(v["cyan_bright"].asString());
-    theme.white_bright   = to_imvec4(v["white_bright"].asString());
+    theme.name    = v["name"].asString();
+    theme.is_dark = v["is_dark"].asBool();
+    theme.bg      = to_imvec4(v["bg"].asString());
+    theme.fg      = to_imvec4(v["fg"].asString());
+    theme.black   = to_imvec4(v["black"].asString());
+    theme.red     = to_imvec4(v["red"].asString());
+    theme.green   = to_imvec4(v["green"].asString());
+    theme.yellow  = to_imvec4(v["yellow"].asString());
+    theme.blue    = to_imvec4(v["blue"].asString());
+    theme.magenta = to_imvec4(v["magenta"].asString());
+    theme.white   = to_imvec4(v["white"].asString());
+    theme.gray    = to_imvec4(v["gray"].asString());
     return OK;
 }
 
@@ -324,50 +308,34 @@ static void _init_default_themes(void)
     Theme dark;
     // Colors (Ayu Light)
     // Default colors - taken from ayu-colors
-    light.name           = "Default (Light)";
-    light.is_dark        = false;
-    light.bg             = to_imvec4(0xFCFCFC);
-    light.fg             = to_imvec4(0x5C6166);
-    light.black          = to_imvec4(0x010101);
-    light.red            = to_imvec4(0xe7666a);
-    light.green          = to_imvec4(0x80ab24);
-    light.yellow         = to_imvec4(0xeba54d);
-    light.blue           = to_imvec4(0x4196df);
-    light.magenta        = to_imvec4(0x9870c3);
-    light.cyan           = to_imvec4(0x51b891);
-    light.white          = to_imvec4(0xc1c1c1);
-    light.black_bright   = to_imvec4(0x343434);
-    light.red_bright     = to_imvec4(0xee9295);
-    light.green_bright   = to_imvec4(0x9fd32f);
-    light.yellow_bright  = to_imvec4(0xf0bc7b);
-    light.blue_bright    = to_imvec4(0x6daee6);
-    light.magenta_bright = to_imvec4(0xb294d2);
-    light.cyan_bright    = to_imvec4(0x75c7a8);
-    light.white_bright   = to_imvec4(0xdbdbdb);
+    light.name    = "Default (Light)";
+    light.is_dark = false;
+    light.bg      = to_imvec4(0xFCFCFC);
+    light.fg      = to_imvec4(0x5C6166);
+    light.black   = to_imvec4(0x010101);
+    light.red     = to_imvec4(0xe7666a);
+    light.green   = to_imvec4(0x80ab24);
+    light.yellow  = to_imvec4(0xeba54d);
+    light.blue    = to_imvec4(0x4196df);
+    light.magenta = to_imvec4(0x9870c3);
+    light.white   = to_imvec4(0xc1c1c1);
+    light.gray    = to_imvec4(0x343434);
     themes.emplace("Default (Light)", std::move(light));
 
     // name: SeaShells
     // https//raw.githubusercontent.com/mbadolato/iTerm2-Color-Schemes/master/schemes/SeaShells.itermcolors
-    dark.name           = "Default (Dark)";
-    dark.is_dark        = true;
-    dark.bg             = to_imvec4(0x061923);
-    dark.fg             = to_imvec4(0xe5c49e);
-    dark.black          = to_imvec4(0x1d485f);
-    dark.red            = to_imvec4(0xdb662d);
-    dark.green          = to_imvec4(0x008eab);
-    dark.yellow         = to_imvec4(0xfeaf3c);
-    dark.blue           = to_imvec4(0x255a62);
-    dark.magenta        = to_imvec4(0x77dbf4);
-    dark.cyan           = to_imvec4(0x5fb1c2);
-    dark.white          = to_imvec4(0xe5c49e);
-    dark.black_bright   = to_imvec4(0x545d65);
-    dark.red_bright     = to_imvec4(0xdd998a);
-    dark.green_bright   = to_imvec4(0x739da8);
-    dark.yellow_bright  = to_imvec4(0xfedaae);
-    dark.blue_bright    = to_imvec4(0x0bc7e3);
-    dark.magenta_bright = to_imvec4(0xc6e8f1);
-    dark.cyan_bright    = to_imvec4(0x97b9c0);
-    dark.white_bright   = to_imvec4(0xffe9d7);
+    dark.name    = "Default (Dark)";
+    dark.is_dark = true;
+    dark.bg      = to_imvec4(0x061923);
+    dark.fg      = to_imvec4(0xe5c49e);
+    dark.black   = to_imvec4(0x1d485f);
+    dark.red     = to_imvec4(0xdb662d);
+    dark.green   = to_imvec4(0x008eab);
+    dark.yellow  = to_imvec4(0xfeaf3c);
+    dark.blue    = to_imvec4(0x255a62);
+    dark.magenta = to_imvec4(0x77dbf4);
+    dark.white   = to_imvec4(0xe5c49e);
+    dark.gray    = to_imvec4(0x545d65);
     themes.emplace("Default (Dark)", std::move(dark));
 }
 

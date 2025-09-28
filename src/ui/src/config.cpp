@@ -37,16 +37,15 @@ namespace ui {
         return Configuration::FOLLOW_OS;
     }
 
-    Configuration& Configuration::load(void)
+    Configuration& Configuration::load(const std::filesystem::path& path)
     {
         std::string old_locale = ACTIVE_CONFIG.language;
         std::string data;
-        if (!fs::read(fs::CONFIG / "config.json", data)) {
+        if (!fs::read(path, data)) {
             L_WARN("Configuration file was not found at %s. Initializing "
                    "defaults.",
-                (fs::CONFIG / "config.json").c_str());
-            fs::write(fs::CONFIG / "config.json",
-                _to_json(ACTIVE_CONFIG).toStyledString());
+                (path).c_str());
+            fs::write(path, _to_json(ACTIVE_CONFIG).toStyledString());
             return ACTIVE_CONFIG;
         }
 
@@ -54,8 +53,7 @@ namespace ui {
         Json::Reader r;
         if (!r.parse(data, v)) {
             L_ERROR("Invalid configuration file format. Overwriting.");
-            fs::write(fs::CONFIG / "config.json",
-                _to_json(ACTIVE_CONFIG).toStyledString());
+            fs::write(path, _to_json(ACTIVE_CONFIG).toStyledString());
             return ACTIVE_CONFIG;
         }
         if (_from_json(v, ACTIVE_CONFIG) != Error::OK) {

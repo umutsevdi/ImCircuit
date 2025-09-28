@@ -8,10 +8,10 @@
 
 namespace ic::ui {
 
-struct NodeEditor final : public Window {
+struct Editor final : public Window {
     enum MenuType { NODE, LINK, NEW };
-    NodeEditor();
-    ~NodeEditor() = default;
+    Editor();
+    ~Editor() = default;
 
     virtual void show(Ref<Scene>, bool switched) override;
     virtual const char* tooltip(void) override
@@ -19,7 +19,6 @@ struct NodeEditor final : public Window {
         return _("A Panel to edit nodes in the selected scene.");
     }
 
-    int id         = 0;
     MenuType menu  = NODE;
     bool is_active = false;
 
@@ -56,12 +55,12 @@ private:
     ImVec2 copy_node_position;
     int nodeids[1 << 20] = { 0 };
 };
-REGISTER_WINDOW("Editor", NodeEditor, {
+REGISTER_WINDOW("Editor", Editor, {
     _flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoFocusOnAppearing
         | ImGuiWindowFlags_NoNavFocus;
 });
 
-void NodeEditor::show(Ref<Scene> scene, bool is_changed)
+void Editor::show(Ref<Scene> scene, bool is_changed)
 {
     ImNodes::BeginNodeEditor();
     if (scene != nullptr) {
@@ -95,7 +94,7 @@ void NodeEditor::show(Ref<Scene> scene, bool is_changed)
                 r.second.value == State::TRUE ? ImGui::GetColorU32(style.green)
                     : r.second.value == State::FALSE
                     ? ImGui::GetColorU32(style.red)
-                    : ImGui::GetColorU32(style.black_bright));
+                    : ImGui::GetColorU32(style.gray));
             ImNodes::Link(r.first,
                 encode_pair(r.second.from_node, r.second.from_sock, true),
                 encode_pair(r.second.to_node, r.second.to_sock, false));
@@ -191,9 +190,14 @@ void NodeEditor::show(Ref<Scene> scene, bool is_changed)
             scene->connect(to, to_sock, from, from_sock);
         };
 
+        int id;
         if (_is_mouse_in() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
             if (ImNodes::IsLinkHovered((int*)&id)) {
                 menu = MenuType::LINK;
+                if (!ImNodes::IsLinkSelected(id)) {
+                    ImNodes::SelectLink(id);
+                }
+
             } else if (ImNodes::IsNodeHovered((int*)&id)) {
                 if (!ImNodes::IsNodeSelected(id)) {
                     ImNodes::SelectNode(id);
@@ -300,7 +304,7 @@ void NodeEditor::show(Ref<Scene> scene, bool is_changed)
         ImNodes::EndNodeEditor();
     }
 }
-void NodeEditor::_show_node(ComponentContext& node, uint16_t, bool)
+void Editor::_show_node(ComponentContext& node, uint16_t, bool)
 {
     uint32_t compin  = Node { 0, Node::COMPONENT_INPUT }.numeric();
     uint32_t compout = Node { 0, Node::COMPONENT_OUTPUT }.numeric();
@@ -330,7 +334,7 @@ void NodeEditor::_show_node(ComponentContext& node, uint16_t, bool)
     ImNodes::EndNode();
 }
 
-void NodeEditor::_show_node(Input& node, uint16_t id, bool is_changed)
+void Editor::_show_node(Input& node, uint16_t id, bool is_changed)
 {
     Node nodeinfo   = Node { id, Node::Type::INPUT };
     uint32_t nodeid = nodeinfo.numeric();
@@ -361,7 +365,7 @@ void NodeEditor::_show_node(Input& node, uint16_t id, bool is_changed)
     ImNodes::EndNode();
 }
 
-void NodeEditor::_show_node(Output& node, uint16_t id, bool is_changed)
+void Editor::_show_node(Output& node, uint16_t id, bool is_changed)
 {
     Node nodeinfo   = Node { id, Node::Type::OUTPUT };
     uint32_t nodeid = nodeinfo.numeric();
@@ -379,7 +383,7 @@ void NodeEditor::_show_node(Output& node, uint16_t id, bool is_changed)
     ImNodes::EndNode();
 }
 
-void NodeEditor::_show_node(Gate& node, uint16_t id, bool is_changed)
+void Editor::_show_node(Gate& node, uint16_t id, bool is_changed)
 {
     Node nodeinfo   = Node { id, Node::Type::GATE };
     uint32_t nodeid = nodeinfo.numeric();
@@ -407,7 +411,7 @@ void NodeEditor::_show_node(Gate& node, uint16_t id, bool is_changed)
     ImNodes::EndNode();
 }
 
-void NodeEditor::_show_node(Component& node, uint16_t id, bool is_changed)
+void Editor::_show_node(Component& node, uint16_t id, bool is_changed)
 {
     Node nodeinfo   = Node { id, Node::Type::COMPONENT };
     uint32_t nodeid = nodeinfo.numeric();
@@ -437,8 +441,7 @@ void NodeEditor::_show_node(Component& node, uint16_t id, bool is_changed)
     ImNodes::EndNode();
 }
 
-void NodeEditor::_sync_position(
-    BaseNode& node, uint32_t node_id, bool is_changed)
+void Editor::_sync_position(BaseNode& node, uint32_t node_id, bool is_changed)
 {
     if (is_changed) {
         ImNodes::SetNodeGridSpacePos(
@@ -454,6 +457,6 @@ void NodeEditor::_sync_position(
     }
 }
 
-void NodeEditor::_context_menu_new(Ref<Scene>) { }
+void Editor::_context_menu_new(Ref<Scene>) { }
 
 } // namespace ic::ui

@@ -32,7 +32,7 @@
 #endif
 
 /* Application constants */
-#define APPVERSION "0.1.0"
+#define APPVERSION "0.1.1"
 #define APPPKG "com.imcircuit"
 #define APPNAME "ImCircuit"
 #define APPNAME_BIN "ImCircuit"

@@ -201,8 +201,8 @@ static void _popup_new(void)
         static char author[60]       = "local";
         static char name[128]        = { 0 };
         static char description[512] = { 0 };
-        static size_t input_size     = 0;
-        static size_t output_size    = 0;
+        static size_t input_size     = 1;
+        static size_t output_size    = 1;
         AnonTable(
             "NewFlow", 0,
             TablePair(Field(_("Scene Name")),
@@ -232,10 +232,21 @@ static void _popup_new(void)
 
             if (!is_scene) {
                 ImGui::Separator();
-                TablePair(Field(_("Input Size")),
-                    ImGui::InputInt("##CompInputSize", (int*)&input_size));
-                TablePair(Field(_("Output Size")),
-                    ImGui::InputInt("##CompOutputSize", (int*)&output_size));
+                TablePair(
+                    Field(_("Input Size")),
+                    if (ImGui::InputInt("##CompInputSize", (int*)&input_size)) {
+                        if (input_size < 1) {
+                            input_size = 1;
+                        }
+                    });
+                TablePair(
+                    Field(_("Output Size")),
+                    if (ImGui::InputInt(
+                            "##CompOutputSize", (int*)&output_size)) {
+                        if (output_size < 1) {
+                            output_size = 1;
+                        }
+                    });
             });
         if (ImGui::Button("Create")) {
             Ref<Scene> scene
@@ -387,39 +398,23 @@ static void _color_buttons(const Theme& style)
     ImGui::PushID(style.name.c_str());
     ImGui::ColorButton(_("Background"), style.bg);
     ImGui::SameLine();
-    ImGui::ColorButton(_("Foreground"), style.fg);
-
-    ImGui::ColorButton(_("Black"), style.black);
+    ImGui::ColorButton(_("Yellow"), style.yellow);
     ImGui::SameLine();
     ImGui::ColorButton(_("Red"), style.red);
     ImGui::SameLine();
     ImGui::ColorButton(_("Green"), style.green);
     ImGui::SameLine();
-    ImGui::ColorButton(_("Yellow"), style.yellow);
+    ImGui::ColorButton(_("Black"), style.black);
 
-    ImGui::ColorButton(_("Black Bright"), style.black_bright);
+    ImGui::ColorButton(_("Foreground"), style.fg);
     ImGui::SameLine();
-    ImGui::ColorButton(_("Red Bright"), style.red_bright);
+    ImGui::ColorButton(_("Gray"), style.gray);
     ImGui::SameLine();
-    ImGui::ColorButton(_("Green Bright"), style.green_bright);
-    ImGui::SameLine();
-    ImGui::ColorButton(_("Yellow Bright"), style.yellow_bright);
-
     ImGui::ColorButton(_("Blue"), style.blue);
     ImGui::SameLine();
     ImGui::ColorButton(_("Magenta"), style.magenta);
     ImGui::SameLine();
-    ImGui::ColorButton(_("Cyan"), style.cyan);
-    ImGui::SameLine();
     ImGui::ColorButton(_("White"), style.white);
-
-    ImGui::ColorButton(_("Blue Bright"), style.blue_bright);
-    ImGui::SameLine();
-    ImGui::ColorButton(_("Magenta Bright"), style.magenta_bright);
-    ImGui::SameLine();
-    ImGui::ColorButton(_("Cyan Bright"), style.cyan_bright);
-    ImGui::SameLine();
-    ImGui::ColorButton(_("White Bright"), style.white_bright);
     ImGui::PopID();
 }
 void _popup_pref(void)
@@ -535,6 +530,15 @@ void _popup_pref(void)
             _("Configuration changes were applied."));
     }
     ImGui::EndDisabled();
+    ImGui::SameLine(ImGui::GetWindowSize().x * 1 / 3);
+    if (IconButton(ICON_LC_ROTATE_CCW, _("Reset to Default"))) {
+        cfg = Configuration::load(fs::APPDATA / "defaults" / "config.json");
+        Configuration::set(cfg);
+        cfg.is_applied = true;
+        cfg.is_saved   = false;
+        Toast(ICON_LC_SETTINGS_2, _("Preferences"),
+            _("Configuration is loaded."));
+    }
     ImGui::SameLine(ImGui::GetWindowSize().x * 5 / 6);
     ImGui::BeginDisabled(cfg.is_saved);
     if (IconButton(ICON_LC_SAVE, _("Save"))) {

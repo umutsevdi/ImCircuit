@@ -42,16 +42,8 @@ struct Theme {
     ImVec4 yellow;
     ImVec4 blue;
     ImVec4 magenta;
-    ImVec4 cyan;
     ImVec4 white;
-    ImVec4 black_bright;
-    ImVec4 red_bright;
-    ImVec4 green_bright;
-    ImVec4 yellow_bright;
-    ImVec4 blue_bright;
-    ImVec4 magenta_bright;
-    ImVec4 cyan_bright;
-    ImVec4 white_bright;
+    ImVec4 gray;
 };
 const Theme& get_theme(const std::string& s);
 const Theme& get_active_style(void);
@@ -88,7 +80,8 @@ public:
     static Configuration& get(void);
     static void set(Configuration&);
     static void save(void);
-    static Configuration& load(void);
+    static Configuration& load(
+        const std::filesystem::path& p = fs::CONFIG / "config.json");
 };
 
 namespace popup {
@@ -166,7 +159,7 @@ protected:
         WINDOWNAME("Inspector"),                                               \
         WINDOWNAME("Editor"),                                                  \
         WINDOWNAME("Palette"),                                                 \
-        WINDOWNAME("Property Editor"),                                         \
+        WINDOWNAME("Properties"),                                         \
         WINDOWNAME("Scene Info"),                                              \
     };
 /* Registers a window CLASS to the provided ID. Automatically implements the

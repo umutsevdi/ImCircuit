@@ -22,7 +22,7 @@ private:
     ImVec4 _log_color(const Theme& style, Message::Severity level)
     {
         switch (level) {
-        case Message::DEBUG: return style.blue_bright;
+        case Message::DEBUG: return style.blue;
         case Message::INFO: return style.green;
         case Message::WARN: return style.magenta;
         case Message::FATAL:;

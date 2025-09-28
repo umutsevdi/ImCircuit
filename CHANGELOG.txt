@@ -8,6 +8,14 @@ ISSUES & SUPPORT: https://github.com/umutsevdi/imcircuit/issues
 CODE DOCS:        https://docs.umutsevdi.com/imcircuit/
 
 CHANGELOG
+-------------------------------------------------------------------------------
+0.1.1 - Fri, Sep 12 2025
+-------------------------------------------------------------------------------
+[https://github.com/owner/name/releases/tag/v0.1.1]
+
+Changes:
+    - Added copy-paste option.
+    - Added more right click options.
 
 -------------------------------------------------------------------------------
 0.1.0 - Fri, Sep 12 2025

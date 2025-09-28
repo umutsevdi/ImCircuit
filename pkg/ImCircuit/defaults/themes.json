@@ -12,14 +12,7 @@
         "magenta": "#5C2D91",
         "cyan": "#008272",
         "white": "#FFFFFF",
-        "black_bright": "#4F4F4F",
-        "red_bright": "#F1707A",
-        "green_bright": "#6FCF97",
-        "yellow_bright": "#FBEA3B",
-        "blue_bright": "#1A85FF",
-        "magenta_bright": "#B39BC8",
-        "cyan_bright": "#3DDAD7",
-        "white_bright": "#F3F3F3"
+        "gray": "#4F4F4F"
     },
     {
         "name": "Breeze",
@@ -34,17 +27,10 @@
         "magenta": "#9b59b6",
         "cyan": "#1abc9c",
         "white": "#fcfcfc",
-        "black_bright": "#7f8c8d",
-        "red_bright": "#c0392b",
-        "green_bright": "#1cdc9a",
-        "yellow_bright": "#fdbc4b",
-        "blue_bright": "#3daee9",
-        "magenta_bright": "#8e44ad",
-        "cyan_bright": "#16a085",
-        "white_bright": "#ffffff"
+        "gray": "#7f8c8d"
     },
     {
-        "name": "GruvboxLight",
+        "name": "Gruvbox Light",
         "is_dark": false,
         "bg": "#f9f5d7",
         "fg": "#3c3836",
@@ -56,14 +42,7 @@
         "magenta": "#b16286",
         "cyan": "#689d6a",
         "white": "#7c6f64",
-        "black_bright": "#928374",
-        "red_bright": "#9d0006",
-        "green_bright": "#79740e",
-        "yellow_bright": "#b57614",
-        "blue_bright": "#076678",
-        "magenta_bright": "#8f3f71",
-        "cyan_bright": "#427b58",
-        "white_bright": "#3c3836"
+        "gray": "#928374"
     },
     {
         "name": "Gruvbox Dark",
@@ -78,14 +57,7 @@
         "magenta": "#b16286",
         "cyan": "#689d6a",
         "white": "#a89984",
-        "black_bright": "#928374",
-        "red_bright": "#fb4934",
-        "green_bright": "#b8bb26",
-        "yellow_bright": "#fabd2f",
-        "blue_bright": "#83a598",
-        "magenta_bright": "#d3869b",
-        "cyan_bright": "#8ec07c",
-        "white_bright": "#ebdbb2"
+        "gray": "#928374"
     },
     {
         "name": "Papertheme",
@@ -100,14 +72,7 @@
         "magenta": "#5c21a5",
         "cyan": "#158c86",
         "white": "#aaaaaa",
-        "black_bright": "#555555",
-        "red_bright": "#cc3e28",
-        "green_bright": "#216609",
-        "yellow_bright": "#b58900",
-        "blue_bright": "#1e6fcc",
-        "magenta_bright": "#5c21a5",
-        "cyan_bright": "#158c86",
-        "white_bright": "#aaaaaa"
+        "gray": "#555555"
     },
     {
         "name": "Material",
@@ -122,14 +87,7 @@
         "magenta": "#ff2f90",
         "cyan": "#aeddff",
         "white": "#ffffff",
-        "black_bright": "#ff262b",
-        "red_bright": "#eb606b",
-        "green_bright": "#c3e88d",
-        "yellow_bright": "#f7eb95",
-        "blue_bright": "#7dc6bf",
-        "magenta_bright": "#6c71c4",
-        "cyan_bright": "#35434d",
-        "white_bright": "#ffffff"
+        "gray": "#ff262b"
     },
     {
         "name": "Base16",
@@ -144,14 +102,7 @@
         "magenta": "#ba8baf",
         "cyan": "#86c1b9",
         "white": "#d8d8d8",
-        "black_bright": "#585858",
-        "red_bright": "#ab4642",
-        "green_bright": "#a1b56c",
-        "yellow_bright": "#f7ca88",
-        "blue_bright": "#7cafc2",
-        "magenta_bright": "#ba8baf",
-        "cyan_bright": "#86c1b9",
-        "white_bright": "#f8f8f8"
+        "gray": "#585858"
     },
     {
         "name": "acme",
@@ -166,14 +117,7 @@
         "magenta": "#505050",
         "cyan": "#bdbdb7",
         "white": "#fcfcce",
-        "black_bright": "#101010",
-        "red_bright": "#af5f00",
-        "green_bright": "#cccc7c",
-        "yellow_bright": "#ffff5f",
-        "blue_bright": "#aeeeee",
-        "magenta_bright": "#505050",
-        "cyan_bright": "#bdbdb7",
-        "white_bright": "#fcfcce"
+        "gray": "#101010"
     },
     {
         "name": "Noctis Lux",
@@ -188,14 +132,7 @@
         "magenta": "#ff5792",
         "cyan": "#00bdd6",
         "white": "#8ca6a6",
-        "black_bright": "#004d57",
-        "red_bright": "#ff4000",
-        "green_bright": "#00d17a",
-        "yellow_bright": "#ff8c00",
-        "blue_bright": "#0fa3ff",
-        "magenta_bright": "#ff6b9f",
-        "cyan_bright": "#00cbe6",
-        "white_bright": "#bbc3c4"
+        "gray": "#004d57"
     },
     {
         "name": "Solarized Dark",
@@ -210,14 +147,7 @@
         "magenta": "#d33682",
         "cyan": "#2aa198",
         "white": "#eee8d5",
-        "black_bright": "#002b36",
-        "red_bright": "#cb4b16",
-        "green_bright": "#586e75",
-        "yellow_bright": "#657b83",
-        "blue_bright": "#839496",
-        "magenta_bright": "#6c71c4",
-        "cyan_bright": "#93a1a1",
-        "white_bright": "#fdf6e3"
+        "gray": "#002b36"
     },
     {
         "name": "Solarized Light",
@@ -232,13 +162,6 @@
         "magenta": "#d33682",
         "cyan": "#2aa198",
         "white": "#eee8d5",
-        "black_bright": "#002b36",
-        "red_bright": "#cb4b16",
-        "green_bright": "#586e75",
-        "yellow_bright": "#657b83",
-        "blue_bright": "#839496",
-        "magenta_bright": "#6c71c4",
-        "cyan_bright": "#93a1a1",
-        "white_bright": "#fdf6e3"
+        "gray": "#002b36"
     }
 ]

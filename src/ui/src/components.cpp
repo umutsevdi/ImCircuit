@@ -42,12 +42,7 @@ void ToggleButton(Input& node)
             node.toggle();
         };
         break;
-    case State::DISABLED:
-        ImGui::PushStyleColor(ImGuiCol_Button, style.black_bright);
-        ImGui::PushStyleColor(ImGuiCol_Text, style.white_bright);
-        ImGui::Button(_(to_str<State>(State::DISABLED)));
-        ImGui::PopStyleColor();
-        break;
+    default: ImGui::PushStyleColor(ImGuiCol_Button, style.gray); break;
     }
     ImGui::PopStyleColor();
 }

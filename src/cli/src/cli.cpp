@@ -44,7 +44,7 @@ namespace cli {
             } else {
                 std::filesystem::path filepath { arg };
                 if (!(filepath.has_extension()
-                        && filepath.extension() == ".ic")) {
+                        && filepath.extension() == ".imcircuit")) {
                     return ERROR(Error::INVALID_FILE);
                 }
                 if (Error err = tabs::open(filepath); err != Error::OK) {

@@ -37,9 +37,9 @@ void SceneInfo::show(Ref<Scene> scene, bool switched)
     AnonTable(
         "AppearanceTable", TABLE_SIZE,
         TablePair(
-            Field(_("Scene Name")),
+            Field(_("Name")),
             if (scene != nullptr
-                && ImGui::InputText("##SceneNameInputText", _name.data(),
+                && ImGui::InputText("##NameInputText", _name.data(),
                     _name.max_size(), ImGuiInputTextFlags_CharsNoBlank)) {
                 scene->set_name(_name.data());
             });
